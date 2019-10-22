@@ -4,6 +4,7 @@ Created on Thu Oct 17 15:41:00 2019
 
 @author: aumeier
 """
+from importlib import reload
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal
@@ -13,7 +14,7 @@ sys.path.append("/home/aumeier/scripts")
 sys.path.append("/scratch/aumeier/run10/analysis")
 
 import esn_rescomp
-#import lorenz_rescomp as lorenz
+import lorenz_rescomp as lorenz
 
 class reservoir(esn_rescomp.res_core):
     def __init__(self, **kwargs):

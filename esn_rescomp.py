@@ -4,8 +4,7 @@
 :license: ???
 
 """
-
-
+from importlib import reload
 import numpy as np
 #import matplotlib.pyplot as plt
 import networkx as nx
@@ -14,51 +13,51 @@ import time
 import datetime
 import copy
 
-import lorenz_rescomp as lorenz
+import lorenz_rescomp
 
 class res_core(object):
-
-    def __init__(self, nature=lorenz.mod_lorenz, number_of_nodes=500, input_dimension=3,
+    """
+    reservoir is a class for reservoir computing, using different network
+    structures to predict (chaotic) time series
+      
+    :parameters:
+    :system: choose from lorenz.lorenz, lorenz.mod_lorenz and 
+        lorenz.roessler
+    :number_of_nodes: number of nodes for the actual reservoir network
+    :input_dimension: dimension of the input to the reservoir
+    :output_dimension: dimension of the output of the reservoir
+    :type_of_network: network type, choose from 'random', 'scale_free' and
+        'random_geometric' that is used as topological structure of the
+        network
+    :dt: timestep for approximating the differential equation generating
+        the timeseries
+    :training_steps: number of datapoints used for training the output
+        matrix
+    :prediction_steps: number of prediction steps
+    :discard_steps: number of steps, that are discarded befor recording r
+        to synchronize the network with the input        
+    :regularization_parameter: weight for the Tikhonov-regularization term
+        in the cost function (self.train())
+    :spectral_radius: spectral radius of the actual reservoir network
+    :input_weight: weight of the input state over the reservoir state in
+        the neurons
+    :edge_prob: the probability with which an edge is created in a random
+        network
+    :epsilon: threshold distance between y_test and y_pred for the
+        prediction to be consided close (self.demerge_time())
+    :extended_state: bool: if True: an extended state of the form [b,x,r]
+        is used for updating the reservoir state, the prediction and
+        fitting W_out.
+        if False: only [r] is used
+    """
+    def __init__(self, nature=lorenz_rescomp.mod_lorenz, number_of_nodes=500, input_dimension=3,
                  output_dimension=3, type_of_network='random',
                  dt = 2e-2, training_steps=5000,
                  prediction_steps=5000, discard_steps=5000,
                  regularization_parameter=0.0001, spectral_radius=0.1,
                  input_weight=1., avg_degree=6., epsilon=np.array([5,10,5]),
                  extended_states=False, W_in_sparse=True, W_in_scale=1.):
-        """
-        reservoir is a class for reservoir computing, using different network
-        structures to predict (chaotic) time series
-          
-        :parameters:
-        :system: choose from lorenz.lorenz, lorenz.mod_lorenz and 
-            lorenz.roessler
-        :number_of_nodes: number of nodes for the actual reservoir network
-        :input_dimension: dimension of the input to the reservoir
-        :output_dimension: dimension of the output of the reservoir
-        :type_of_network: network type, choose from 'random', 'scale_free' and
-            'random_geometric' that is used as topological structure of the
-            network
-        :dt: timestep for approximating the differential equation generating
-            the timeseries
-        :training_steps: number of datapoints used for training the output
-            matrix
-        :prediction_steps: number of prediction steps
-        :discard_steps: number of steps, that are discarded befor recording r
-            to synchronize the network with the input        
-        :regularization_parameter: weight for the Tikhonov-regularization term
-            in the cost function (self.train())
-        :spectral_radius: spectral radius of the actual reservoir network
-        :input_weight: weight of the input state over the reservoir state in
-            the neurons
-        :edge_prob: the probability with which an edge is created in a random
-            network
-        :epsilon: threshold distance between y_test and y_pred for the
-            prediction to be consided close (self.demerge_time())
-        :extended_state: bool: if True: an extended state of the form [b,x,r]
-            is used for updating the reservoir state, the prediction and
-            fitting W_out.
-            if False: only [r] is used
-        """       
+        
         self.nature = nature
         self.N = number_of_nodes
         self.type = type_of_network
@@ -130,6 +129,11 @@ class res_core(object):
             self.W_in = np.random.uniform(low=-self.W_in_scale,
                                           high=self.W_in_scale,
                                           size=(self.N,self.xdim))        
+#    def __str__(self):
+#        return str('measures.reservoir('+str(self.N)+')')
+#    
+#    def __repr__(self):
+#        pass
     
     def calc_binary_network(self):
         """
@@ -211,17 +215,17 @@ class res_core(object):
             if print_switch:
                 print('random index for starting_point: ', random_index)
             
-            starting_point = lorenz.record_trajectory(f=self.nature,
+            starting_point = lorenz_rescomp.record_trajectory(f=self.nature,
                                 dt=self.dt, timesteps=length,
                                 starting_point=original_start)[random_index]
-            vals = lorenz.record_trajectory(f=self.nature, dt=self.dt,
+            vals = lorenz_rescomp.record_trajectory(f=self.nature, dt=self.dt,
                                             timesteps=timesteps,
                                             starting_point=starting_point)
         elif mode == 'fix_start':
             if starting_point == None:
                 print('set starting_point to use fix_start')
             else:
-                vals = lorenz.record_trajectory(f=self.system, dt=self.dt,
+                vals = lorenz_rescomp.record_trajectory(f=self.system, dt=self.dt,
                                                 timesteps=timesteps,
                                                 starting_point=starting_point)
 

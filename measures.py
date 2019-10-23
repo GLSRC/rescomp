@@ -2,9 +2,10 @@
 """
 Created on Thu Oct 17 15:41:00 2019
 
+
 @author: aumeier
 """
-from importlib import reload
+#from importlib import reload
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal
@@ -14,7 +15,8 @@ sys.path.append("/home/aumeier/scripts")
 sys.path.append("/scratch/aumeier/run10/analysis")
 
 import esn_rescomp
-import lorenz_rescomp as lorenz
+#delete:
+#import lorenz_rescomp as lorenz
 
 class reservoir(esn_rescomp.res_core):
     def __init__(self, **kwargs):
@@ -32,7 +34,7 @@ class reservoir(esn_rescomp.res_core):
         self.weighted_cc = None
         self.clustering_coeff = None
         self.avg_clustering_coeff = None    
-        super().__init__(self, **kwargs)
+        super(reservoir, self).__init__(**kwargs)
         
     def RMSE(self, flag):
         """

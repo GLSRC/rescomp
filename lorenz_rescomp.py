@@ -50,20 +50,29 @@ def mod_lorenz(x):
     else:
         return 'check shape of x, should have 3 components'
         
-
 def runge_kutta(f, dt, y=np.array([2.2,-3.5,4.3])):
     '''
     the function approximates differential equations of the form dy/dt = f(t,y)
     returns y(t + dt)
     '''
+    print(y)
     k1 = dt*f(y)
     k2 = dt*f(y+k1/2)
     k3 = dt*f(y+k2/2)
     k4 = dt*f(y + k3)
     return y + 1./6*(k1+2*k2+2*k3+k4)
     
-def record_trajectory(f=mod_lorenz, dt=1., timesteps=int(10e4),
+def record_trajectory(sys_flag='mod_lorenz', dt=1., timesteps=int(10e4),
                       print_switch=False, starting_point=None):
+    if print_switch:
+        print(sys_flag)
+    if sys_flag == 'mod_lorenz':
+        f = mod_lorenz
+    if sys_flag == 'normal_lorenz':
+        f = normal_lorenz
+    if sys_flag == 'roessler':
+        f = roessler
+        
     traj_size = ((timesteps, starting_point.shape[0]))
     traj = np.zeros(traj_size)
     if print_switch:

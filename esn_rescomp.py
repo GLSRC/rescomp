@@ -2,9 +2,9 @@
 :author: aumeier
 :date: 2019/04/26
 :license: ???
-
 """
-from importlib import reload
+
+#from importlib import reload
 import numpy as np
 #import matplotlib.pyplot as plt
 import networkx as nx
@@ -13,6 +13,7 @@ import time
 import datetime
 import copy
 
+#delete:
 import lorenz_rescomp
 
 class res_core(object):
@@ -50,7 +51,7 @@ class res_core(object):
         fitting W_out.
         if False: only [r] is used
     """
-    def __init__(self, nature=lorenz_rescomp.mod_lorenz, number_of_nodes=500, input_dimension=3,
+    def __init__(self, sys_flag='mod_lorenz', N=500, input_dimension=3,
                  output_dimension=3, type_of_network='random',
                  dt = 2e-2, training_steps=5000,
                  prediction_steps=5000, discard_steps=5000,
@@ -58,8 +59,8 @@ class res_core(object):
                  input_weight=1., avg_degree=6., epsilon=np.array([5,10,5]),
                  extended_states=False, W_in_sparse=True, W_in_scale=1.):
         
-        self.nature = nature
-        self.N = number_of_nodes
+        self.sys_flag = sys_flag
+        self.N = N
         self.type = type_of_network
         self.xdim = input_dimension
         self.ydim = output_dimension
@@ -112,6 +113,8 @@ class res_core(object):
             #radius, dimension have to be specified
         elif type_of_network == 'small_world':
             network = nx.watts_strogatz_graph(self.N, k=int(self.avg_degree), p=0.1)
+        else:
+            print('wrong self.type_of_network')
             
         #make a numpy array out of the network's adjacency matrix:
         self.network = np.asarray(nx.to_numpy_matrix(network))
@@ -170,9 +173,10 @@ class res_core(object):
         """
         self.network = self.spectral_radius*(self.network/np.absolute(
             np.linalg.eigvals(self.network)).max())
-            
+        
     def load_data(self, mode='start_from_attractor', starting_point=None,
-                  add_noise=False, std_noise=0., print_switch=False):
+                  add_noise=False, std_noise=0., print_switch=False,
+                  data_input=None):
         """
         Method to load data from a file or function (depending on mode)
         for training and testing the network.
@@ -199,36 +203,49 @@ class res_core(object):
                     + self.prediction_steps
         
         print('mode: ', mode)
-        if mode == 'data_from_file':
-            a = np.load('/scratch/aumeier/turbine_data/BKD-LL-11-02run2.npy')
-            b = np.load('/scratch/aumeier/turbine_data/BKD-LL-11-02run3.npy')
-            c = np.load('/scratch/aumeier/turbine_data/BKD-LL-11-02run4.npy')
-            vals = np.concatenate((b,a,c))
-            for i in [0,1]:
-                vals[:,i] -= vals[:,i].mean()
-                vals[:,i] *= 1/vals[:,i].std()
+        """
+        Has to be matched!
         
-        elif mode == 'start_from_attractor':
+        
+        if mode == 'data_from_file':
+    
+#            check for dimension and timesteps
+#            self.discard_steps + self.training_steps + \
+#            self.prediction_steps (+1) == vals.shape
+         
+            vals = data_input
+            
+            vals -= vals.mean(axis=0)
+            vals *= 1/vals.std(axis=0)
+        
+        el
+        """
+        if mode == 'start_from_attractor':
             length = 50000
             original_start = np.array([-2.00384153, -5.34877257, -1.20401106])
             random_index = np.random.choice(np.arange(10000, length, 1))
             if print_switch:
                 print('random index for starting_point: ', random_index)
             
-            starting_point = lorenz_rescomp.record_trajectory(f=self.nature,
-                                dt=self.dt, timesteps=length,
-                                starting_point=original_start)[random_index]
-            vals = lorenz_rescomp.record_trajectory(f=self.nature, dt=self.dt,
-                                            timesteps=timesteps,
-                                            starting_point=starting_point)
+            starting_point = lorenz_rescomp.record_trajectory(
+                sys_flag=self.sys_flag,
+                dt=self.dt,
+                timesteps=length,
+                starting_point=original_start)[random_index]
+                
+            vals = lorenz_rescomp.record_trajectory(sys_flag=self.sys_flag,
+                dt=self.dt,
+                timesteps=timesteps,
+                starting_point=starting_point)
+                
         elif mode == 'fix_start':
             if starting_point == None:
                 print('set starting_point to use fix_start')
             else:
-                vals = lorenz_rescomp.record_trajectory(f=self.system, dt=self.dt,
+                vals = lorenz_rescomp.record_trajectory(sys_flag=self.sys_flag,
+                                                dt=self.dt,
                                                 timesteps=timesteps,
                                                 starting_point=starting_point)
-
         #print('data loading successfull')
         if add_noise:
             vals += np.random.normal(scale=std_noise, size=vals.shape)
@@ -317,8 +334,8 @@ class res_core(object):
         else:
         """
         X = self.r.T
-
         Y = self.y_train.T
+        
         #actual calculation of self.W_out:
         self.W_out = np.matmul(
             np.matmul(Y,X.T), np.linalg.inv(np.matmul(X,X.T)

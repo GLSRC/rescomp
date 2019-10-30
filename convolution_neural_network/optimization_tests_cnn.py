@@ -209,6 +209,7 @@ def cnn_scipy_sparse(
              (w_out[-1].dot(r[-1]))[-l:]))
         t += 1
     # print("Time needed for the training (and discarding) %.3f seconda " % (perf_counter() - t1_start))
+    # this is a test comment
     print("Time for t2 %.3f seconda " % (perf_counter() - t2_start))
 
     signal_test = signal[discarding_steps + training_steps:discarding_steps + training_steps + prediction_steps]
@@ -227,10 +228,10 @@ if __name__ == "__main__":
     grid_points = 300
     t_max = 300
     t_step = 0.05
-    network_nodes = 5000
-    discarding_steps = 1
-    training_steps = 1
-    prediction_steps = 1
+    network_nodes = 500
+    discarding_steps = 1000
+    training_steps = 1000
+    prediction_steps = 1000
 
     # A shortcut to not have to re-calculate the 5000x5000 network every time.
     # TODO: The way the loading is implemented here is suuper hacky

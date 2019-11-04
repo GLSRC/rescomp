@@ -187,7 +187,10 @@ def cnn_scipy_sparse(
                 r.T @ (local_signal[discarding_steps + 1:discarding_steps + training_steps + 1]))).T
         print("Time needed for the fitting %.3f seconds " % (perf_counter() - fit_start))
 
-        return local_w_out, r[-1]
+        # returning a list is important here, as otherwise one returns a tuple and as a tuple is immutable, while a
+        # np.array is mutable, the ndarray r[-1] gets converted to a tuple which is NOT what we want
+        return [local_w_out, r[-1]]
+        # return local_w_out, r[-1]
 
     aux = np.array([training(s) for s in local_signal])
     w_out = np.array([x[0] for x in aux])

@@ -8,12 +8,13 @@ author: mabrouk, edited by baur
 import numpy as np
 import networkx as nx
 from numpy.linalg import inv
+import scipy.sparse
+import scipy.sparse.linalg
 import matplotlib.pyplot as plt
 # import numba as nb
 from numba import jit, njit
 from time import perf_counter
 import time
-import scipy.sparse
 
 
 # TODO: Refactor to make more legible, then add a docstring, remove/add print statements etc.
@@ -159,7 +160,20 @@ def cnn_scipy_sparse(
             nx.to_numpy_matrix(nx.fast_gnp_random_graph(network_dimension, network_edges, seed=np.random)))
         index_nonzero = np.nonzero(network)
         network[index_nonzero] = np.random.uniform(-1, 1, np.count_nonzero(network))
-        network = ((network_radius / np.absolute(np.linalg.eigvals(network)).max()) * network).astype(array_data_type)
+
+        network = scipy.sparse.csr_matrix(network)
+
+        eigenvals = scipy.sparse.linalg.eigs(network, 1)[0]
+        max = np.absolute(eigenvals).max()
+
+        network = ((network_radius / max) * network)
+
+        # network = np.asarray(
+        #     nx.to_numpy_matrix(nx.fast_gnp_random_graph(network_dimension, network_edges, seed=np.random)))
+        # index_nonzero = np.nonzero(network)
+        # network[index_nonzero] = np.random.uniform(-1, 1, np.count_nonzero(network))
+        # network = ((network_radius / np.absolute(np.linalg.eigvals(network)).max()) * network).astype(array_data_type)
+        # network = scipy.sparse.csr_matrix(network)
 
     w_in = np.random.uniform(-0.5, 0.5, (network_dimension, signal_dimension)).astype(array_data_type)
     network = scipy.sparse.csr_matrix(network)
@@ -168,7 +182,7 @@ def cnn_scipy_sparse(
     signal_prediction = np.zeros([prediction_steps, q * (int(global_dimension / q) - 2) + 2 * l]).astype(
         array_data_type)
 
-    # @njit #TODO: Numba not yet implemented. Also should be another function of the to be done
+    # @njit #TODO: Numba not yet implemented. Also should be another function of the to be done class
     def training(local_signal):
         r = np.zeros([training_steps, network_dimension]).astype(array_data_type)
 
@@ -208,8 +222,6 @@ def cnn_scipy_sparse(
              np.array([(w_out[i].dot(r[i]))[l:-l] for i in range(int(global_dimension / q) - 2)]).flatten(),
              (w_out[-1].dot(r[-1]))[-l:]))
         t += 1
-    # print("Time needed for the training (and discarding) %.3f seconda " % (perf_counter() - t1_start))
-    # this is a test comment
     print("Time for t2 %.3f seconda " % (perf_counter() - t2_start))
 
     signal_test = signal[discarding_steps + training_steps:discarding_steps + training_steps + prediction_steps]
@@ -228,7 +240,7 @@ if __name__ == "__main__":
     grid_points = 300
     t_max = 300
     t_step = 0.05
-    network_nodes = 500
+    network_nodes = 5000
     discarding_steps = 1000
     training_steps = 1000
     prediction_steps = 1000
@@ -296,5 +308,3 @@ if __name__ == "__main__":
     plt.show()
 
     print("Time needed in total: ", time.time() - script_start_time)
-
-#Hallo

@@ -48,7 +48,7 @@ def cnn(signal, network_dimension, network_edges, network_radius, regularization
      np.array([(layer_out[i] @ echo[i])[l:-l] for i in range(int(N/q)-2)]).ravel(), (layer_out[-1] @ echo[-1])[-l:]))
     t = 0
     while t <= prediction_steps-2:
-        r = np.array([np.tanh(layer_in @ signal_prediction[t, i*q:(i+1)*q+2*l] + network @ echo[i])  for i in range(int(N/q)-2)])
+        echo = np.array([np.tanh(layer_in @ signal_prediction[t, i*q:(i+1)*q+2*l] + network @ echo[i])  for i in range(int(N/q)-2)])
         signal_prediction[t+1] = np.concatenate(((layer_out[0] @ echo[0])[:l], \
          np.array([(layer_out[i] @ echo[i])[l:-l] for i in range(int(N/q)-2)]).flatten(), (layer_out[-1] @ echo[-1])[-l:]))
         t+=1

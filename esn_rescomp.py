@@ -299,6 +299,7 @@ class res_core(object):
         if print_switch:
             print('input (x) and target (y) loaded in ', t1-t0, 's')
 
+    #TODO SHITTY CODE, PLS CHANGE (the network conversion is trash in the train() fct)
     def set_activation_function(self, activation_flag):
         if activation_flag == 'tanh':
             self.activation_function = self.__tanh
@@ -332,6 +333,7 @@ class res_core(object):
         '''
         t0 = time.time()
 
+        #TODO SHITTY CODE, PLS CHANGE
         if self.activation_function != self.__tanh_slow:
             self.network = scipy.sparse.csr_matrix(self.network)
         
@@ -385,6 +387,7 @@ class res_core(object):
         if print_switch:
             print('training done in ', t1-t0, 's')
 
+        #TODO SHITTY CODE, PLS CHANGE
         if self.activation_function != self.__tanh_slow:
             self.network = self.network.toarray()
         

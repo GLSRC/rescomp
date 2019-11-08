@@ -8,10 +8,11 @@ Created on Thu Oct 17 15:41:00 2019
 #from importlib import reload
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 import scipy.signal
 #import scipy.spatial
 import sys
-sys.path.append("/home/aumeier/scripts")
+sys.path.append("/home/aumeier/scripts/reservoir-computing")
 sys.path.append("/scratch/aumeier/run10/analysis")
 
 import esn_rescomp
@@ -302,11 +303,11 @@ class reservoir(esn_rescomp.res_core):
             time_range_train = np.arange(self.training_steps)
 
             #y-values
-            if self.system == lorenz.roessler:
+            if self.sys_flag == "roessler":
                 ylimits = ((-5,8), (-8,5), (0, 15))
-            elif self.system == lorenz.mod_lorenz:
+            elif self.sys_flag == 'mod_lorenz':
                 ylimits = ((-15,20), (-15,30), (-10,50))
-            elif self.system == 'data':
+            else:
                 traj = np.concatenate((self.y_test, self.y_train), axis=0)
                 ylimits = [[traj[:,dim].min(), traj[:,dim].max()] for dim in np.arange(self.ydim)]
             for i, ylim in enumerate(ylimits):

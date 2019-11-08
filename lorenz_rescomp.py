@@ -55,7 +55,7 @@ def runge_kutta(f, dt, y=np.array([2.2,-3.5,4.3])):
     the function approximates differential equations of the form dy/dt = f(t,y)
     returns y(t + dt)
     '''
-    print(y)
+    #print(y)
     k1 = dt*f(y)
     k2 = dt*f(y+k1/2)
     k3 = dt*f(y+k2/2)

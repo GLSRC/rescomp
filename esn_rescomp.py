@@ -6,6 +6,8 @@
 
 #from importlib import reload
 import numpy as np
+import scipy.sparse
+import scipy.sparse.linalg
 #import matplotlib.pyplot as plt
 import networkx as nx
 import pickle
@@ -59,7 +61,8 @@ class res_core(object):
                  prediction_steps=5000, discard_steps=5000,
                  regularization_parameter=0.0001, spectral_radius=0.1,
                  input_weight=1., avg_degree=6., epsilon=np.array([5,10,5]),
-                 extended_states=False, W_in_sparse=True, W_in_scale=1.):
+                 extended_states=False, W_in_sparse=True, W_in_scale=1., 
+                 activation_function_flag='tanh'):
         
         self.sys_flag = sys_flag
         self.N = N
@@ -80,10 +83,12 @@ class res_core(object):
         self.epsilon = epsilon
         self.W_in_sparse = W_in_sparse
         self.W_in_scale = W_in_scale
+        self.activation_function_flag=activation_function_flag
+        self.activation_function=self.__tanh
         
         self.base_class_test_variable = 17.
         #topology of the network, adjacency matrix with entries 0. or 1.:
-        self.binary_network = None # calc_binary_network() assigns values
+        self.binary_network = None # calc_bina_scry_network() assigns values
         
         #load_data() assigns values to:        
         self.x_train = None
@@ -118,8 +123,11 @@ class res_core(object):
         else:
             print('wrong self.type_of_network')
             
-        #make a numpy array out of the network's adjacency matrix:
-        self.network = np.asarray(nx.to_numpy_matrix(network))
+        #self.network_sc = scipy.sparse.csr_matrix(np.asarray(nx.to_numpy_matrix(network))
+        # make a numpy array out of the network's adjacency matrix:
+        self.network = network_sc.toarray()
+        
+        # self.network = np.asarray(nx.to_numpy_matrix(network))
         
         self.calc_binary_network()
         
@@ -133,13 +141,27 @@ class res_core(object):
         else:
             self.W_in = np.random.uniform(low=-self.W_in_scale,
                                           high=self.W_in_scale,
-                                          size=(self.N,self.xdim))        
+                                          size=(self.N,self.xdim))
+                                         
 #    def __str__(self):
 #        return str('measures.reservoir('+str(self.N)+')')
 #    
 #    def __repr__(self):
 #        pass
-    
+    def set_activation_function(self):
+        
+        if self.activation_function_flag=='tanh':
+            self.activation_function=self.__tanh
+            
+                
+    def __tanh(self,x,r):
+        return np.tanh(
+                self.input_weight *
+                np.matmul(self.W_in, x) + \
+                np.matmul(self.network, r) )
+        
+            
+            
     def calc_binary_network(self):
         """
         returns a binary version of self.network to self.binary_network.
@@ -173,8 +195,15 @@ class res_core(object):
         """
         scale self.network, according to desired self.spectral_radius.
         """
-        self.network = self.spectral_radius*(self.network/np.absolute(
-            np.linalg.eigvals(self.network)).max())
+        self.network = scipy.sparse.csr_matrix(self.network)
+
+        eigenvals = scipy.sparse.linalg.eigs(self.network, k=1, which='LM')[0]
+        max = np.absolute(eigenvals).max()
+
+        self.network = ((self.spectral_radius / max) * self.network)        
+        self.network = self.network.toarray()
+#        self.network = self.spectral_radius*(self.network/np.absolute(
+#            np.linalg.eigvals(self.network)).max())
         
     def load_data(self, mode='start_from_attractor', starting_point=None,
                   add_noise=False, std_noise=0., print_switch=False,
@@ -190,7 +219,11 @@ class res_core(object):
         - 'start_from_attractor' uses lorenz.record_trajectory for 
             generating a timeseries, by randomly picking starting points from a 
             given trajectory.
-        - 'fix_start' passes starting_point to lorenz.record_trajectory
+        - 'fix_start' passes        for t in np.arange(self.discard_steps):
+            self.r[0] = np.tanh(
+                self.input_weight *
+                np.matmul(self.W_in, self.x_discard[t]) + \
+                np.matmul(self.network, self.r[0]) ) starting_point to lorenz.record_trajectory
         - 'data_from_file' loads a timeseries from file without further
         checking for reasonability - use with care!
         
@@ -214,7 +247,7 @@ class res_core(object):
          
             vals = data_input
             
-            vals -= vals.mean(axis=0)
+            vals -= vals.meactivation_funcan(axis=0)
             vals *= 1/vals.std(axis=0)
             print(vals.shape)
         if mode == 'start_from_attractor':
@@ -272,7 +305,7 @@ class res_core(object):
         t1 = time.time()
         if print_switch:
             print('input (x) and target (y) loaded in ', t1-t0, 's')
-        
+
     def train(self, print_switch=False):
         '''
         Fits self.W_out, which connects the reservoir states and the input to
@@ -293,25 +326,19 @@ class res_core(object):
                     
         #reservoir is synchronized with trajectory during discard_steps:            
         for t in np.arange(self.discard_steps):
-            self.r[0] = np.tanh(
-                self.input_weight *
-                np.matmul(self.W_in, self.x_discard[t]) + \
-                np.matmul(self.network, self.r[0]) )
+            self.r[0] = self.activation_function(self.x_discard[t],self.r[0])
+               
         """
         the following step was included when Youssef proposed a revision of the timing.
         his concern was due to a missmatch between r and y (maybe we train the
         system to replicate the input not the next step -> has to be clarified!)
         """
-        self.r[0] = np.tanh(
-                self.input_weight *
-                np.matmul(self.W_in, self.x_train[0]) + \
-                np.matmul(self.network, self.r[0]) )
+        self.r[0] = self.activation_function(self.x_train[0],self.r[0])
+                
         #states are then used to fit the target y_train:
         for t in range(self.training_steps-1):
-            self.r[t+1] = np.tanh(
-               self.input_weight *
-               np.matmul(self.W_in, self.x_train[t+1]) + \
-               np.matmul(self.network, self.r[t]) )#vector equation with
+            self.r[t+1] = self.activation_function(self.x_train[t+1],self.r[t])
+            #vector equation with
                # self.N entries
         '''
         zimmermann, parlitz paper uses not only the reservoir states but also
@@ -391,18 +418,18 @@ class res_core(object):
             #print('extended_state = ', self.extended_states, ' worked')
         
         else: #no extended states -> [r]
-            self.r_pred[0] = np.tanh(self.input_weight *
-                    np.matmul(self.W_in, self.y_train[-1])
-                    + np.matmul(self.network, self.r[-1]))
+            self.r_pred[0] = self.activation_function(self.y_train[-1],self.r[-1])
+
             #transition from training to prediction               
             self.y_pred[0] = np.matmul(self.W_out, self.r_pred[0])
             
             #prediction:
             for t in range(self.prediction_steps - 1):
                 #update r:
-                self.r_pred[t+1] = np.tanh(self.input_weight *
-                    np.matmul(self.W_in, self.y_pred[t] + self.noise[t])
-                    + np.matmul(self.network, self.r_pred[t]))
+                self.r_pred[t+1] = self.activation_function(
+                                    self.y_pred[t] + self.noise[t],
+                                    self.r_pred[t])
+                
                 #update y:
                 self.y_pred[t+1] = np.matmul(self.W_out, self.r_pred[t+1])
 

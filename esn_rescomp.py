@@ -12,6 +12,8 @@ import pickle
 import time
 import datetime
 import copy
+import sys
+sys.path.append("/home/aumeier/scripts/reservoir-computing")
 
 #delete:
 import lorenz_rescomp
@@ -71,7 +73,7 @@ class res_core(object):
         self.reg_param = regularization_parameter
         self.spectral_radius = spectral_radius
         self.input_weight = input_weight
-        self.avg_degree = float(avg_degree)# = self.network.sum()/self.N
+        self.avg_degree = float(avg_degree) # = self.network.sum()/self.N
         self.edge_prob = self.avg_degree/ (self.N-1)
         self.b_out = np.ones((self.training_steps,1)) #bias in fitting W_out
         self.extended_states = extended_states
@@ -203,9 +205,6 @@ class res_core(object):
                     + self.prediction_steps
         
         print('mode: ', mode)
-        """
-        Has to be matched!
-        
         
         if mode == 'data_from_file':
     
@@ -217,9 +216,7 @@ class res_core(object):
             
             vals -= vals.mean(axis=0)
             vals *= 1/vals.std(axis=0)
-        
-        el
-        """
+            print(vals.shape)
         if mode == 'start_from_attractor':
             length = 50000
             original_start = np.array([-2.00384153, -5.34877257, -1.20401106])
@@ -239,13 +236,15 @@ class res_core(object):
                 starting_point=starting_point)
                 
         elif mode == 'fix_start':
-            if starting_point == None:
+            if starting_point is None:
                 print('set starting_point to use fix_start')
             else:
                 vals = lorenz_rescomp.record_trajectory(sys_flag=self.sys_flag,
                                                 dt=self.dt,
                                                 timesteps=timesteps,
                                                 starting_point=starting_point)
+        else:
+            print(mode, ' mode not recognized')
         #print('data loading successfull')
         if add_noise:
             vals += np.random.normal(scale=std_noise, size=vals.shape)

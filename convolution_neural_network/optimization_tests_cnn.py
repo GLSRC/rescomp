@@ -240,7 +240,7 @@ if __name__ == "__main__":
     grid_points = 300
     t_max = 300
     t_step = 0.05
-    network_nodes = 5000
+    network_nodes = 1000
     discarding_steps = 1000
     training_steps = 1000
     prediction_steps = 1000

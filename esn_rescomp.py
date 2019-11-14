@@ -125,7 +125,7 @@ class res_core(object):
             
         #self.network_sc = scipy.sparse.csr_matrix(np.asarray(nx.to_numpy_matrix(network))
         # make a numpy array out of the network's adjacency matrix:
-        self.network = network_sc.toarray()
+        self.network = network
         
         # self.network = np.asarray(nx.to_numpy_matrix(network))
         
@@ -141,7 +141,7 @@ class res_core(object):
         else:
             self.W_in = np.random.uniform(low=-self.W_in_scale,
                                           high=self.W_in_scale,
-                                          size=(self.N,self.xdim))
+                                          size=(self.N, self.xdim))
                                          
 #    def __str__(self):
 #        return str('measures.reservoir('+str(self.N)+')')
@@ -149,10 +149,12 @@ class res_core(object):
 #    def __repr__(self):
 #        pass
     def set_activation_function(self):
-        
-        if self.activation_function_flag=='tanh':
-            self.activation_function=self.__tanh
-            
+        if self.activation_function_flag == 'tanh':
+            self.activation_function = self.__tanh
+        else:
+            print('activation_function_flag: '
+                + str(self.activation_function_flag)
+                + ' does not exist')
                 
     def __tanh(self,x,r):
         return np.tanh(
@@ -160,8 +162,6 @@ class res_core(object):
                 np.matmul(self.W_in, x) + \
                 np.matmul(self.network, r) )
         
-            
-            
     def calc_binary_network(self):
         """
         returns a binary version of self.network to self.binary_network.
@@ -202,6 +202,7 @@ class res_core(object):
 
         self.network = ((self.spectral_radius / max) * self.network)        
         self.network = self.network.toarray()
+        
 #        self.network = self.spectral_radius*(self.network/np.absolute(
 #            np.linalg.eigvals(self.network)).max())
         
@@ -366,7 +367,16 @@ class res_core(object):
         self.W_out = np.matmul(
             np.matmul(Y,X.T), np.linalg.inv(np.matmul(X,X.T)
             + self.reg_param*np.eye(X.shape[0])))
-
+            
+        """
+        this version should be matched with the old one, and then implemented
+        ultimately.
+        
+        self.W_out = np.linalg.solve((
+            self.r.T @ self.r + self.reg_param * np.eye(self.r.shape[1])),
+            (self.r.T @ (self.y_train))).T
+        """
+        
         t1 = time.time()
         if print_switch:
             print('training done in ', t1-t0, 's')

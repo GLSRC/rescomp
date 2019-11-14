@@ -83,9 +83,11 @@ class res_core(object):
         self.epsilon = epsilon
         self.W_in_sparse = W_in_sparse
         self.W_in_scale = W_in_scale
-        self.activation_function_flag=activation_function_flag
-        self.activation_function=self.__tanh
-        
+        # self.activation_function_flag=activation_function_flag
+        # self.activation_function=self.__tanh
+        self.activation_function=None
+        self.set_activation_function(activation_function_flag)
+
         self.base_class_test_variable = 17.
         #topology of the network, adjacency matrix with entries 0. or 1.:
         self.binary_network = None # calc_bina_scry_network() assigns values
@@ -123,11 +125,19 @@ class res_core(object):
         else:
             print('wrong self.type_of_network')
             
-        #self.network_sc = scipy.sparse.csr_matrix(np.asarray(nx.to_numpy_matrix(network))
+        # self.network_sc = scipy.sparse.csr_matrix(np.asarray(nx.to_numpy_matrix(network))
         # make a numpy array out of the network's adjacency matrix:
-        self.network = network
+
         
         # self.network = np.asarray(nx.to_numpy_matrix(network))
+
+        # self.network = network_sc.toarray()
+
+        # def network():
+        #     return self.network_sc.toarray()
+
+        # make a numpy array out of the network's adjacency matrix:
+        self.network = np.asarray(nx.to_numpy_matrix(network))
         
         self.calc_binary_network()
         
@@ -148,6 +158,7 @@ class res_core(object):
 #    
 #    def __repr__(self):
 #        pass
+
     def set_activation_function(self):
         if self.activation_function_flag == 'tanh':
             self.activation_function = self.__tanh
@@ -288,7 +299,7 @@ class res_core(object):
         n_test = self.prediction_steps
         n_train = self.training_steps + self.discard_steps
         n_discard = self.discard_steps
-            
+
         #sketch of test/train split:
         #[--n_discard --|--n_train--|--n_test--]
         #and y_train is shifted by 1
@@ -307,6 +318,25 @@ class res_core(object):
         if print_switch:
             print('input (x) and target (y) loaded in ', t1-t0, 's')
 
+    #TODO SHITTY CODE, PLS CHANGE (the network conversion is trash in the train() fct)
+    def set_activation_function(self, activation_flag):
+        if activation_flag == 'tanh':
+            self.activation_function = self.__tanh
+
+        elif activation_flag == 'tanh_slow':
+            self.activation_function = self.__tanh_slow
+
+        else:
+            print("Activation Function NOT Supported!")
+            raise Exception
+
+    def __tanh(self, x, r):
+        return np.tanh(self.input_weight * self.W_in.dot(x) + self.network.dot(r))
+
+    def __tanh_slow(self, x, r):
+        out = np.tanh(self.input_weight * np.matmul(self.W_in, x) + np.matmul(self.network, r))
+        return out
+
     def train(self, print_switch=False):
         '''
         Fits self.W_out, which connects the reservoir states and the input to
@@ -321,6 +351,10 @@ class res_core(object):
         -> extend to test!
         '''
         t0 = time.time()
+
+        #TODO SHITTY CODE, PLS CHANGE
+        if self.activation_function != self.__tanh_slow:
+            self.network = scipy.sparse.csr_matrix(self.network)
         
         #states of the reservoir:
         self.r = np.zeros((self.training_steps, self.N))
@@ -380,6 +414,10 @@ class res_core(object):
         t1 = time.time()
         if print_switch:
             print('training done in ', t1-t0, 's')
+
+        #TODO SHITTY CODE, PLS CHANGE
+        if self.activation_function != self.__tanh_slow:
+            self.network = self.network.toarray()
         
     def predict(self, print_switch=False, prediction_noise=False, noise_scale=0.1):
         """

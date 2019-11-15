@@ -26,8 +26,8 @@ class res_core(object):
     structures to predict (chaotic) time series
       
     :parameters:
-    :system: choose from lorenz.lorenz, lorenz.mod_lorenz and 
-        lorenz.roessler
+    :sys: choose from lorenz.lorenz, lorenz.mod_lorenz and 
+        lorenz.roessler, eg. the system to predict
     :number_of_nodes: number of nodes for the actual reservoir network
     :input_dimension: dimension of the input to the reservoir
     :output_dimension: dimension of the output of the reservoir
@@ -54,6 +54,12 @@ class res_core(object):
         is used for updating the reservoir state, the prediction and
         fitting W_out.
         if False: only [r] is used
+    :W_in_sparse: if True, each node only gets input from one dimension,
+        if False, all dimensions are superimposed at each node
+    :W_in_scale: Defines the absolute scale of uniformly distributed random
+        numbers, centered at zero
+    :activation_function_flag: selects the type of activation function 
+        (steepness, offset).
     """
     def __init__(self, sys_flag='mod_lorenz', N=500, input_dimension=3,
                  output_dimension=3, type_of_network='random',
@@ -64,8 +70,8 @@ class res_core(object):
                  extended_states=False, W_in_sparse=True, W_in_scale=1., 
                  activation_function_flag='tanh'):
         
-        self.sys_flag = sys_flag
-        self.N = N
+        self.sys_flag = sys_flag 
+        self.N = N 
         self.type = type_of_network
         self.xdim = input_dimension
         self.ydim = output_dimension
@@ -83,8 +89,6 @@ class res_core(object):
         self.epsilon = epsilon
         self.W_in_sparse = W_in_sparse
         self.W_in_scale = W_in_scale
-        # self.activation_function_flag=activation_function_flag
-        # self.activation_function=self.__tanh
         self.activation_function=None
         self.set_activation_function(activation_function_flag)
 
@@ -124,19 +128,9 @@ class res_core(object):
             network = nx.watts_strogatz_graph(self.N, k=int(self.avg_degree), p=0.1)
         else:
             print('wrong self.type_of_network')
-            
-        # self.network_sc = scipy.sparse.csr_matrix(np.asarray(nx.to_numpy_matrix(network))
-        # make a numpy array out of the network's adjacency matrix:
 
-        
-        # self.network = np.asarray(nx.to_numpy_matrix(network))
-
-        # self.network = network_sc.toarray()
-
-        # def network():
-        #     return self.network_sc.toarray()
-
-        # make a numpy array out of the network's adjacency matrix:
+        # make a numpy array out of the network's adjacency matrix,
+        # will be converted to scipy sparse in train(), predict()
         self.network = np.asarray(nx.to_numpy_matrix(network))
         
         self.calc_binary_network()
@@ -159,15 +153,22 @@ class res_core(object):
 #    def __repr__(self):
 #        pass
 
-    def set_activation_function(self):
-        if self.activation_function_flag == 'tanh':
+    def set_activation_function(self, activation_function_flag):
+        """
+        method to change the activation function according to 
+        activation_function_flag variable
+        """
+        if activation_function_flag == 'tanh':
             self.activation_function = self.__tanh
         else:
             print('activation_function_flag: '
-                + str(self.activation_function_flag)
+                + str(activation_function_flag)
                 + ' does not exist')
                 
     def __tanh(self,x,r):
+        """
+        standard activation function tanh()
+        """
         return np.tanh(
                 self.input_weight *
                 np.matmul(self.W_in, x) + \
@@ -204,14 +205,21 @@ class res_core(object):
     
     def scale_network(self):
         """
-        scale self.network, according to desired self.spectral_radius.
+        Scale self.network, according to desired self.spectral_radius.
+        Converts network in scipy.sparse object internally.
+        """
+        """
+        Can cause problems due to non converging of the eigenvalue evaluation
         """
         self.network = scipy.sparse.csr_matrix(self.network)
+        try:
+            eigenvals = scipy.sparse.linalg.eigs(self.network, k=1, which='LM')[0]
+            max = np.absolute(eigenvals).max()
 
-        eigenvals = scipy.sparse.linalg.eigs(self.network, k=1, which='LM')[0]
-        max = np.absolute(eigenvals).max()
-
-        self.network = ((self.spectral_radius / max) * self.network)        
+            self.network = ((self.spectral_radius / max) * self.network)
+        except:
+            print('scaling failed due to non-convergence of eigenvalue \
+            evaluation.')
         self.network = self.network.toarray()
         
 #        self.network = self.spectral_radius*(self.network/np.absolute(
@@ -318,21 +326,8 @@ class res_core(object):
         if print_switch:
             print('input (x) and target (y) loaded in ', t1-t0, 's')
 
-    def set_activation_function(self, activation_flag):
-        """
-        method to set the activation function, according to activation_flag
-        """
-        if activation_flag == 'tanh':
-            self.activation_function = self.__tanh
-        else:
-            print("Activation Function NOT Supported!")
-            raise Exception
-
-    def __tanh(self, x, r):
-        return np.tanh(self.input_weight * self.W_in.dot(x) + self.network.dot(r))
-
     def train(self, print_switch=False):
-        '''
+        """
         Fits self.W_out, which connects the reservoir states and the input to
         the desired output, using linear regression and Tikhonov
         regularization.
@@ -343,7 +338,8 @@ class res_core(object):
         
         Requires load_data() first, to pass values to x_train, y_train, y_test
         -> extend to test!
-        '''
+        Internally converts network in scipy.sparse object        
+        """
         t0 = time.time()
         
         #sparse, necessary for speed up in training loop
@@ -417,6 +413,7 @@ class res_core(object):
         """
         Uses the self.W_out to predict output, using the network as
         recurrent network, feeding back in the (noisy) output.
+        Internally converts network in scipy.sparse object   
         """
         t0 = time.time()
         

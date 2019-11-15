@@ -46,6 +46,21 @@ def mod_lorenz(x):
     b = 8/3
     np.array(x)
     if x.shape == (3,):
+        return  np.array([sigma*(x[1]-x[0]), x[0]*(rho-x[2])-x[1], x[0]*x[1] - b*x[2] + x[0]])
+    else:
+        return 'check shape of x, should have 3 components'
+
+def mod_lorenz_wrong(x):
+    '''
+    
+    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
+    with dz/dt += x(t) to break symmetry
+    '''
+    sigma = 10.
+    rho = 28.
+    b = 8/3
+    np.array(x)
+    if x.shape == (3,):
         return  np.array([sigma*(x[1]-x[0]), x[0]*(rho-x[2])-x[1], x[0]*x[1] - b*x[2]] + x[0])
     else:
         return 'check shape of x, should have 3 components'
@@ -68,6 +83,9 @@ def record_trajectory(sys_flag='mod_lorenz', dt=1., timesteps=int(10e4),
         print(sys_flag)
     if sys_flag == 'mod_lorenz':
         f = mod_lorenz
+    if sys_flag == 'mod_lorenz_wrong':
+        print('YOU ARE USING A NON-USUAL KIND OF LORENZ EQUATION! USE WITH CARE')        
+        f = mod_lorenz_wrong
     if sys_flag == 'normal_lorenz':
         f = normal_lorenz
     if sys_flag == 'roessler':

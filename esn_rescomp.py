@@ -318,24 +318,18 @@ class res_core(object):
         if print_switch:
             print('input (x) and target (y) loaded in ', t1-t0, 's')
 
-    #TODO SHITTY CODE, PLS CHANGE (the network conversion is trash in the train() fct)
     def set_activation_function(self, activation_flag):
+        """
+        method to set the activation function, according to activation_flag
+        """
         if activation_flag == 'tanh':
             self.activation_function = self.__tanh
-
-        elif activation_flag == 'tanh_slow':
-            self.activation_function = self.__tanh_slow
-
         else:
             print("Activation Function NOT Supported!")
             raise Exception
 
     def __tanh(self, x, r):
         return np.tanh(self.input_weight * self.W_in.dot(x) + self.network.dot(r))
-
-    def __tanh_slow(self, x, r):
-        out = np.tanh(self.input_weight * np.matmul(self.W_in, x) + np.matmul(self.network, r))
-        return out
 
     def train(self, print_switch=False):
         '''
@@ -351,10 +345,9 @@ class res_core(object):
         -> extend to test!
         '''
         t0 = time.time()
-
-        #TODO SHITTY CODE, PLS CHANGE
-        if self.activation_function != self.__tanh_slow:
-            self.network = scipy.sparse.csr_matrix(self.network)
+        
+        #sparse, necessary for speed up in training loop
+        self.network = scipy.sparse.csr_matrix(self.network)
         
         #states of the reservoir:
         self.r = np.zeros((self.training_steps, self.N))
@@ -398,26 +391,27 @@ class res_core(object):
         Y = self.y_train.T
         
         #actual calculation of self.W_out:
-        self.W_out = np.matmul(
-            np.matmul(Y,X.T), np.linalg.inv(np.matmul(X,X.T)
-            + self.reg_param*np.eye(X.shape[0])))
-            
+        
+#        t_old = time.time()
+#        self.W_out_old = np.matmul(
+#            np.matmul(Y,X.T), np.linalg.inv(np.matmul(X,X.T)
+#            + self.reg_param*np.eye(X.shape[0])))
+#        print('old: ')
+#        print(time.time() - t_old)
         """
         this version should be matched with the old one, and then implemented
         ultimately.
-        
+        """
         self.W_out = np.linalg.solve((
             self.r.T @ self.r + self.reg_param * np.eye(self.r.shape[1])),
             (self.r.T @ (self.y_train))).T
-        """
         
         t1 = time.time()
         if print_switch:
             print('training done in ', t1-t0, 's')
-
-        #TODO SHITTY CODE, PLS CHANGE
-        if self.activation_function != self.__tanh_slow:
-            self.network = self.network.toarray()
+        
+        #array (backtransform from sparse)
+        self.network = self.network.toarray()
         
     def predict(self, print_switch=False, prediction_noise=False, noise_scale=0.1):
         """
@@ -425,7 +419,10 @@ class res_core(object):
         recurrent network, feeding back in the (noisy) output.
         """
         t0 = time.time()
-    
+        
+        #sparse, necessary for speed up in training loop
+        self.network = scipy.sparse.csr_matrix(self.network)
+        
         ### predicting, fixed P, and using output as input again
         self.r_pred = np.zeros((self.prediction_steps, self.N))
         self.y_pred = np.zeros((self.prediction_steps, self.ydim))
@@ -481,6 +478,9 @@ class res_core(object):
                 #update y:
                 self.y_pred[t+1] = np.matmul(self.W_out, self.r_pred[t+1])
 
+        #array (backtransform from sparse)
+        self.network = self.network.toarray()
+        
         t1 = time.time()
         if print_switch:
             print('predicting done in ', t1-t0, 's')

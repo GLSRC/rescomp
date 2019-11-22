@@ -1,5 +1,5 @@
 """
-:author: aumeier
+:author: aumeier, edited slightly by baur
 :date: 2019/04/26
 :license: ???
 """
@@ -13,12 +13,8 @@ import networkx as nx
 import pickle
 import time
 import datetime
-import copy
-import sys
-sys.path.append("/home/aumeier/scripts/reservoir-computing")
 
-#delete:
-import lorenz_rescomp
+from . import lorenz_rescomp
 
 class res_core(object):
     """
@@ -66,10 +62,12 @@ class res_core(object):
                  dt = 2e-2, training_steps=5000,
                  prediction_steps=5000, discard_steps=5000,
                  regularization_parameter=0.0001, spectral_radius=0.1,
-                 input_weight=1., avg_degree=6., epsilon=np.array([5,10,5]),
+                 input_weight=1., avg_degree=6., epsilon=None,
                  extended_states=False, W_in_sparse=True, W_in_scale=1., 
                  activation_function_flag='tanh'):
-        
+
+        if epsilon == None: epsilon = np.array([5,10,5])
+
         self.sys_flag = sys_flag
         self.N = N 
         self.type = type_of_network
@@ -127,7 +125,7 @@ class res_core(object):
         elif type_of_network == 'small_world':
             network = nx.watts_strogatz_graph(self.N, k=int(self.avg_degree), p=0.1)
         else:
-            print('wrong self.type_of_network')
+            raise Exception("wrong self.type_of_network")
 
         # make a numpy array out of the network's adjacency matrix,
         # will be converted to scipy sparse in train(), predict()
@@ -161,7 +159,7 @@ class res_core(object):
         if activation_function_flag == 'tanh':
             self.activation_function = self.tanh
         else:
-            print('activation_function_flag: '
+            raise Exception('activation_function_flag: '
                 + str(activation_function_flag)
                 + ' does not exist')
                 
@@ -268,7 +266,8 @@ class res_core(object):
             vals -= vals.meactivation_funcan(axis=0)
             vals *= 1/vals.std(axis=0)
             print(vals.shape)
-        if mode == 'start_from_attractor':
+
+        elif mode == 'start_from_attractor':
             length = 50000
             original_start = np.array([-2.00384153, -5.34877257, -1.20401106])
             random_index = np.random.choice(np.arange(10000, length, 1))
@@ -288,14 +287,15 @@ class res_core(object):
                 
         elif mode == 'fix_start':
             if starting_point is None:
-                print('set starting_point to use fix_start')
+                raise Exception('set starting_point to use fix_start')
             else:
                 vals = lorenz_rescomp.record_trajectory(sys_flag=self.sys_flag,
                                                 dt=self.dt,
                                                 timesteps=timesteps,
                                                 starting_point=starting_point)
         else:
-            print(mode, ' mode not recognized')
+            raise Exception(mode, ' mode not recognized')
+            # print(mode, ' mode not recognized')
         #print('data loading successfull')
         if add_noise:
             vals += np.random.normal(scale=std_noise, size=vals.shape)
@@ -499,11 +499,12 @@ class res_core(object):
         if absolute > 0:        
             top_ten_bool[arg[-absolute:]] = True #set largest entries True
             top_ten_arg = np.argsort(np.max(np.abs(self.W_out), axis=0))[-absolute:]
-        if absolute < 0:
+        elif absolute < 0:
             top_ten_bool[arg[:-absolute]] = True #set largest entries True
             top_ten_arg = np.argsort(np.max(np.abs(self.W_out), axis=0))[:-absolute]
-        if absolute == 0:
+        else:
             top_ten_arg = np.empty(0)
+
         top_ten_bool = np.reshape(top_ten_bool, self.W_out.shape) #reshape to original shape
         top_ten_bool_1d = np.array(top_ten_bool.sum(axis=0), dtype=bool) #project to 1d
         

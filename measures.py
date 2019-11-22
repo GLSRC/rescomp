@@ -12,7 +12,19 @@ import scipy.signal
 import scipy.sparse.linalg
 import scipy.spatial
 
-from . import esn_rescomp
+import sys
+sys.path.append("..")
+sys.path.append(".")
+try: import esn_rescomp
+except ModuleNotFoundError: from . import esn_rescomp
+
+
+# import sys
+# sys.path.append(".")
+# from . import esn_rescomp
+
+
+# from . import esn_rescomp
 
 
 class reservoir(esn_rescomp.res_core):

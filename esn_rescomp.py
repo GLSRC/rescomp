@@ -14,8 +14,11 @@ import pickle
 import time
 import datetime
 
-from . import lorenz_rescomp
-
+import sys
+sys.path.append("..")
+sys.path.append(".")
+try: import lorenz_rescomp
+except ModuleNotFoundError: from . import lorenz_rescomp
 
 class res_core(object):
     """

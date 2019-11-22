@@ -364,4 +364,58 @@ class reservoir(esn_rescomp.res_core):
         covar = np.matmul(res_dyn.T, res_dyn)
         self.covar_rank = np.linalg.matrix_rank(covar)
             
+    def remove_nodes(self, split):
+        """
+        This method removes nodes from the network and W_in according to split,
+        updates avg_degree, spectral_radius, 
+        This new reservoir is returned
+        split should be given as a list of two values or a float e [-1. and 1.]
+        example: split = [-.3, 0.3]
+        """
+        if type(split) == list:
+            if len(split) < 3:
+                pass
+            else:
+                print('too many entries in split. length: ', len(split))
+        elif type(split) == float and split >= -1. and split <= 1.:
+            split = [split]
+        else:
+            return print('values in split not between -1. and 1., type: ', type(split))
+          
+        remaining_size = sum(np.abs(split))
+        new = reservoir(sys_flag=self.sys_flag, N=int(round(self.N*(1-remaining_size))),
+                      input_dimension=3, output_dimension=3,
+                      type_of_network=self.type, dt = self.dt,
+                      training_steps=self.training_steps,
+                      prediction_steps=self.prediction_steps,
+                      discard_steps=self.discard_steps,
+                      regularization_parameter=self.reg_param,
+                      spectral_radius=self.spectral_radius,
+                      input_weight=self.input_weight, avg_degree=self.avg_degree,
+                      epsilon=self.epsilon, extended_states=self.extended_states,
+                      W_in_sparse=self.W_in_sparse, W_in_scale=self.W_in_scale)
+        #gather to be removed nodes arguments in rm_args:
+        rm_args = np.empty(0)
+        for s in split:
+            rm_args = np.append(self.calc_tt(flag='arg', split=s), rm_args)
+            #print(s, rm_args.shape)
             
+        #rows and columns of network are deleted according to rm_args:
+        new.network = np.delete(np.delete(self.network, rm_args, 0), rm_args, 1)
+        
+        #the new average degree is calculated:
+        new.calc_binary_network()        
+        new.avg_degree = new.binary_network.sum(axis=0).mean(axis=0)
+        #the new spectral radius is calculated:
+        new.network = scipy.sparse.csr_matrix(new.network)
+        try:
+            eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM')[0]
+            new.spectral_radius = np.absolute(eigenvals).max()
+        except:
+            print('eigenvalue calculation failed!, no spectral_radius assigned')
+        new.network = new.network.toarray()
+        
+        #Adjust W_in
+        new.W_in = np.delete(self.W_in, rm_args, 0)
+        
+        return new

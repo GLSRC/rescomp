@@ -70,7 +70,7 @@ class res_core(object):
                  extended_states=False, W_in_sparse=True, W_in_scale=1., 
                  activation_function_flag='tanh'):
         
-        self.sys_flag = sys_flag 
+        self.sys_flag = sys_flag
         self.N = N 
         self.type = type_of_network
         self.xdim = input_dimension
@@ -159,20 +159,17 @@ class res_core(object):
         activation_function_flag variable
         """
         if activation_function_flag == 'tanh':
-            self.activation_function = self.__tanh
+            self.activation_function = self.tanh
         else:
             print('activation_function_flag: '
                 + str(activation_function_flag)
                 + ' does not exist')
                 
-    def __tanh(self,x,r):
+    def tanh(self,x,r):
         """
         standard activation function tanh()
         """
-        return np.tanh(
-                self.input_weight *
-                np.matmul(self.W_in, x) + \
-                np.matmul(self.network, r) )
+        return np.tanh(self.input_weight * self.W_in @ x + self.network @ r)
         
     def calc_binary_network(self):
         """
@@ -214,9 +211,9 @@ class res_core(object):
         self.network = scipy.sparse.csr_matrix(self.network)
         try:
             eigenvals = scipy.sparse.linalg.eigs(self.network, k=1, which='LM')[0]
-            max = np.absolute(eigenvals).max()
+            maximum = np.absolute(eigenvals).max()
 
-            self.network = ((self.spectral_radius / max) * self.network)
+            self.network = ((self.spectral_radius / maximum) * self.network)
         except:
             print('scaling failed due to non-convergence of eigenvalue \
             evaluation.')
@@ -257,7 +254,8 @@ class res_core(object):
         timesteps = 1 + self.discard_steps + self.training_steps \
                     + self.prediction_steps
         
-        print('mode: ', mode)
+        if print_switch:
+            print('mode: ', mode)
         
         if mode == 'data_from_file':
     
@@ -344,24 +342,24 @@ class res_core(object):
         
         #sparse, necessary for speed up in training loop
         self.network = scipy.sparse.csr_matrix(self.network)
-        
+
         #states of the reservoir:
         self.r = np.zeros((self.training_steps, self.N))
                     
         #reservoir is synchronized with trajectory during discard_steps:            
         for t in np.arange(self.discard_steps):
-            self.r[0] = self.activation_function(self.x_discard[t],self.r[0])
+            self.r[0] = self.activation_function(self.x_discard[t], self.r[0])
                
         """
-        the following step was included when Youssef proposed a revision of the timing.
-        his concern was due to a missmatch between r and y (maybe we train the
-        system to replicate the input not the next step -> has to be clarified!)
+        the following step was included when Youssef proposed a revision of the
+        timing. His concern was due to a missmatch between r and y
+        (maybe we train the system to replicate the input not the next step
+        -> has to be clarified!)
         """
-        self.r[0] = self.activation_function(self.x_train[0],self.r[0])
-                
+        self.r[0] = self.activation_function(self.x_train[0], self.r[0])    
         #states are then used to fit the target y_train:
         for t in range(self.training_steps-1):
-            self.r[t+1] = self.activation_function(self.x_train[t+1],self.r[t])
+            self.r[t+1] = self.activation_function(self.x_train[t+1], self.r[t])
             #vector equation with
                # self.N entries
         '''
@@ -383,8 +381,8 @@ class res_core(object):
         
         else:
         """
-        X = self.r.T
-        Y = self.y_train.T
+        #X = self.r.T
+        #Y = self.y_train.T
         
         #actual calculation of self.W_out:
         
@@ -504,6 +502,8 @@ class res_core(object):
         if absolute < 0:
             top_ten_bool[arg[:-absolute]] = True #set largest entries True
             top_ten_arg = np.argsort(np.max(np.abs(self.W_out), axis=0))[:-absolute]
+        if absolute == 0:
+            top_ten_arg = np.empty(0)
         top_ten_bool = np.reshape(top_ten_bool, self.W_out.shape) #reshape to original shape
         top_ten_bool_1d = np.array(top_ten_bool.sum(axis=0), dtype=bool) #project to 1d
         
@@ -562,9 +562,9 @@ class res_core(object):
         except:
             print('file could not be unpickled: ', filename)
         g.close() 
-
-
-#        
+    
+    
+        
 #    def ft(self, traj):
 #        ft_traj = np.zeros(shape=traj.shape, dtype=complex)
 #        for dimension in np.arange(traj.shape[1]):

@@ -81,15 +81,17 @@ def record_trajectory(sys_flag='mod_lorenz', dt=1., timesteps=int(10e4),
                       print_switch=False, starting_point=None):
     if print_switch:
         print(sys_flag)
-    if sys_flag == 'mod_lorenz':
-        f = mod_lorenz
-    if sys_flag == 'mod_lorenz_wrong':
-        print('YOU ARE USING A NON-USUAL KIND OF LORENZ EQUATION! USE WITH CARE')        
-        f = mod_lorenz_wrong
-    if sys_flag == 'normal_lorenz':
-        f = normal_lorenz
-    if sys_flag == 'roessler':
-        f = roessler
+        if sys_flag == 'mod_lorenz':
+            f = mod_lorenz
+        elif sys_flag == 'mod_lorenz_wrong':
+            print('YOU ARE USING A NON-USUAL KIND OF LORENZ EQUATION! USE WITH CARE')        
+            f = mod_lorenz_wrong
+        elif sys_flag == 'normal_lorenz':
+            f = normal_lorenz
+        elif sys_flag == 'roessler':
+            f = roessler
+        else:
+            print('sys_flag not recoginized')
         
     traj_size = ((timesteps, starting_point.shape[0]))
     traj = np.zeros(traj_size)

@@ -177,7 +177,7 @@ class reservoir(esn_rescomp.res_core):
         self.nn_index = tree.query(traj, k=2)[1]
         
         #drop all elements in nn_index lists where the neighbour is:
-        #1. less than 200 timesteps away
+        #1. less than threshold timesteps away
         #2. where we cannot calculate the neighbours future in tau_max timesteps:
         
         #contains indices of points and the indices of their nn:

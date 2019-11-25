@@ -279,12 +279,14 @@ class res_core(object):
                 sys_flag=self.sys_flag,
                 dt=self.dt,
                 timesteps=length,
-                starting_point=original_start)[random_index]
+                starting_point=original_start,
+                print_switch=print_switch)[random_index]
                 
             vals = lorenz_rescomp.record_trajectory(sys_flag=self.sys_flag,
                 dt=self.dt,
                 timesteps=timesteps,
-                starting_point=starting_point)
+                starting_point=starting_point,
+                print_switch=print_switch)
                 
         elif mode == 'fix_start':
             if starting_point is None:
@@ -293,7 +295,8 @@ class res_core(object):
                 vals = lorenz_rescomp.record_trajectory(sys_flag=self.sys_flag,
                                                 dt=self.dt,
                                                 timesteps=timesteps,
-                                                starting_point=starting_point)
+                                                starting_point=starting_point,
+                                                print_switch=print_switch)
         else:
             print(mode, ' mode not recognized')
         #print('data loading successfull')

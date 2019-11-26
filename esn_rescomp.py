@@ -1,5 +1,5 @@
 """
-:author: aumeier
+:author: aumeier, edited slightly by baur
 :date: 2019/04/26
 :license: ???
 """
@@ -13,12 +13,12 @@ import networkx as nx
 import pickle
 import time
 import datetime
-import copy
-import sys
-sys.path.append("/home/aumeier/scripts/reservoir-computing")
 
-#delete:
-import lorenz_rescomp
+import sys
+sys.path.append("..")
+sys.path.append(".")
+try: import lorenz_rescomp
+except ModuleNotFoundError: from . import lorenz_rescomp
 
 class res_core(object):
     """
@@ -61,17 +61,20 @@ class res_core(object):
     :activation_function_flag: selects the type of activation function 
         (steepness, offset).
     """
+
     def __init__(self, sys_flag='mod_lorenz', N=500, input_dimension=3,
                  output_dimension=3, type_of_network='random',
-                 dt = 2e-2, training_steps=5000,
+                 dt=2e-2, training_steps=5000,
                  prediction_steps=5000, discard_steps=5000,
                  regularization_parameter=0.0001, spectral_radius=0.1,
-                 input_weight=1., avg_degree=6., epsilon=np.array([5,10,5]),
-                 extended_states=False, W_in_sparse=True, W_in_scale=1., 
+                 input_weight=1., avg_degree=6., epsilon=None,
+                 extended_states=False, W_in_sparse=True, W_in_scale=1.,
                  activation_function_flag='tanh'):
-        
+
+        if epsilon == None: epsilon = np.array([5, 10, 5])
+
         self.sys_flag = sys_flag
-        self.N = N 
+        self.N = N
         self.type = type_of_network
         self.xdim = input_dimension
         self.ydim = output_dimension
@@ -82,76 +85,76 @@ class res_core(object):
         self.reg_param = regularization_parameter
         self.spectral_radius = spectral_radius
         self.input_weight = input_weight
-        self.avg_degree = float(avg_degree) # = self.network.sum()/self.N
-        self.edge_prob = self.avg_degree/ (self.N-1)
-        self.b_out = np.ones((self.training_steps,1)) #bias in fitting W_out
+        self.avg_degree = float(avg_degree)  # = self.network.sum()/self.N
+        self.edge_prob = self.avg_degree / (self.N - 1)
+        self.b_out = np.ones((self.training_steps, 1))  # bias in fitting W_out
         self.extended_states = extended_states
         self.epsilon = epsilon
         self.W_in_sparse = W_in_sparse
         self.W_in_scale = W_in_scale
-        self.activation_function=None
+        self.activation_function = None
         self.set_activation_function(activation_function_flag)
 
         self.base_class_test_variable = 17.
-        #topology of the network, adjacency matrix with entries 0. or 1.:
-        self.binary_network = None # calc_bina_scry_network() assigns values
-        
-        #load_data() assigns values to:        
+        # topology of the network, adjacency matrix with entries 0. or 1.:
+        self.binary_network = None  # calc_bina_scry_network() assigns values
+
+        # load_data() assigns values to:
         self.x_train = None
         self.x_discard = None
         self.y_train = None
-        self.y_test = None 
+        self.y_test = None
         self.W_in = None
 
-        #train() assigns values to:
-        self.W_out = None        
+        # train() assigns values to:
+        self.W_out = None
         self.r = None
 
-        #predict() assigns values to:
+        # predict() assigns values to:
         self.r_pred = None
         self.y_pred = None
         self.noise = None
-        
-        #methods for analyizing assing values to:
-        self.complete_network = None #complete_network() assigns value        
-        
-        self.timestamp = None #timestamp; value assigned in save_realization()
- 
-        #network type flags are handled:
+
+        # methods for analyizing assing values to:
+        self.complete_network = None  # complete_network() assigns value
+
+        self.timestamp = None  # timestamp; value assigned in save_realization()
+
+        # network type flags are handled:
         if type_of_network == 'random':
             network = nx.fast_gnp_random_graph(self.N, self.edge_prob)
-            
+
         elif type_of_network == 'scale_free':
-            network = nx.barabasi_albert_graph(self.N, int(self.avg_degree/2))
-            #radius, dimension have to be specified
+            network = nx.barabasi_albert_graph(self.N, int(self.avg_degree / 2))
+            # radius, dimension have to be specified
         elif type_of_network == 'small_world':
             network = nx.watts_strogatz_graph(self.N, k=int(self.avg_degree), p=0.1)
         else:
-            print('wrong self.type_of_network')
+            raise Exception("wrong self.type_of_network")
 
         # make a numpy array out of the network's adjacency matrix,
         # will be converted to scipy sparse in train(), predict()
         self.network = np.asarray(nx.to_numpy_matrix(network))
-        
+
         self.calc_binary_network()
-        
+
         if self.W_in_sparse:
-            #W_in such that one element in each row is non-zero (Lu,Hunt, Ott 2018):
-            self.W_in = np.zeros((self.N,self.xdim))            
+            # W_in such that one element in each row is non-zero (Lu,Hunt, Ott 2018):
+            self.W_in = np.zeros((self.N, self.xdim))
             for i in range(self.N):
                 random_x_coord = np.random.choice(np.arange(self.xdim))
                 self.W_in[i, random_x_coord] = np.random.uniform(
-                    low=-self.W_in_scale, high=self.W_in_scale) #maps input values to reservoir
+                    low=-self.W_in_scale, high=self.W_in_scale)  # maps input values to reservoir
         else:
             self.W_in = np.random.uniform(low=-self.W_in_scale,
                                           high=self.W_in_scale,
                                           size=(self.N, self.xdim))
-                                         
-#    def __str__(self):
-#        return str('measures.reservoir('+str(self.N)+')')
-#    
-#    def __repr__(self):
-#        pass
+
+    #    def __str__(self):
+    #        return str('measures.reservoir('+str(self.N)+')')
+    #
+    #    def __repr__(self):
+    #        pass
 
     def set_activation_function(self, activation_function_flag):
         """
@@ -161,16 +164,16 @@ class res_core(object):
         if activation_function_flag == 'tanh':
             self.activation_function = self.tanh
         else:
-            print('activation_function_flag: '
-                + str(activation_function_flag)
-                + ' does not exist')
-                
-    def tanh(self,x,r):
+            raise Exception('activation_function_flag: '
+                            + str(activation_function_flag)
+                            + ' does not exist')
+
+    def tanh(self, x, r):
         """
         standard activation function tanh()
         """
         return np.tanh(self.input_weight * self.W_in @ x + self.network @ r)
-        
+
     def calc_binary_network(self):
         """
         returns a binary version of self.network to self.binary_network.
@@ -185,21 +188,21 @@ class res_core(object):
         and the matrix is scaled (self.scale_network()) to self.spectral_radius.
         """
         t0 = time.time()
-        
-        #contains tuples of non-zero elements:
+
+        # contains tuples of non-zero elements:
         arg_binary_network = np.argwhere(self.network)
-        
-        #uniform entries from [-0.5, 0.5) at the former non-zero locations:
-        self.network[arg_binary_network[:,0],
-                     arg_binary_network[:,1]] = np.random.random(
-                     size=self.network[self.network != 0.].shape)-0.5
+
+        # uniform entries from [-0.5, 0.5) at the former non-zero locations:
+        self.network[arg_binary_network[:, 0],
+                     arg_binary_network[:, 1]] = np.random.random(
+            size=self.network[self.network != 0.].shape) - 0.5
 
         self.scale_network()
-        
+
         t1 = time.time()
         if print_switch:
-            print('varied non-zero entries in self.network in ', t1-t0, 's')
-    
+            print('varied non-zero entries in self.network in ', t1 - t0, 's')
+
     def scale_network(self):
         """
         Scale self.network, according to desired self.spectral_radius.
@@ -218,10 +221,10 @@ class res_core(object):
             print('scaling failed due to non-convergence of eigenvalue \
             evaluation.')
         self.network = self.network.toarray()
-        
-#        self.network = self.spectral_radius*(self.network/np.absolute(
-#            np.linalg.eigvals(self.network)).max())
-        
+
+    #        self.network = self.spectral_radius*(self.network/np.absolute(
+    #            np.linalg.eigvals(self.network)).max())
+
     def load_data(self, mode='start_from_attractor', starting_point=None,
                   add_noise=False, std_noise=0., print_switch=False,
                   data_input=None):
@@ -249,32 +252,33 @@ class res_core(object):
         :std_noise: standard deviation of the applied noise
         """
         t0 = time.time()
-        
-        #minimum size for vals, lorenz.save_trajectory has to evaluate:
+
+        # minimum size for vals, lorenz.save_trajectory has to evaluate:
         timesteps = 1 + self.discard_steps + self.training_steps \
                     + self.prediction_steps
-        
+
         if print_switch:
             print('mode: ', mode)
-        
+
         if mode == 'data_from_file':
-    
-#            check for dimension and timesteps
-#            self.discard_steps + self.training_steps + \
-#            self.prediction_steps (+1) == vals.shape
-         
+
+            #            check for dimension and timesteps
+            #            self.discard_steps + self.training_steps + \
+            #            self.prediction_steps (+1) == vals.shape
+
             vals = data_input
-            
+
             vals -= vals.meactivation_funcan(axis=0)
-            vals *= 1/vals.std(axis=0)
+            vals *= 1 / vals.std(axis=0)
             print(vals.shape)
-        if mode == 'start_from_attractor':
+
+        elif mode == 'start_from_attractor':
             length = 50000
             original_start = np.array([-2.00384153, -5.34877257, -1.20401106])
             random_index = np.random.choice(np.arange(10000, length, 1))
             if print_switch:
                 print('random index for starting_point: ', random_index)
-            
+
             starting_point = lorenz_rescomp.record_trajectory(
                 sys_flag=self.sys_flag,
                 dt=self.dt,
@@ -287,10 +291,10 @@ class res_core(object):
                 timesteps=timesteps,
                 starting_point=starting_point,
                 print_switch=print_switch)
-                
+
         elif mode == 'fix_start':
             if starting_point is None:
-                print('set starting_point to use fix_start')
+                raise Exception('set starting_point to use fix_start')
             else:
                 vals = lorenz_rescomp.record_trajectory(sys_flag=self.sys_flag,
                                                 dt=self.dt,
@@ -298,34 +302,35 @@ class res_core(object):
                                                 starting_point=starting_point,
                                                 print_switch=print_switch)
         else:
-            print(mode, ' mode not recognized')
-        #print('data loading successfull')
+            raise Exception(mode, ' mode not recognized')
+            # print(mode, ' mode not recognized')
+        # print('data loading successfull')
         if add_noise:
             vals += np.random.normal(scale=std_noise, size=vals.shape)
             print('added noise with std_dev: ' + str(std_noise))
-        
-        #define local variables for test/train split:
+
+        # define local variables for test/train split:
         n_test = self.prediction_steps
         n_train = self.training_steps + self.discard_steps
         n_discard = self.discard_steps
 
-        #sketch of test/train split:
-        #[--n_discard --|--n_train--|--n_test--]
-        #and y_train is shifted by 1
-        self.x_train = vals[n_discard:n_train,:] #input values driving reservoir
-        self.x_discard = vals[:n_discard,:]
-        self.y_train = vals[n_discard+1:n_train+1,:] #+1
-        self.y_test = vals[n_train+1:n_train+n_test+1,:] #+1
-        
-        #check, if y_test has prediction_steps:
-        #should be extended to a real test_func!
+        # sketch of test/train split:
+        # [--n_discard --|--n_train--|--n_test--]
+        # and y_train is shifted by 1
+        self.x_train = vals[n_discard:n_train, :]  # input values driving reservoir
+        self.x_discard = vals[:n_discard, :]
+        self.y_train = vals[n_discard + 1:n_train + 1, :]  # +1
+        self.y_test = vals[n_train + 1:n_train + n_test + 1, :]  # +1
+
+        # check, if y_test has prediction_steps:
+        # should be extended to a real test_func!
         if self.y_test.shape[0] != self.prediction_steps:
             print('length(y_test) [' + str(self.y_test.shape[0])
-                    + '] != prediction_steps [' + str(self.prediction_steps) + ']')
-        
+                  + '] != prediction_steps [' + str(self.prediction_steps) + ']')
+
         t1 = time.time()
         if print_switch:
-            print('input (x) and target (y) loaded in ', t1-t0, 's')
+            print('input (x) and target (y) loaded in ', t1 - t0, 's')
 
     def train(self, print_switch=False):
         """
@@ -342,29 +347,29 @@ class res_core(object):
         Internally converts network in scipy.sparse object        
         """
         t0 = time.time()
-        
-        #sparse, necessary for speed up in training loop
+
+        # sparse, necessary for speed up in training loop
         self.network = scipy.sparse.csr_matrix(self.network)
 
-        #states of the reservoir:
+        # states of the reservoir:
         self.r = np.zeros((self.training_steps, self.N))
-                    
-        #reservoir is synchronized with trajectory during discard_steps:            
+
+        # reservoir is synchronized with trajectory during discard_steps:
         for t in np.arange(self.discard_steps):
             self.r[0] = self.activation_function(self.x_discard[t], self.r[0])
-               
+
         """
         the following step was included when Youssef proposed a revision of the
         timing. His concern was due to a missmatch between r and y
         (maybe we train the system to replicate the input not the next step
         -> has to be clarified!)
         """
-        self.r[0] = self.activation_function(self.x_train[0], self.r[0])    
-        #states are then used to fit the target y_train:
-        for t in range(self.training_steps-1):
-            self.r[t+1] = self.activation_function(self.x_train[t+1], self.r[t])
-            #vector equation with
-               # self.N entries
+        self.r[0] = self.activation_function(self.x_train[0], self.r[0])
+        # states are then used to fit the target y_train:
+        for t in range(self.training_steps - 1):
+            self.r[t + 1] = self.activation_function(self.x_train[t + 1], self.r[t])
+            # vector equation with
+            # self.N entries
         '''
         zimmermann, parlitz paper uses not only the reservoir states but also
         the current input for predicting an outcome
@@ -384,32 +389,32 @@ class res_core(object):
         
         else:
         """
-        #X = self.r.T
-        #Y = self.y_train.T
-        
-        #actual calculation of self.W_out:
-        
-#        t_old = time.time()
-#        self.W_out_old = np.matmul(
-#            np.matmul(Y,X.T), np.linalg.inv(np.matmul(X,X.T)
-#            + self.reg_param*np.eye(X.shape[0])))
-#        print('old: ')
-#        print(time.time() - t_old)
+        # X = self.r.T
+        # Y = self.y_train.T
+
+        # actual calculation of self.W_out:
+
+        #        t_old = time.time()
+        #        self.W_out_old = np.matmul(
+        #            np.matmul(Y,X.T), np.linalg.inv(np.matmul(X,X.T)
+        #            + self.reg_param*np.eye(X.shape[0])))
+        #        print('old: ')
+        #        print(time.time() - t_old)
         """
         this version should be matched with the old one, and then implemented
         ultimately.
         """
         self.W_out = np.linalg.solve((
-            self.r.T @ self.r + self.reg_param * np.eye(self.r.shape[1])),
+                self.r.T @ self.r + self.reg_param * np.eye(self.r.shape[1])),
             (self.r.T @ (self.y_train))).T
-        
+
         t1 = time.time()
         if print_switch:
-            print('training done in ', t1-t0, 's')
-        
-        #array (backtransform from sparse)
+            print('training done in ', t1 - t0, 's')
+
+        # array (backtransform from sparse)
         self.network = self.network.toarray()
-        
+
     def predict(self, print_switch=False, prediction_noise=False, noise_scale=0.1):
         """
         Uses the self.W_out to predict output, using the network as
@@ -417,72 +422,72 @@ class res_core(object):
         Internally converts network in scipy.sparse object   
         """
         t0 = time.time()
-        
-        #sparse, necessary for speed up in training loop
+
+        # sparse, necessary for speed up in training loop
         self.network = scipy.sparse.csr_matrix(self.network)
-        
+
         ### predicting, fixed P, and using output as input again
         self.r_pred = np.zeros((self.prediction_steps, self.N))
         self.y_pred = np.zeros((self.prediction_steps, self.ydim))
         ### add noise to reinserted input
         if prediction_noise:
             self.noise = np.random.normal(loc=0.0, scale=noise_scale,
-                                   size=(self.prediction_steps, self.ydim))
+                                          size=(self.prediction_steps, self.ydim))
         else:
             self.noise = np.zeros((self.prediction_steps, self.ydim))
-            
+
         if self.extended_states:
-            print('Incorrect timing when using extenden_states!')            
-#            """
-#            should I implement b as well?
-#            """
-#            #create the extended state:[b_out, r, x] and time as 2nd dimension:
-#            #X = np.concatenate((self.b_out, self.r, self.x_train), axis=1).T
-#            
-#            #create the extended state:[r, x] and time as 2nd dimension:
-#            
-#            self.y_pred[0] = np.matmul(self.W_out,
-#                                np.hstack((self.r[-1], self.x_train[-1])))
-#            
-#            for t in range(self.prediction_steps - 1):
-#                """
-#                Add noise
-#                """
-#                #update r:
-#                self.r_pred[t+1] = np.tanh(
-#                    self.input_weight * np.matmul(self.W_in,
-#                    np.matmul(self.W_out,
-#                              np.hstack((self.r_pred[t], self.y_pred[t]))))
-#                + np.matmul(self.network, self.r_pred[t]))
-#                #update y:
-#                self.y_pred[t+1] = np.matmul(self.W_out,
-#                np.hstack((self.r_pred[t], self.y_pred[t])))
-#        
-            #print('extended_state = ', self.extended_states, ' worked')
-        
-        else: #no extended states -> [r]
-            self.r_pred[0] = self.activation_function(self.y_train[-1],self.r[-1])
+            print('Incorrect timing when using extenden_states!')
+        #            """
+        #            should I implement b as well?
+        #            """
+        #            #create the extended state:[b_out, r, x] and time as 2nd dimension:
+        #            #X = np.concatenate((self.b_out, self.r, self.x_train), axis=1).T
+        #
+        #            #create the extended state:[r, x] and time as 2nd dimension:
+        #
+        #            self.y_pred[0] = np.matmul(self.W_out,
+        #                                np.hstack((self.r[-1], self.x_train[-1])))
+        #
+        #            for t in range(self.prediction_steps - 1):
+        #                """
+        #                Add noise
+        #                """
+        #                #update r:
+        #                self.r_pred[t+1] = np.tanh(
+        #                    self.input_weight * np.matmul(self.W_in,
+        #                    np.matmul(self.W_out,
+        #                              np.hstack((self.r_pred[t], self.y_pred[t]))))
+        #                + np.matmul(self.network, self.r_pred[t]))
+        #                #update y:
+        #                self.y_pred[t+1] = np.matmul(self.W_out,
+        #                np.hstack((self.r_pred[t], self.y_pred[t])))
+        #
+        # print('extended_state = ', self.extended_states, ' worked')
 
-            #transition from training to prediction               
+        else:  # no extended states -> [r]
+            self.r_pred[0] = self.activation_function(self.y_train[-1], self.r[-1])
+
+            # transition from training to prediction
             self.y_pred[0] = np.matmul(self.W_out, self.r_pred[0])
-            
-            #prediction:
-            for t in range(self.prediction_steps - 1):
-                #update r:
-                self.r_pred[t+1] = self.activation_function(
-                                    self.y_pred[t] + self.noise[t],
-                                    self.r_pred[t])
-                
-                #update y:
-                self.y_pred[t+1] = np.matmul(self.W_out, self.r_pred[t+1])
 
-        #array (backtransform from sparse)
+            # prediction:
+            for t in range(self.prediction_steps - 1):
+                # update r:
+                self.r_pred[t + 1] = self.activation_function(
+                    self.y_pred[t] + self.noise[t],
+                    self.r_pred[t])
+
+                # update y:
+                self.y_pred[t + 1] = np.matmul(self.W_out, self.r_pred[t + 1])
+
+        # array (backtransform from sparse)
         self.network = self.network.toarray()
-        
+
         t1 = time.time()
         if print_switch:
-            print('predicting done in ', t1-t0, 's')
-            
+            print('predicting done in ', t1 - t0, 's')
+
     def calc_tt(self, flag='bool', split=0.1):
         """
         selects depending on if the abs(entry) of self.W_out is one of the
@@ -495,28 +500,29 @@ class res_core(object):
         
         """
         absolute = int(self.N * split)
-        
-        n = self.ydim*self.N #dof in W_out
-        top_ten_bool = np.zeros(n, dtype=bool) #False array
-        arg = np.argsort(np.reshape(np.abs(self.W_out), -1)) #order of abs(W_out)
-        if absolute > 0:        
-            top_ten_bool[arg[-absolute:]] = True #set largest entries True
+
+        n = self.ydim * self.N  # dof in W_out
+        top_ten_bool = np.zeros(n, dtype=bool)  # False array
+        arg = np.argsort(np.reshape(np.abs(self.W_out), -1))  # order of abs(W_out)
+        if absolute > 0:
+            top_ten_bool[arg[-absolute:]] = True  # set largest entries True
             top_ten_arg = np.argsort(np.max(np.abs(self.W_out), axis=0))[-absolute:]
-        if absolute < 0:
-            top_ten_bool[arg[:-absolute]] = True #set largest entries True
+        elif absolute < 0:
+            top_ten_bool[arg[:-absolute]] = True  # set largest entries True
             top_ten_arg = np.argsort(np.max(np.abs(self.W_out), axis=0))[:-absolute]
-        if absolute == 0:
+        else:
             top_ten_arg = np.empty(0)
-        top_ten_bool = np.reshape(top_ten_bool, self.W_out.shape) #reshape to original shape
-        top_ten_bool_1d = np.array(top_ten_bool.sum(axis=0), dtype=bool) #project to 1d
-        
+
+        top_ten_bool = np.reshape(top_ten_bool, self.W_out.shape)  # reshape to original shape
+        top_ten_bool_1d = np.array(top_ten_bool.sum(axis=0), dtype=bool)  # project to 1d
+
         if flag == 'bool':
             return top_ten_bool
         elif flag == 'bool_1d':
             return top_ten_bool_1d
         elif flag == 'arg':
             return top_ten_arg
-             
+
     def save_realization(self, filename='parameter/test_pickle_'):
         """
         Saves the network parameters (extracted with self.__dict__ to a file,
@@ -531,9 +537,9 @@ class res_core(object):
         except:
             print('file could not be pickled: ', filename)
         f.close()
-        
+
         return 'file saved'
-        
+
     def load_realization(self, filename='parameter/test_pickle_', print_switch=False):
         """
         loads __dict__ from a pickled file and overwrites self.__dict__
@@ -542,15 +548,15 @@ class res_core(object):
         g = open(filename, 'rb')
         try:
             dict_load = pickle.load(g)
-            
+
             keys_init = self.__dict__.keys()
             keys_load = dict_load.keys()
-            
+
             key_load_list = []
             key_init_list = []
             for key in keys_load:
-                self.__dict__[key] = dict_load[key] #this is where the dict is loaded
-                #print(str(key)+' was loaded to __dict__')                
+                self.__dict__[key] = dict_load[key]  # this is where the dict is loaded
+                # print(str(key)+' was loaded to __dict__')
                 if not key in keys_init:
                     key_load_list.append(key)
             if print_switch:
@@ -560,7 +566,7 @@ class res_core(object):
                     key_init_list.append(key)
             if print_switch:
                 print('not in loaded reservoir: ' + str(key_init_list))
-                
+
             return 'file loaded, __dict__ available in self.dict'
         except:
             print('file could not be unpickled: ', filename)

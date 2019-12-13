@@ -18,15 +18,6 @@ sys.path.append(".")
 try: import esn_rescomp
 except ModuleNotFoundError: from . import esn_rescomp
 
-
-# import sys
-# sys.path.append(".")
-# from . import esn_rescomp
-
-
-# from . import esn_rescomp
-
-
 class reservoir(esn_rescomp.res_core):
     def __init__(self, **kwargs):
         self.demerge_time = None  # demerge_time() assigns value
@@ -160,7 +151,7 @@ class reservoir(esn_rescomp.res_core):
         after 4. time units [time_units = dt*steps]
         Therefore the default values are choosen to be dt dependent as in 
         ###Definition of taus:
-           
+
         tau_min/max are given in units of steps
         plot to check for correct average
         """

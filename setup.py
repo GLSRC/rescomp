@@ -1,22 +1,20 @@
 """
 """
 
-
 from distutils.core import setup
 
-
 setup(
-    name='rcdlr',
+    name='rescomp',
     version='2019-11-22',
-    description='', #TODO
-    long_description='', #TODO
-    keywords='',#TODO
-    author='Sebastian Baur',
-    author_email='sebastian.baur@dlr.de',#TODO
-    # maintainer='Daniel Mohr',
-    # maintainer_email='daniel.mohr@dlr.de',
+    description='',  # TODO
+    long_description='',  # TODO
+    keywords='',  # TODO
+    author='Sebastian Baur',  # TODO
+    author_email='sebastian.baur@dlr.de',
+    maintainer='Sebastian Baur',
+    maintainer_email='sebastian.baur@dlr.de',
     url='http://www.dlr.de/',
-    download_url='', # TODO
+    download_url='',  # TODO
     # package_dir = {'': 'src'},
     packages=[
         'rcdlr'],
@@ -46,9 +44,16 @@ setup(
         # 'Topic :: Software Development :: Libraries :: Python Modules' # TODO
     ],
     # cat $(find | grep "py$") | egrep -i "^[ \t]*import .*$" | egrep -i --only-matching "import .*$" | sort -u
-    requires=[ # TODO
+    requires=[  # TODO
         'matplotlib',
         'numpy',
-        'scipy'],
-    provides=['rcdlr']
-    )
+        'scipy'
+        'networkx'
+        'time'
+        'datetime'
+        'pickle'
+        'matplotlib'
+
+        ],
+    provides=['rescomp']
+)

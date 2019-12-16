@@ -28,7 +28,7 @@ The discarded steps are needed to synchronize the reservoir with the input and
 are not used for training or prediction. 
 """
 
-e = esn(N=500, input_dimension=data.shape[1],
+e = esn(network_dimension=500, input_dimension=data.shape[1],
         output_dimension=data.shape[1], training_steps=4000,
         prediction_steps=4000, discard_steps=1999)
 

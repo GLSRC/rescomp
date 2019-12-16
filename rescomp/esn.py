@@ -9,24 +9,12 @@
 import numpy as np
 import scipy.sparse
 import scipy.sparse.linalg
-# import matplotlib.pyplot as plt
 import networkx as nx
-import pickle
 import time
-import datetime
-
-# import sys
-# sys.path.append("..")
-# sys.path.append(".")
-# import lorenz_rescomp
+# import pickle
+# import matplotlib.pyplot as plt
+# import datetime
 from . import utilities
-
-
-# try: import lorenz_rescomp
-# except ModuleNotFoundError: from . import lorenz_rescomp
-
-# try: import utilities
-# except ModuleNotFoundError: from . import utilities
 
 
 class esn(object):
@@ -71,7 +59,7 @@ class esn(object):
         (steepness, offset).
     """
 
-    def __init__(self, sys_flag='mod_lorenz', N=500, input_dimension=3,
+    def __init__(self, sys_flag='mod_lorenz', network_dimension=500, input_dimension=3,
                  output_dimension=3, type_of_network='random',
                  dt=2e-2, training_steps=5000,
                  prediction_steps=5000, discard_steps=5000,
@@ -82,7 +70,7 @@ class esn(object):
         if epsilon == None: epsilon = np.array([5, 10, 5])
 
         self.sys_flag = sys_flag
-        self.N = N
+        self.ndim = network_dimension
         self.type = type_of_network
         self.xdim = input_dimension
         self.ydim = output_dimension
@@ -93,8 +81,8 @@ class esn(object):
         self.reg_param = regularization_parameter
         self.spectral_radius = spectral_radius
         self.input_weight = input_weight
-        self.avg_degree = float(avg_degree)  # = self.network.sum()/self.N
-        self.edge_prob = self.avg_degree / (self.N - 1)
+        self.avg_degree = float(avg_degree)  # = self.network.sum()/self.network_dimension
+        self.edge_prob = self.avg_degree / (self.ndim - 1)
         self.b_out = np.ones((self.training_steps, 1))  # bias in fitting W_out
         self.epsilon = epsilon
         self.W_in_sparse = W_in_sparse
@@ -129,13 +117,13 @@ class esn(object):
 
         # network type flags are handled:
         if type_of_network == 'random':
-            network = nx.fast_gnp_random_graph(self.N, self.edge_prob)
+            network = nx.fast_gnp_random_graph(self.ndim, self.edge_prob)
 
         elif type_of_network == 'scale_free':
-            network = nx.barabasi_albert_graph(self.N, int(self.avg_degree / 2))
+            network = nx.barabasi_albert_graph(self.ndim, int(self.avg_degree / 2))
             # radius, dimension have to be specified
         elif type_of_network == 'small_world':
-            network = nx.watts_strogatz_graph(self.N, k=int(self.avg_degree), p=0.1)
+            network = nx.watts_strogatz_graph(self.ndim, k=int(self.avg_degree), p=0.1)
         else:
             raise Exception("wrong self.type_of_network")
 
@@ -150,15 +138,15 @@ class esn(object):
 
         if self.W_in_sparse:
             # W_in such that one element in each row is non-zero (Lu,Hunt, Ott 2018):
-            self.W_in = np.zeros((self.N, self.xdim))
-            for i in range(self.N):
+            self.W_in = np.zeros((self.ndim, self.xdim))
+            for i in range(self.ndim):
                 random_x_coord = np.random.choice(np.arange(self.xdim))
                 self.W_in[i, random_x_coord] = np.random.uniform(
                     low=-self.W_in_scale, high=self.W_in_scale)  # maps input values to reservoir
         else:
             self.W_in = np.random.uniform(low=-self.W_in_scale,
                                           high=self.W_in_scale,
-                                          size=(self.N, self.xdim))
+                                          size=(self.ndim, self.xdim))
 
     def set_activation_function(self, activation_function_flag):
         """
@@ -279,7 +267,7 @@ class esn(object):
         self.network = scipy.sparse.csr_matrix(self.network)
 
         # states of the reservoir:
-        self.r = np.zeros((self.training_steps, self.N))
+        self.r = np.zeros((self.training_steps, self.ndim))
 
         # reservoir is synchronized with trajectory during discard_steps:
         for t in np.arange(self.discard_steps):
@@ -296,7 +284,7 @@ class esn(object):
         for t in range(self.training_steps - 1):
             self.r[t + 1] = self.activation_function(self.x_train[t + 1], self.r[t])
             # vector equation with
-            # self.N entries
+            # self.ndim entries
 
         self.W_out = np.linalg.solve((
                 self.r.T @ self.r + self.reg_param * np.eye(self.r.shape[1])),
@@ -321,7 +309,7 @@ class esn(object):
         self.network = scipy.sparse.csr_matrix(self.network)
 
         ### predicting, fixed P, and using output as input again
-        self.r_pred = np.zeros((self.prediction_steps, self.N))
+        self.r_pred = np.zeros((self.prediction_steps, self.ndim))
         self.y_pred = np.zeros((self.prediction_steps, self.ydim))
         ### add noise to reinserted input
         if prediction_noise:

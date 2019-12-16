@@ -11,7 +11,6 @@ setup(
     description='Reservoir Computing package developed at the DLR',
     # long_description=long_description,  # TODO
     # long_description_content_type="text/markdown",
-    # long_description='',
     # keywords='',  # TODO
     author='Sebastian Baur',  # TODO
     author_email='sebastian.baur@dlr.de',  # TODO
@@ -44,6 +43,6 @@ setup(
         'numpy>=1',
         'scipy>=1',
         'networkx>=2'
-    ],  # TODO
+    ],
     provides=['rescomp']
 )

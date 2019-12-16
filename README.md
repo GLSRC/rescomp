@@ -9,24 +9,18 @@ For questions, feedback and ideas, [write us!][all our mail adresses]
 ## Installation
 
 The following is a guide detailing how to install the rescomp package the way it "should" be done, i.e. as safely as possible.  
-If you already know what you are doing, you can just install this package like any other locally installed package though; no special dependencies are required.
+If you already know what you are doing, you can just install this package like any other locally installed package; no special dependencies are required.
 
-#### Prerequesites
-
-##### Absolutely Necessary
-   * Python 3
-   * A DLR GitLab account with access to this repository
-
-##### Optional but encouraged
+#### Optional but Strongly Encouraged Prerequesites
 
 * [git](https://git-scm.com/downloads): Used for downloading the repository and keeping it up to date. 
 * [Anaconda 3](https://www.anaconda.com/distribution/): Using a virtual python environment is **highly** recommended to avoid irreparably damaging your system/working python as this is a Pre-Alpha distribution and hence not well tested.  
   Of course you are free to use the environment manager of your choice, but in the following we will assume it to be Anaconda.
 
 #### Installation Instructions
-These instructions were written for unix systems/terminals, but should work essentially the same way on windows too.
+These instructions are for unix systems/terminals, but should work with no or at most minor modifications on Windows too.
 
-Install git and Anaconda 3, see above.  
+Install git and Anaconda 3 (see above). Make sure to close and then reopen the terminal if this is the first time you installed Anaconda.
 
 Open a terminal and enter the folder you wish to copy the gitlab repository to.  
 
@@ -47,18 +41,28 @@ Create a new Anaconda environment by cloning your base environment, your current
 
     conda env create --name rc_env --file environment_rescomp.yml
 
+Activate your new environment
+
+    conda activate rc_env
+
 Create the package distribution files
 
     python3 setup.py sdist bdist_wheel
 
-Make sure that the is installed in the environment you want to install the package to:
+Make sure that pip is installed and active in the environment you want to install the package to:
     
     which pip
 
 The output of the above should be something like 
-    
-    "/Users/<username>/anaconda3/envs/rc_env/bin/pip"
- 
+
+    > "/Users/<username>/anaconda3/envs/rc_env/bin/pip"
+   
+if it's not install pip activate and deactivate your anaconda environment and then install pip, should it still not be found
+
+    conda deactivate rc_env
+    conda activate rc_env
+    conda install pip
+
 To install everything like a normal, unchanging package, use
 
     pip install .
@@ -79,7 +83,7 @@ To uninstall the rescomp package, simply activate the respective environment and
 ## Usage
 
 Please read the **FAQ** below.  
-Otherwise, just look at the examples in bin to get started. Not many features are implemented yet, hence there is not much to explain.
+Otherwise, just look at the examples in _bin_ to get started. Not many features are implemented yet, hence there is not that much to explain.
 
 ## FAQ
 
@@ -111,5 +115,5 @@ As a corrolary, this also means that writing legible, high information content c
 * All the old code, before we made everything installable as a package, is in the folder "legacy". The goal should be to slowly add all the functions from the legacy code base to one, coherent python package.
 
 
-[all our mail adresses]: mailto:sebastian.baur@dlr.de
+[all our mail adresses]: mailto:Jonas.Aumeier@dlr.de,Sebastian.Baur@dlr.de,Joschka.Herteux@dlr.de,Youssef.Mabrouk@dlr.de
 [rescomp gitlab link]: https://gitlab.dlr.de/rescom/reservoir-computing

@@ -16,7 +16,6 @@ trajectory = record_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(5e4
 
 data = trajectory
 
-
 # Example for using esn
 """
 First create an esn object. You can specify the number of nodes you want to 

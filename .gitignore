@@ -2,4 +2,5 @@
 
 # Python package build files
 build/
-
+dist/
+rescomp.egg-info/

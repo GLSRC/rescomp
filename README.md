@@ -11,7 +11,7 @@ For questions, feedback and ideas, [write us!][all our mail adresses]
 The following is a guide detailing how to install the rescomp package the way it "should" be done, i.e. as safely as possible.  
 If you already know what you are doing, you can just install this package like any other locally installed package; no special dependencies are required.
 
-These instructions are for unix systems/terminals, but should work with no or at most minor modifications on Windows too.
+These instructions are for unix systems, but should work with no or at most minor modifications on Windows too.
 
 #### Optional but Strongly Encouraged Prerequesites
 
@@ -33,12 +33,12 @@ Enter the cloned gitlab folder
 
     cd rescomp
 
-Set your name and email for this repository
+Set your (name and email for this repository (just use your full name and the DLR email address here)
     
     git config user.name "<Your Name>"
     git config user.email <you@example.com>
-    
-Create a new Anaconda environment by cloning your base environment, your current working environment or just use the environment file we are working with. Here, we create the new environment _rc_env_ from the environment file included in the repository
+
+Create a new Anaconda environment _rc_env_ from the environment file included in the repository. 
 
     conda env create --name rc_env --file environment_rescomp.yml
 
@@ -50,24 +50,10 @@ Create the package distribution files
 
     python3 setup.py sdist bdist_wheel
 
-Make sure that pip is installed and active in the environment you want to install the package to:
-    
-    which pip
-
-The output of the above should include the environment name, here _rc_env_, something like 
-
-    > "/Users/<username>/anaconda3/envs/rc_env/bin/pip"
-
-If it doesn't, activate and deactivate your anaconda environment and then, should it still not be found, install pip (again)
-
-    conda deactivate rc_env
-    conda activate rc_env
-    conda install pip
-
 To install everything like a normal, unchanging package, use
 
     pip install .
-    
+ 
 If you plan to contribute, or just want to change the code yourself, it is much more conventient to install the package as an [editable install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs) 
     
     pip install -e .
@@ -75,11 +61,31 @@ If you plan to contribute, or just want to change the code yourself, it is much 
 An editablte install allows you to change the code in the repository and instantly work with the new behaviour without having the reinstall the package! 
 
 
+### Installation Problems
+
+* The installation seems to have worked without error, but I can't import the package. 
+
+  Make sure that pip is installed and active in the environment you want to install the package to:
+    
+      which pip
+
+  The output of the above should include the environment name, here _rc_env_, something like 
+
+      > "/Users/<username>/anaconda3/envs/rc_env/bin/pip"
+
+  If it doesn't, activate and deactivate your anaconda environment and then, should it still not be found, install pip (again)
+
+      conda deactivate rc_env
+      conda activate rc_env
+      conda install pip
+
+
 ### Un-Installation
 
 To uninstall the rescomp package, simply activate the respective environment and type:
 
     pip uninstall rescomp
+
 
 ## Usage
 
@@ -91,19 +97,19 @@ Otherwise, just look at the examples in _bin_ to get started. Not many features 
 * My predictions don't agree with the real data at all! What is going on?  
   * The performance of the reservoir depends strongly on the hyperparameters.  
   Nobody really knows _how exactly_ the prediction quality depends on the parameters, but as a start you should use a reservoir that has about 10x-100x as many nodes as the input has dimensions.  More for real or more "complicated" data, less for synthetic inputs.  
-  For all other parameters it is advisable to just play around by hand to see what parameter (ranges) might work or to use the hyperparameter optimization algorithm of your choice. As RC is fast to train, a simple grid search is often sufficient.
-  
+  For all other parameters it is advisable to just play around by hand to see what parameter (ranges) might work or to use the hyperparameter optimization algorithm of your choice. As RC is fast to train, a simple grid search is often sufficient  
+
 * For the exact same set of hyperparameters the prediction is sometimes amazingly accurate and at other times utterly wrong. Why?
-  * As the network is not trained at all, it can happen that the randomly generated network is not suited to learn the task at hand. How "good" and "bad" network topologies differ is an active research problem.  
+  * As the network is not trained at all, it can happen that the randomly generated network is not suited to learn the task at hand. How "good" and "bad" network topologies differ is an active research problem.    
   Practically, this means that the prediction quality for a set of hyperparameters can not be determined by a single randomly generated network but instead must be calculated using e.g. the success rate of at least 10 randomly generated networks, preferably more.  
-  Luckily, unsuccessful predictions are almost always very clearly distinguishable if the network topology is at fault, i.e. the prediction either works well or not at all.
- 
+  Luckily, unsuccessful predictions are almost always very clearly distinguishable if the network topology is at fault, i.e. the prediction either works well or not at all.  
+
 * Do I need to denoise my data?
   * Yes, if you work with real data it should be denoised as strongly as possible without loosing too much information. It's the same as for all other ML techniques, really.
-  
+
 * Your code is bad, your documentation is bad and you should feel bad.
   * Well, this is quite rude. Also not a question.  
-  Nonetheless we do know that a lot of work needs to be done before the code can ascend to the status of "real python package". Regardless, we hope that you still get some use out of the package, even if it is just toying around with Reservoir Computing a bit while you wait for the code base to be developed further.
+  Nonetheless we do know that a lot of work needs to be done before the code can ascend to the status of "real python package". Regardless, we hope that you still get some use out of the package, even if it is just toying around with Reservoir Computing a bit while you wait for the code base to be developed further.  
 
 
 ## For Contributors

@@ -11,6 +11,8 @@ For questions, feedback and ideas, [write us!][all our mail adresses]
 The following is a guide detailing how to install the rescomp package the way it "should" be done, i.e. as safely as possible.  
 If you already know what you are doing, you can just install this package like any other locally installed package; no special dependencies are required.
 
+These instructions are for unix systems/terminals, but should work with no or at most minor modifications on Windows too.
+
 #### Optional but Strongly Encouraged Prerequesites
 
 * [git](https://git-scm.com/downloads): Used for downloading the repository and keeping it up to date. 
@@ -18,7 +20,6 @@ If you already know what you are doing, you can just install this package like a
   Of course you are free to use the environment manager of your choice, but in the following we will assume it to be Anaconda.
 
 #### Installation Instructions
-These instructions are for unix systems/terminals, but should work with no or at most minor modifications on Windows too.
 
 Install git and Anaconda 3 (see above). Make sure to close and then reopen the terminal if this is the first time you installed Anaconda.
 
@@ -34,7 +35,7 @@ Enter the cloned gitlab folder
 
 Set your name and email for this repository
     
-    git config user.name <Your Name>
+    git config user.name "<Your Name>"
     git config user.email <you@example.com>
     
 Create a new Anaconda environment by cloning your base environment, your current working environment or just use the environment file we are working with. Here, we create the new environment _rc_env_ from the environment file included in the repository
@@ -53,11 +54,11 @@ Make sure that pip is installed and active in the environment you want to instal
     
     which pip
 
-The output of the above should be something like 
+The output of the above should include the environment name, here _rc_env_, something like 
 
     > "/Users/<username>/anaconda3/envs/rc_env/bin/pip"
-   
-if it's not install pip activate and deactivate your anaconda environment and then install pip, should it still not be found
+
+If it doesn't, activate and deactivate your anaconda environment and then, should it still not be found, install pip (again)
 
     conda deactivate rc_env
     conda activate rc_env
@@ -67,7 +68,7 @@ To install everything like a normal, unchanging package, use
 
     pip install .
     
-If you plan to contribute, it is probably better to install the package asan [editable install](https://setuptools.readthedocs.io/en/latest/setuptools.html#development-mode) 
+If you plan to contribute, or just want to change the code yourself, it is much more conventient to install the package as an [editable install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs) 
     
     pip install -e .
 

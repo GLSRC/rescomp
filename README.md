@@ -112,6 +112,23 @@ Please read the **FAQ** below.
 
 Otherwise, just look at the examples in _bin_ to get started. Not many features are implemented yet, hence there is not that much to explain.
 
+### For Contributors
+
+* As the package is very much in flux, reading the commits of others is very important! Otherwise you might write code for functions that don't exist anymore or whose syntax has completely changed.  
+As a corrolary, this also means that writing legible, descriptive commit messages is paramount!
+
+* All the old code, before we made everything installable as a package, is in the folder _legacy_. The goal should be to slowly add all the functions from the legacy code base to one, coherent python package.
+
+
+#### For Internal Contributors
+* When you install the package on the Rechenknecht, instead of using the environment file `environment_rescomp.yml` specified above, use the much more detailed one for the Rechenknecht `environment_rescomp_full_rk.yml`. The command to create the environment would then be
+      
+      conda env create --name rc_env --file environment_rescomp_full_rk.yml
+      
+  Doing so should ensure absolute reproducability between all results calculated on the Rechenknecht.
+
+* When importing a new packet, add it to the environment_rescomp.yml file, specifying the newest version that runs on the Rechenknecht, as well as to the setup.py under "install_requires", specifying the minimal version needed to run the code at all (usually the last major update)
+
 
 ## FAQ  
   
@@ -135,19 +152,6 @@ Luckily, unsuccessful predictions are almost always very clearly distinguishable
    
 **A:** Well, this is quite rude. Also not a question.  
 Nonetheless we do know that a lot of work needs to be done before the code can ascend to the status of "real python package". Regardless, we hope that you still get some use out of the package, even if it is just toying around with Reservoir Computing a bit while you wait for the code base to be developed further.
-
-
-## For Contributors
-
-* As the package is very much in flux, reading the commits of others is very important! Otherwise you might write code for functions that don't exist anymore or whose syntax has completely changed.  
-As a corrolary, this also means that writing legible, descriptive commit messages is paramount!
-
-* All the old code, before we made everything installable as a package, is in the folder _legacy_. The goal should be to slowly add all the functions from the legacy code base to one, coherent python package.
-
-
-### For Internal Contributors
-* When importing a new packet, add it to the environment_rescomp.yml file, specifying the newest version that runs on the Rechenknecht, as well as to the setup.py under "install_requires", specifying the minimal version needed to run the code at all (usually the last major update)
-
 
 
 [maintainer mail adresses]: mailto:Jonas.Aumeier@dlr.de,Sebastian.Baur@dlr.de,Joschka.Herteux@dlr.de,Youssef.Mabrouk@dlr.de?cc=Christoph.Raeth@dlr.de

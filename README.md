@@ -1,6 +1,6 @@
 ## Reservoir Computing
 
-This repository contains the python 3 package **rescomp** implementing the machine learning technique Reservoir Computing which is currently in the Pre-Alpha state.
+This repository contains the Pre-Alpha python 3 package **rescomp** implementing the machine learning technique Reservoir Computing.
  
 Development largely takes place at the DLR group _Komplexe Plasmen_ in Oberpfaffenhofen, but contributions from other DLR sites are encouraged.
 

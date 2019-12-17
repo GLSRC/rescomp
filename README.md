@@ -1,6 +1,6 @@
 ## Reservoir Computing
 
-This repository contains the Pre-Alpha python 3 package **rescomp** implementing the machine learning technique Reservoir Computing.
+This repository contains the Pre-Alpha python 3 package **rescomp** implementing the machine learning technique Reservoir Computing(RC).
  
 Development largely takes place at the DLR group _Komplexe Plasmen_ in Oberpfaffenhofen, but contributions from other DLR sites are encouraged.
 
@@ -108,7 +108,7 @@ To uninstall the rescomp package, simply activate the respective environment and
 
 ## Usage
 
-Please read the **FAQ** below.  
+Please read the **FAQ below**.  
 
 Otherwise, just look at the examples in _bin_ to get started. Not many features are implemented yet, hence there is not that much to explain.
 
@@ -135,12 +135,19 @@ As a corrolary, this also means that writing legible, descriptive commit message
 **Q:** My predictions don't agree with the real data at all! What is going on?
   
 **A:** The performance of the reservoir depends strongly on the hyperparameters.  
-Nobody really knows how _exactly_ the prediction quality depends on the parameters, but as a start you should use a reservoir that has about 10x-100x as many nodes as the input has dimensions.  More for real or more "complicated" data, less for synthetic inputs.    
+Nobody really knows how _exactly_ the prediction quality depends on the parameters, but as a start you should use a reservoir that has about 100x as many nodes as the input has dimensions.  More for real or more "complicated" data.  
 For all other parameters it is advisable to just play around by hand to see what parameter (ranges) might work or to use the hyperparameter optimization algorithm of your choice. As RC is fast to train, a simple grid search is often sufficient   
  
+**Q:** You just said the network should have about 100x as many nodes as the input has dimensions, maybe more. My input is >50 dimensional and with 5000-10000 nodes the training and prediction is really slow! I thought RC was supposed to be fast, what's going on?
+
+**A:** The computational bottleneck of RC is a bunch of matrix multplications which, roughly, scale as O(n^3), where n is the number of nodes in the network. Therefore, just scaling up the network to accommodate larger and larger inputs doesn't work.  
+Luckily there is a potential solution to this problem in the method of [local states][local states paper].  
+While we have already written our own implementation of this idea, we first want to re-write our current code base to be a foundation one can build a package on without having to re-write everything again in half a year due to a badly planned start.  
+Besides local states it is of course always helpful to reduce the input dimensionality as much as possible, for example via an autoencoder.
+
 **Q:** For the exact same set of hyperparameters the prediction is sometimes amazingly accurate and at other times utterly wrong. Why?   
 
-**A:** As the network is not trained at all, it can happen that the randomly generated network is not suited to learn the task at hand. How "good" and "bad" network topologies differ is an active research problem.    
+**A:** As the network is not trained at all, it can happen that the randomly generated network is not suited to learn the task at hand. How "good" and "bad" network topologies differ is an active research problem.  
 Practically, this means that the prediction quality for a set of hyperparameters can not be determined by a single randomly generated network but instead must be calculated using e.g. the success rate of at least 10 randomly generated networks, preferably more.    
 Luckily, unsuccessful predictions are almost always very clearly distinguishable if the network topology is at fault, i.e. the prediction either works well or not at all. 
 
@@ -151,8 +158,9 @@ Luckily, unsuccessful predictions are almost always very clearly distinguishable
 **Q:** Your code is bad, your documentation is bad and you should feel bad. 
    
 **A:** Well, this is quite rude. Also not a question.  
-Nonetheless we do know that a lot of work needs to be done before the code can ascend to the status of "real python package". Regardless, we hope that you still get some use out of the package, even if it is just toying around with Reservoir Computing a bit while you wait for the code base to be developed further.
+Nonetheless we do know that a lot of work needs to be done before the code can ascend to the status of "real python package". Regardless, we hope that you still get some use out of the package, even if it is just toying around with RC a bit while you wait for the code base to be developed further.
 
 
 [maintainer mail adresses]: mailto:Jonas.Aumeier@dlr.de,Sebastian.Baur@dlr.de,Joschka.Herteux@dlr.de,Youssef.Mabrouk@dlr.de?cc=Christoph.Raeth@dlr.de
 [rescomp gitlab link]: https://gitlab.dlr.de/rescom/reservoir-computing
+[local states paper]: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.120.024102

@@ -87,7 +87,7 @@ def record_trajectory(sys_flag='mod_lorenz', dt=1., timesteps=int(10e4),
     if sys_flag == 'mod_lorenz':
         f = mod_lorenz
     elif sys_flag == 'mod_lorenz_wrong':
-        print('YOU ARE USING A NON-USUAL KIND OF LORENZ EQUATION! USE WITH CARE')
+        print('YOU ARE USING AN UNUSUAL KIND OF LORENZ EQUATION! USE WITH CARE')
         f = mod_lorenz_wrong
     elif sys_flag == 'normal_lorenz':
         f = normal_lorenz
@@ -110,3 +110,64 @@ def record_trajectory(sys_flag='mod_lorenz', dt=1., timesteps=int(10e4),
 # not used currently:
 # def save_trajectory(timesteps, dt): #starting_point=np.array([-13.5,10.8,-17.9])
 #     np.savetxt('lorenz_attractor_'+str(timesteps)+'_a_'+str(dt)+'.dat', record_trajectory(timesteps=timesteps, dt=dt))
+
+
+# TODO: Refactor to make more legible, then add a docstring, remove/add print statements etc.
+def ks_pde_simulation(dimensions, system_size, t_max, time_step):
+    # This function simulates the Kuramoto–Sivashinsky PDE
+    # reference for the numerical integration : "fourth order time stepping for stiff pde-kassam trefethen 2005" at
+    # https://people.maths.ox.ac.uk/trefethen/publication/PDF/2005_111.pdf
+    # Python implementation at: https://github.com/E-Renshaw/kuramoto-sivashinsky
+
+    # print("Start PDE simulation")
+
+    n = dimensions  # No. of grid points in real space (and hence dimensionality of the output)
+    size = system_size  # grid points for the PDE simulation #TODO: I think
+
+    # Define initial conditions and Fourier Transform them
+    x = np.transpose(np.conj(np.arange(1, n + 1))) / n
+    u = np.cos(2 * np.pi * x / size) * (1 + np.sin(2 * np.pi * x / size))
+    v = np.fft.fft(u)
+
+    h = time_step  # time step
+
+    # Wave numbers
+    k = np.transpose(
+        np.conj(np.concatenate((np.arange(0, n / 2), np.array([0]), np.arange(-n / 2 + 1, 0))))) * 2 * np.pi / size
+
+    # Just copied from the paper, it works
+    L = k ** 2 - k ** 4
+    E = np.exp(h * L)
+    E_2 = np.exp(h * L / 2)
+    M = 16
+    r = np.exp(1j * np.pi * (np.arange(1, M + 1) - 0.5) / M)
+    LR = h * np.transpose(np.repeat([L], M, axis=0)) + np.repeat([r], n, axis=0)
+    Q = h * np.real(np.mean((np.exp(LR / 2) - 1) / LR, axis=1))
+    f1 = h * np.real(np.mean((-4 - LR + np.exp(LR) * (4 - 3 * LR + LR ** 2)) / LR ** 3, axis=1))
+    f2 = h * np.real(np.mean((2 + LR + np.exp(LR) * (-2 + LR)) / LR ** 3, axis=1))
+    f3 = h * np.real(np.mean((-4 - 3 * LR - LR ** 2 + np.exp(LR) * (4 - LR)) / LR ** 3, axis=1))
+
+    uu = [np.array(u)]  # List of Real space solutions, later converted to a np.array
+    tmax = t_max  # Length of time to simulate
+    nmax = round(tmax / h)  # No. of time steps to simulate
+
+    g = -0.5j * k  # TODO: Meaning?
+
+    # See paper for details
+    for n in range(1, nmax + 1):
+        Nv = g * np.fft.fft(np.real(np.fft.ifft(v)) ** 2)
+        a = E_2 * v + Q * Nv
+        Na = g * np.fft.fft(np.real(np.fft.ifft(a)) ** 2)
+        b = E_2 * v + Q * Na
+        Nb = g * np.fft.fft(np.real(np.fft.ifft(b)) ** 2)
+        c = E_2 * a + Q * (2 * Nb - Nv)
+        Nc = g * np.fft.fft(np.real(np.fft.ifft(c)) ** 2)
+
+        v = E * v + Nv * f1 + 2 * (Na + Nb) * f2 + Nc * f3
+        u = np.real(np.fft.ifft(v))
+        uu.append(np.array(u))
+
+    uu = np.array(uu)
+    # print("PDE simulation finished")
+
+    return uu

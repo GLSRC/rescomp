@@ -91,7 +91,7 @@ An editablte install allows you to change the code in the repository and instant
       conda deactivate rc_env
       conda activate rc_env
       
-  and then, should pip still not be located in the active environment by "_which pip_", install pip explicitly:
+  and then, should pip still not be located in the active environment by "which pip", install pip explicitly:
   
       conda install pip
 
@@ -121,13 +121,13 @@ As a corrolary, this also means that writing legible, descriptive commit message
 
 
 #### For Internal Contributors
-* When you install the package on the Rechenknecht, instead of using the environment file `environment_rescomp.yml` specified above, use the much more detailed one for the Rechenknecht `environment_rescomp_full_rk.yml`. The command to create the environment would then be
+* When you install the package on the Rechenknecht, instead of using the environment file "environment_rescomp.yml" specified above, use the much more detailed one for the Rechenknecht "environment_rescomp_full_rk.yml". The command to create the environment would then be
       
       conda env create --name rc_env --file environment_rescomp_full_rk.yml
       
   Doing so should ensure absolute reproducability between all results calculated on the Rechenknecht.
 
-* When importing a new packet, add it to the environment_rescomp.yml file, specifying the newest version that runs on the Rechenknecht, as well as to the setup.py under "install_requires", specifying the minimal version needed to run the code at all (usually the last major update)
+* When importing a new packet, add it to the environment_rescomp.yml file, specifying the newest version that runs on the Rechenknecht, and to the setup.py under "install_requires", specifying the minimal version needed to run the code at all (usually the current major version)
 
 
 ## FAQ  

@@ -138,7 +138,7 @@ As a corrolary, this also means that writing legible, descriptive commit message
 Nobody really knows how _exactly_ the prediction quality depends on the parameters, but as a start you should use a reservoir that has about 100x as many nodes as the input has dimensions.  More for real or more "complicated" data.  
 For all other parameters it is advisable to just play around by hand to see what parameter (ranges) might work or to use the hyperparameter optimization algorithm of your choice. As RC is fast to train, a simple grid search is often sufficient   
  
-**Q:** You just said the network should have about 100x as many nodes as the input has dimensions, maybe more. My input is >50 dimensional and with 5000-10000 nodes the training and prediction is really slow! I thought RC was supposed to be fast, what's going on?
+**Q:** You just said the network should have about 100x as many nodes as the input has dimensions, maybe more. My input is >50 dimensional and with 5000-10000 nodes the training and prediction is annoyingly slow! I thought RC was supposed to be fast, what's going on?
 
 **A:** The computational bottleneck of RC is a bunch of matrix multplications which, roughly, scale as O(n^3), where n is the number of nodes in the network. Therefore, just scaling up the network to accommodate larger and larger inputs doesn't work.  
 Luckily there is a potential solution to this problem in the method of [local states][local states paper].  

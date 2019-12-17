@@ -26,7 +26,7 @@ if __name__ == "__main__":
     esn = esn(network_dimension=5000, input_dimension=data.shape[1],
               output_dimension=data.shape[1], training_steps=6000,
               prediction_steps=500, discard_steps=999,
-              regularization_parameter=0.01, spectral_radius=1.6,
+              regularization_parameter=0.01, spectral_radius=0.3,
               avg_degree=100)
 
     esn.load_data(data)
@@ -40,15 +40,15 @@ if __name__ == "__main__":
 
     fig1 = plt.figure(figsize=(6, 6))
     ax1 = fig1.add_subplot(3, 1, 1)
-    ax1.imshow(test.T, aspect='auto')
+    ax1.imshow(test.T)
     ax1.set_title("Simulation")
 
     ax2 = fig1.add_subplot(3, 1, 2)
-    ax2.imshow(pred.T, aspect='auto')
+    ax2.imshow(pred.T)
     ax2.set_title("Prediction")
 
     ax3 = fig1.add_subplot(3, 1, 3)
-    ax3.imshow(pred.T - test.T, aspect='auto')
+    ax3.imshow(pred.T - test.T)
     ax3.set_title("Difference between simulation and prediction")
 
     plt.show()

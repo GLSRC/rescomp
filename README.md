@@ -69,6 +69,13 @@ If you plan to contribute, or just want to change the code yourself, it is much 
 An editablte install allows you to change the code in the repository and instantly work with the new behaviour without having the reinstall the package! 
 
 
+### Uninstalling rescomp
+
+To uninstall the rescomp package, simply activate the respective environment and then type:
+
+    pip uninstall rescomp
+
+
 ### Common Installation Problems
 
 * The installation seems to have worked without error, but the package is not found when I try to import it. 
@@ -98,12 +105,6 @@ An editablte install allows you to change the code in the repository and instant
 * Nothing works, please help me!  
 
   If you can't install or use the package despite following the above instructions, [write us][maintainer mail adresses]. For a package as new as this one, such problems are to be expected and we will try to help as soon as possible.
-  
-### Uninstalling rescomp
-
-To uninstall the rescomp package, simply activate the respective environment and then type:
-
-    pip uninstall rescomp
 
 
 ## Usage

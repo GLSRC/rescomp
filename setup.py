@@ -1,54 +1,48 @@
 """
 """
 
-
-from distutils.core import setup
-
+# from distutils.core import setup
+import setuptools
+from setuptools import setup
 
 setup(
-    name='rcdlr',
-    version='2019-11-22',
-    description='', #TODO
-    long_description='', #TODO
-    keywords='',#TODO
-    author='Sebastian Baur',
-    author_email='sebastian.baur@dlr.de',#TODO
-    # maintainer='Daniel Mohr',
-    # maintainer_email='daniel.mohr@dlr.de',
-    url='http://www.dlr.de/',
-    download_url='', # TODO
+    name='rescomp',
+    version='0.0.1',
+    description='Reservoir Computing package developed at the DLR',
+    # long_description=long_description,  # TODO
+    # long_description_content_type="text/markdown",
+    # keywords='',  # TODO
+    author='Jonas.Aumeier, Sebastian.Baur, Joschka.Herteux, Youssef.Mabrouk',
+    author_email='Jonas.Aumeier@dlr.de, Sebastian.Baur@dlr.de, Joschka.Herteux@dlr.de, Youssef.Mabrouk@dlr.de',
+    maintainer='Jonas.Aumeier, Sebastian.Baur, Joschka.Herteux, Youssef.Mabrouk',
+    maintainer_email='Jonas.Aumeier@dlr.de, Sebastian.Baur@dlr.de, Joschka.Herteux@dlr.de, Youssef.Mabrouk@dlr.de',
+    url='https://gitlab.dlr.de/rescom/reservoir-computing',
+    download_url='https://gitlab.dlr.de/rescom/reservoir-computing.git',
     # package_dir = {'': 'src'},
-    packages=[
-        'rcdlr'],
-    # scripts=[
-    #     'src/scripts/staub_dummy.py',
-    #     'src/scripts/staub_create_image.py',
-    #     'src/scripts/staub_find_particles.py',
-    #     'src/scripts/staub_display_garching_format.py',
-    #     'src/scripts/staub_enhance_images.py',
-    #     'src/scripts/staub_find_template.py'],
-    license='',  # TODO
+    # packages=['rescomp'],
+    packages=setuptools.find_packages(),
+    # scripts=[],  # TODO
+    # license='',  # TODO
     classifiers=[
-        'Development Status :: 3 - Alpha',
-        # 'Environment :: Console',
-        # 'Environment :: X11 Applications',
+        'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Science/Research',
         # 'License :: OSI Approved :: GNU General Public License (GPL)', # TODO
         'Natural Language :: English',
-        'Operating System :: POSIX',
-        'Operating System :: POSIX :: BSD :: FreeBSD',
-        'Operating System :: POSIX :: BSD :: OpenBSD',
-        'Operating System :: POSIX :: Linux',
-        'Operating System :: Unix',
-        'Operating System :: MacOS',
+        # 'Operating System :: POSIX',
+        # 'Operating System :: POSIX :: BSD :: FreeBSD',
+        # 'Operating System :: POSIX :: BSD :: OpenBSD',
+        # 'Operating System :: POSIX :: Linux',
+        # 'Operating System :: Unix',
+        # 'Operating System :: MacOS',
+        "Operating System :: OS Independent"
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.7',
         # 'Topic :: Software Development :: Libraries :: Python Modules' # TODO
     ],
-    # cat $(find | grep "py$") | egrep -i "^[ \t]*import .*$" | egrep -i --only-matching "import .*$" | sort -u
-    requires=[ # TODO
-        'matplotlib',
-        'numpy',
-        'scipy'],
-    provides=['rcdlr']
-    )
+    install_requires=[
+        'numpy>=1',
+        'scipy>=1',
+        'networkx>=2'
+    ],
+    provides=['rescomp']
+)

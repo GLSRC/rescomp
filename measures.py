@@ -311,7 +311,7 @@ class reservoir(esn_rescomp.res_core):
             if self.sys_flag == "roessler":
                 ylimits = ((-5, 8), (-8, 5), (0, 15))
             elif self.sys_flag == 'mod_lorenz':
-                ylimits = ((-15, 20), (-15, 30), (-10, 50))
+                ylimits = ((-25, 20), (-30, 30), (0, 50))
             else:
                 traj = np.concatenate((self.y_test, self.y_train), axis=0)
                 ylimits = [[traj[:, dim].min(), traj[:, dim].max()] for dim in np.arange(self.ydim)]
@@ -361,20 +361,24 @@ class reservoir(esn_rescomp.res_core):
 
         self.avg_weighted_cc = self.weighted_cc.mean()
 
-    def calc_covar_rank(self, flag='train'):
-        """
-        Calculated the covarianc rank of the squared network dynamics matrix self.r
-        (or self.r_pred) and stores it in self.covar_rank
-        """
-        if flag == 'train':
-            res_dyn = self.r
-        elif flag == 'pred':
-            res_dyn = self.r_pred
-        else:
-            raise Exception("wrong covariance flag")
-        covar = np.matmul(res_dyn.T, res_dyn)
-        self.covar_rank = np.linalg.matrix_rank(covar)
-
+#    def calc_covar_rank(self, flag='train'):
+#        """
+#        Calculated the covarianc rank of the squared network dynamics matrix self.r
+#        (or self.r_pred) and stores it in self.covar_rank               
+#        """
+#        """
+#        Does not calculate the actual covariance matrix!! Fix befor using
+#        """
+#        if flag == 'train':
+#            res_dyn = self.r
+#        elif flag == 'pred':
+#            res_dyn = self.r_pred
+#        else:
+#            raise Exception("wrong covariance flag")
+#        covar = np.matmul(res_dyn.T, res_dyn)
+#        #self.covar_rank = np.linalg.matrix_rank(covar)
+#        print(np.linalg.matrix_rank(covar))
+        
     def remove_nodes(self, split):
         """
         This method removes nodes from the network and W_in according to split,
@@ -419,18 +423,27 @@ class reservoir(esn_rescomp.res_core):
         new.avg_degree = new.binary_network.sum(axis=0).mean(axis=0)
         # the new spectral radius is calculated:
         new.network = scipy.sparse.csr_matrix(new.network)
+        try:
+            eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM')[0]
+            new.spectral_radius = np.absolute(eigenvals).max()
+            # try:
+            #     eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM')[0]
+            #     new.spectral_radius = np.absolute(eigenvals).max()
+            # except:
+            #     print('eigenvalue calculation failed!, no spectral_radius assigned')
 
-        eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM')[0]
-        new.spectral_radius = np.absolute(eigenvals).max()
-        # try:
-        #     eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM')[0]
-        #     new.spectral_radius = np.absolute(eigenvals).max()
-        # except:
-        #     print('eigenvalue calculation failed!, no spectral_radius assigned')
+            new.network = new.network.toarray()
 
-        new.network = new.network.toarray()
-
+        except ArpackNoConvergence as conv_error:
+            print(conv_error)
+            
+        
         # Adjust W_in
         new.W_in = np.delete(self.W_in, rm_args, 0)
-
+        # pass x,y to new_reservoir
+        new.x_train = self.x_train
+        new.x_discard = self.x_discard
+        new.y_test = self.y_test
+        new.y_train = self.y_train
+        
         return new

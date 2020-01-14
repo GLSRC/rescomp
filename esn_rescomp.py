@@ -59,7 +59,11 @@ class res_core(object):
     :W_in_scale: Defines the absolute scale of uniformly distributed random
         numbers, centered at zero
     :activation_function_flag: selects the type of activation function 
-        (steepness, offset).
+        (steepness, offset)
+    :self.normalize_data: boolean: if the time series should be normalized to zer
+            mean and unit std.
+    :self.r_squared: boolean: if the r vector should be squared for some nodes
+        in each step
     """
 
     def __init__(self, sys_flag='mod_lorenz', N=500, input_dimension=3,
@@ -69,9 +73,10 @@ class res_core(object):
                  regularization_parameter=0.0001, spectral_radius=0.1,
                  input_weight=1., avg_degree=6., epsilon=None,
                  extended_states=False, W_in_sparse=True, W_in_scale=1.,
-                 activation_function_flag='tanh'):
+                 activation_function_flag='tanh', bias_scale=0.,
+                 normalize_data=False, r_squared=False):
 
-        if epsilon == None: epsilon = np.array([5, 10, 5])
+        if epsilon is None: epsilon = np.array([5, 10, 5])
 
         self.sys_flag = sys_flag
         self.N = N
@@ -94,8 +99,10 @@ class res_core(object):
         self.W_in_scale = W_in_scale
         self.activation_function = None
         self.set_activation_function(activation_function_flag)
-
-        self.base_class_test_variable = 17.
+        self.bias_scale = bias_scale
+        self.normalize_data = normalize_data
+        self.r_squared = r_squared
+        
         # topology of the network, adjacency matrix with entries 0. or 1.:
         self.binary_network = None  # calc_bina_scry_network() assigns values
 
@@ -109,9 +116,11 @@ class res_core(object):
         # train() assigns values to:
         self.W_out = None
         self.r = None
+        self.r2 = None #if self.squared is True
 
         # predict() assigns values to:
         self.r_pred = None
+        self.r_pred2 = None #if self.squared is True
         self.y_pred = None
         self.noise = None
 
@@ -135,9 +144,11 @@ class res_core(object):
         # make a numpy array out of the network's adjacency matrix,
         # will be converted to scipy sparse in train(), predict()
         self.network = np.asarray(nx.to_numpy_matrix(network))
-
+        
         self.calc_binary_network()
-
+        
+        self.set_bias()
+        
         if self.W_in_sparse:
             # W_in such that one element in each row is non-zero (Lu,Hunt, Ott 2018):
             self.W_in = np.zeros((self.N, self.xdim))
@@ -156,6 +167,11 @@ class res_core(object):
     #    def __repr__(self):
     #        pass
 
+    def set_bias(self):
+        #bias for each node to enrich the used interval of activation function:
+        #if unwanted set self.bias_scale to zero.
+        self.bias = self.bias_scale * np.random.uniform(low=-1.0, high=1.0, size=self.N)
+
     def set_activation_function(self, activation_function_flag):
         """
         method to change the activation function according to 
@@ -171,8 +187,11 @@ class res_core(object):
     def tanh(self, x, r):
         """
         standard activation function tanh()
+        with optional r**2 for all odd nodes
         """
-        return np.tanh(self.input_weight * self.W_in @ x + self.network @ r)
+#        if self.r_squared:
+#            r[::2] *= r[::2]
+        return np.tanh(self.input_weight * self.W_in @ x + self.network @ r + self.bias)
 
     def calc_binary_network(self):
         """
@@ -219,7 +238,7 @@ class res_core(object):
             self.network = ((self.spectral_radius / maximum) * self.network)
         except:
             print('scaling failed due to non-convergence of eigenvalue \
-            evaluation.')
+            evaluation. ')
         self.network = self.network.toarray()
 
     #        self.network = self.spectral_radius*(self.network/np.absolute(
@@ -309,6 +328,12 @@ class res_core(object):
             vals += np.random.normal(scale=std_noise, size=vals.shape)
             print('added noise with std_dev: ' + str(std_noise))
 
+        #normalization of time series to zero mean and unit std for each
+        #dimension individually:
+        if self.normalize_data:
+            vals -= vals.mean(axis=0)
+            vals *= 1/vals.std(axis=0)            
+            
         # define local variables for test/train split:
         n_test = self.prediction_steps
         n_train = self.training_steps + self.discard_steps
@@ -404,9 +429,13 @@ class res_core(object):
         this version should be matched with the old one, and then implemented
         ultimately.
         """
+        if self.r_squared:
+            self.r2 = np.hstack((self.r, self.r**2))
+        else:
+            self.r2 = self.r
         self.W_out = np.linalg.solve((
-                self.r.T @ self.r + self.reg_param * np.eye(self.r.shape[1])),
-            (self.r.T @ (self.y_train))).T
+                self.r2.T @ self.r2 + self.reg_param * np.eye(self.r2.shape[1])),
+            (self.r2.T @ (self.y_train))).T
 
         t1 = time.time()
         if print_switch:
@@ -428,6 +457,7 @@ class res_core(object):
 
         ### predicting, fixed P, and using output as input again
         self.r_pred = np.zeros((self.prediction_steps, self.N))
+        self.r_pred2 = np.zeros((self.prediction_steps, self.N))
         self.y_pred = np.zeros((self.prediction_steps, self.ydim))
         ### add noise to reinserted input
         if prediction_noise:
@@ -469,7 +499,12 @@ class res_core(object):
             self.r_pred[0] = self.activation_function(self.y_train[-1], self.r[-1])
 
             # transition from training to prediction
-            self.y_pred[0] = np.matmul(self.W_out, self.r_pred[0])
+            if self.r_squared:
+                self.r_pred2 = np.hstack((self.r_pred, self.r_pred**2))
+            else:
+                self.r_pred2 = self.r_pred
+            
+            self.y_pred[0] = np.matmul(self.W_out, self.r_pred2[0])
 
             # prediction:
             for t in range(self.prediction_steps - 1):
@@ -477,9 +512,14 @@ class res_core(object):
                 self.r_pred[t + 1] = self.activation_function(
                     self.y_pred[t] + self.noise[t],
                     self.r_pred[t])
-
+                    
+                if self.r_squared:
+                    self.r_pred2 = np.hstack((self.r_pred, self.r_pred**2))
+                else:
+                    self.r_pred2 = self.r_pred
                 # update y:
-                self.y_pred[t + 1] = np.matmul(self.W_out, self.r_pred[t + 1])
+                
+                self.y_pred[t + 1] = np.matmul(self.W_out, self.r_pred2[t + 1])
 
         # array (backtransform from sparse)
         self.network = self.network.toarray()
@@ -499,29 +539,31 @@ class res_core(object):
         - 'arg': returns args of the selection
         
         """
-        absolute = int(self.N * split)
-
-        n = self.ydim * self.N  # dof in W_out
-        top_ten_bool = np.zeros(n, dtype=bool)  # False array
-        arg = np.argsort(np.reshape(np.abs(self.W_out), -1))  # order of abs(W_out)
-        if absolute > 0:
-            top_ten_bool[arg[-absolute:]] = True  # set largest entries True
-            top_ten_arg = np.argsort(np.max(np.abs(self.W_out), axis=0))[-absolute:]
-        elif absolute < 0:
-            top_ten_bool[arg[:-absolute]] = True  # set largest entries True
-            top_ten_arg = np.argsort(np.max(np.abs(self.W_out), axis=0))[:-absolute]
+        if self.r_squared:
+            print('no tt_calc for r_squared implemented yet')
         else:
-            top_ten_arg = np.empty(0)
-
-        top_ten_bool = np.reshape(top_ten_bool, self.W_out.shape)  # reshape to original shape
-        top_ten_bool_1d = np.array(top_ten_bool.sum(axis=0), dtype=bool)  # project to 1d
-
-        if flag == 'bool':
-            return top_ten_bool
-        elif flag == 'bool_1d':
-            return top_ten_bool_1d
-        elif flag == 'arg':
-            return top_ten_arg
+            absolute = int(self.N * split)
+            n = self.ydim * self.N  # dof in W_out
+            top_ten_bool = np.zeros(n, dtype=bool)  # False array
+            arg = np.argsort(np.reshape(np.abs(self.W_out), -1))  # order of abs(W_out)
+            if absolute > 0:
+                top_ten_bool[arg[-absolute:]] = True  # set largest entries True
+                top_ten_arg = np.argsort(np.max(np.abs(self.W_out), axis=0))[-absolute:]
+            elif absolute < 0:
+                top_ten_bool[arg[:-absolute]] = True  # set largest entries True
+                top_ten_arg = np.argsort(np.max(np.abs(self.W_out), axis=0))[:-absolute]
+            else:
+                top_ten_arg = np.empty(0)
+    
+            top_ten_bool = np.reshape(top_ten_bool, self.W_out.shape)  # reshape to original shape
+            top_ten_bool_1d = np.array(top_ten_bool.sum(axis=0), dtype=bool)  # project to 1d
+    
+            if flag == 'bool':
+                return top_ten_bool
+            elif flag == 'bool_1d':
+                return top_ten_bool_1d
+            elif flag == 'arg':
+                return top_ten_arg
 
     def save_realization(self, filename='parameter/test_pickle_'):
         """

@@ -44,6 +44,7 @@ def load_data(reservoir, data_input=None, mode='data_from_array', starting_point
     """
     # pdb.set_trace()
     # print(reservoir)
+
     t0 = time.time()
 
     # minimum size for vals, lorenz.save_trajectory has to evaluate:
@@ -101,6 +102,12 @@ def load_data(reservoir, data_input=None, mode='data_from_array', starting_point
     if add_noise:
         vals += np.random.normal(scale=std_noise, size=vals.shape)
         print('added noise with std_dev: ' + str(std_noise))
+
+    #normalization of time series to zero mean and unit std for each
+    #dimension individually:
+    if reservoir.normalize_data:
+        vals -= vals.mean(axis=0)
+        vals *= 1/vals.std(axis=0)
 
     # define local variables for test/train split:
     n_test = reservoir.prediction_steps

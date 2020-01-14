@@ -95,7 +95,7 @@ To uninstall the rescomp package, simply activate the respective environment and
       
   then deactivate and activate your anaconda environment 
 
-      conda deactivate rc_env
+      conda deactivate
       conda activate rc_env
       
   and then, should pip still not be located in the active environment by "which pip", install pip explicitly:

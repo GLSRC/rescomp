@@ -117,13 +117,13 @@ class esn(object):
 
         # network type flags are handled:
         if type_of_network == 'random':
-            network = nx.fast_gnp_random_graph(self.ndim, self.edge_prob)
+            network = nx.fast_gnp_random_graph(self.ndim, self.edge_prob, seed=np.random)
 
         elif type_of_network == 'scale_free':
-            network = nx.barabasi_albert_graph(self.ndim, int(self.avg_degree / 2))
+            network = nx.barabasi_albert_graph(self.ndim, int(self.avg_degree / 2), seed=np.random)
             # radius, dimension have to be specified
         elif type_of_network == 'small_world':
-            network = nx.watts_strogatz_graph(self.ndim, k=int(self.avg_degree), p=0.1)
+            network = nx.watts_strogatz_graph(self.ndim, k=int(self.avg_degree), p=0.1, seed=np.random)
         else:
             raise Exception("wrong self.type_of_network")
 

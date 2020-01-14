@@ -43,7 +43,8 @@ def mod_lorenz(x):
     sigma = 10.
     rho = 28.
     b = 8 / 3
-    np.array(x)
+    # np.array(x)
+    # print('cheese')
     if x.shape == (3,):
         return np.array([sigma * (x[1] - x[0]), x[0] * (rho - x[2]) - x[1], x[0] * x[1] - b * x[2] + x[0]])
     else:
@@ -66,6 +67,45 @@ def mod_lorenz_wrong(x):
         raise Exception('check shape of x, should have 3 components')
 
 
+# def lorenz_96(x, dim=11, force=8):
+#     # compute state derivatives
+#     der = np.zeros(dim)
+#
+#     # Periodic Boundary Conditions for the 3 edge cases i=1,2,system_dimension
+#     der[0] = (x[1] - x[dim - 2]) * x[dim - 1] - x[0]
+#     der[1] = (x[2] - x[dim - 1]) * x[0] - x[1]
+#     der[dim - 1] = (x[0] - x[dim - 3]) * x[dim - 2] - x[dim - 1]
+#
+#     # then the general case
+#     for i in range(2, dim - 1):
+#         der[i] = (x[i + 1] - x[i - 2]) * x[i - 1] - x[i]
+#
+#     # add the forcing term
+#     der = der + force
+#
+#     # return the state derivatives
+#     return der
+
+#TODO: Rewrite using numpy vectorization to make faster
+def lorenz_96(x, system_dimension=11, force=8):
+    # compute state derivatives
+    derivative = np.zeros(system_dimension)
+
+    # Periodic Boundary Conditions for the 3 edge cases i=1,2,system_dimension
+    derivative[0] = (x[1] - x[system_dimension - 2]) * x[system_dimension - 1] - x[0]
+    derivative[1] = (x[2] - x[system_dimension - 1]) * x[0] - x[1]
+    derivative[system_dimension - 1] = (x[0] - x[system_dimension - 3]) * x[system_dimension - 2] - x[system_dimension - 1]
+
+    # then the general case
+    for i in range(2, system_dimension - 1):
+        derivative[i] = (x[i + 1] - x[i - 2]) * x[i - 1] - x[i]
+
+    # add the forcing term
+    derivative = derivative + force
+
+    # return the state derivatives
+    return derivative
+
 def runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
     '''
     the function approximates differential equations of the form dy/dt = f(t,y)
@@ -80,7 +120,7 @@ def runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
 
 
 def record_trajectory(sys_flag='mod_lorenz', dt=1., timesteps=int(10e4),
-                      print_switch=False, starting_point=None):
+                      print_switch=False, starting_point=None, **kwargs):
     if print_switch:
         print(sys_flag)
 
@@ -93,6 +133,8 @@ def record_trajectory(sys_flag='mod_lorenz', dt=1., timesteps=int(10e4),
         f = normal_lorenz
     elif sys_flag == 'roessler':
         f = roessler
+    elif sys_flag == 'lorenz_96':
+        f = lambda x: lorenz_96(x, **kwargs)
     else:
         raise Exception('sys_flag not recoginized')
 

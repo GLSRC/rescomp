@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Calculating the lorenz63-attractor and other chaotic systems using 4th order runge kutta method
 
-@author: aumeier, edited by baur and herteux
+@author: aumeier, baur and herteux
 """
 
 
@@ -56,7 +56,11 @@ class esn(object):
     :W_in_scale: Defines the absolute scale of uniformly distributed random
         numbers, centered at zero
     :activation_function_flag: selects the type of activation function 
-        (steepness, offset).
+        (steepness, offset)
+    :self.normalize_data: boolean: if the time series should be normalized to zer
+            mean and unit std.
+    :self.r_squared: boolean: if the r vector should be squared for some nodes
+        in each step
     """
 
     def __init__(self, sys_flag='mod_lorenz', network_dimension=500, input_dimension=3,
@@ -65,9 +69,10 @@ class esn(object):
                  prediction_steps=5000, discard_steps=5000,
                  regularization_parameter=0.0001, spectral_radius=0.1,
                  input_weight=1., avg_degree=6., epsilon=None, W_in_sparse=True,
-                 W_in_scale=1., activation_function_flag='tanh'):
+                 W_in_scale=1., activation_function_flag='tanh', bias_scale=0.,
+                 normalize_data=False, r_squared=False):
 
-        if epsilon == None: epsilon = np.array([5, 10, 5])
+        if epsilon is None: epsilon = np.array([5, 10, 5])
 
         self.sys_flag = sys_flag
         self.ndim = network_dimension
@@ -81,7 +86,7 @@ class esn(object):
         self.reg_param = regularization_parameter
         self.spectral_radius = spectral_radius
         self.input_weight = input_weight
-        self.avg_degree = float(avg_degree)  # = self.network.sum()/self.network_dimension
+        self.avg_degree = float(avg_degree)  # = self.network.sum()/self.ndim
         self.edge_prob = self.avg_degree / (self.ndim - 1)
         self.b_out = np.ones((self.training_steps, 1))  # bias in fitting W_out
         self.epsilon = epsilon
@@ -89,8 +94,10 @@ class esn(object):
         self.W_in_scale = W_in_scale
         self.activation_function = None
         self.set_activation_function(activation_function_flag)
-
-        self.base_class_test_variable = 17.
+        self.bias_scale = bias_scale
+        self.normalize_data = normalize_data
+        self.r_squared = r_squared
+        
         # topology of the network, adjacency matrix with entries 0. or 1.:
         self.binary_network = None  # calc_bina_scry_network() assigns values
 
@@ -104,9 +111,11 @@ class esn(object):
         # train() assigns values to:
         self.W_out = None
         self.r = None
+        self.r2 = None #if self.squared is True
 
         # predict() assigns values to:
         self.r_pred = None
+        self.r_pred2 = None #if self.squared is True
         self.y_pred = None
         self.noise = None
 
@@ -134,8 +143,9 @@ class esn(object):
 
         self.calc_binary_network()
 
-        self.scale_network()
-
+        self.vary_network() # previously: self.scale_network() can someone explain why? vary contains scale
+        self.set_bias()
+        
         if self.W_in_sparse:
             # W_in such that one element in each row is non-zero (Lu,Hunt, Ott 2018):
             self.W_in = np.zeros((self.ndim, self.xdim))
@@ -147,7 +157,11 @@ class esn(object):
             self.W_in = np.random.uniform(low=-self.W_in_scale,
                                           high=self.W_in_scale,
                                           size=(self.ndim, self.xdim))
-
+    def set_bias(self):
+        #bias for each node to enrich the used interval of activation function:
+        #if unwanted set self.bias_scale to zero.
+        self.bias = self.bias_scale * np.random.uniform(low=-1.0, high=1.0, size=self.ndim)
+        
     def set_activation_function(self, activation_function_flag):
         """
         method to change the activation function according to 
@@ -218,8 +232,7 @@ class esn(object):
     #            np.linalg.eigvals(self.network)).max())
 
     def load_data(self, data_input=None, mode='data_from_array', starting_point=None,
-                  add_noise=False, std_noise=0., print_switch=False,
-                  ):
+                  add_noise=False, std_noise=0., print_switch=False):
         """
         Method to load data from a file or function (depending on mode)
         for training and testing the network.
@@ -286,9 +299,13 @@ class esn(object):
             # vector equation with
             # self.ndim entries
 
+        if self.r_squared:
+            self.r2 = np.hstack((self.r, self.r**2))
+        else:
+            self.r2 = self.r
         self.W_out = np.linalg.solve((
-                self.r.T @ self.r + self.reg_param * np.eye(self.r.shape[1])),
-            (self.r.T @ (self.y_train))).T
+                self.r2.T @ self.r2 + self.reg_param * np.eye(self.r2.shape[1])),
+            (self.r2.T @ (self.y_train))).T
 
         t1 = time.time()
         if print_switch:
@@ -321,7 +338,11 @@ class esn(object):
         self.r_pred[0] = self.activation_function(self.y_train[-1], self.r[-1])
 
         # transition from training to prediction
-        self.y_pred[0] = np.matmul(self.W_out, self.r_pred[0])
+        if self.r_squared:
+            self.r_pred2 = np.hstack((self.r_pred, self.r_pred**2))
+        else:
+            self.r_pred2 = self.r_pred
+        self.y_pred[0] = np.matmul(self.W_out, self.r_pred2[0])
 
         # prediction:
         for t in range(self.prediction_steps - 1):
@@ -329,9 +350,12 @@ class esn(object):
             self.r_pred[t + 1] = self.activation_function(
                 self.y_pred[t] + self.noise[t],
                 self.r_pred[t])
-
+            if self.r_squared:
+                self.r_pred2 = np.hstack((self.r_pred, self.r_pred**2))
+            else:
+                self.r_pred2 = self.r_pred
             # update y:
-            self.y_pred[t + 1] = np.matmul(self.W_out, self.r_pred[t + 1])
+            self.y_pred[t + 1] = np.matmul(self.W_out, self.r_pred2[t + 1])
 
         # array (backtransform from sparse)
         self.network = self.network.toarray()

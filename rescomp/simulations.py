@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Calculating the lorenz63-attractor and other chaotic systems using 4th order runge kutta method
 
-@author: aumeier, edited slightly by baur
+@author: aumeier, baur, mabrouk
 """
 
 import numpy as np
@@ -119,7 +119,7 @@ def runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
     return y + 1. / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
 
 
-def record_trajectory(sys_flag='mod_lorenz', dt=1., timesteps=int(10e4),
+def record_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
                       print_switch=False, starting_point=None, **kwargs):
     if print_switch:
         print(sys_flag)

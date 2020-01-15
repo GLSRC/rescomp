@@ -150,7 +150,6 @@ def save_realization(reservoir, filename='parameter/test_pickle_'):
 
     return 'file saved'
 
-
 def load_realization(reservoir, filename='parameter/test_pickle_', print_switch=False):
     """
     loads __dict__ from a pickled file and overwrites reservoir.__dict__

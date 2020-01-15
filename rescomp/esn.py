@@ -3,8 +3,6 @@
 
 @author: aumeier, baur and herteux
 """
-
-
 # from importlib import reload
 import numpy as np
 import scipy.sparse
@@ -15,7 +13,6 @@ import time
 # import matplotlib.pyplot as plt
 # import datetime
 from . import utilities
-
 
 class esn(object):
     """

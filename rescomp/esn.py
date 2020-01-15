@@ -57,9 +57,10 @@ class esn(object):
         numbers, centered at zero
     :activation_function_flag: selects the type of activation function 
         (steepness, offset)
-    :self.normalize_data: boolean: if the time series should be normalized to zer
+    :bias_scale: ###
+    :normalize_data: boolean: if the time series should be normalized to zer
             mean and unit std.
-    :self.r_squared: boolean: if the r vector should be squared for some nodes
+    :r_squared: boolean: if the r vector should be squared for some nodes
         in each step
     """
 
@@ -178,7 +179,7 @@ class esn(object):
         """
         standard activation function tanh()
         """
-        return np.tanh(self.input_weight * self.W_in @ x + self.network @ r)
+        return np.tanh(self.input_weight * self.W_in @ x + self.network @ r + self.bias)
 
     def calc_binary_network(self):
         """

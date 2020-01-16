@@ -217,7 +217,7 @@ class esn(object):
         """
         self.network = scipy.sparse.csr_matrix(self.network)
         try:
-            eigenvals = scipy.sparse.linalg.eigs(self.network, k=1, which='LM')[0]
+            eigenvals = scipy.sparse.linalg.eigs(self.network, k=1, v0=np.ones(self.ndim))[0]
             maximum = np.absolute(eigenvals).max()
 
             self.network = ((self.spectral_radius / maximum) * self.network)

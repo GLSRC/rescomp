@@ -58,11 +58,11 @@ Create the package distribution files
 
     python setup.py sdist bdist_wheel
 
-To install everything like a normal, unchanging package, use
+To install everything like a normal, unchanging package, use (the dot is important)
 
     pip install .
  
-If you plan to contribute, or just want to change the code yourself, it is much more conventient to install the package as an [editable install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs) 
+If you plan to contribute, or just want to change the code yourself, it is much more conventient to install the package as an [editable install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs) (the dot is important here too)
     
     pip install -e .
 
@@ -95,7 +95,7 @@ To uninstall the rescomp package, simply activate the respective environment and
       
   then deactivate and activate your anaconda environment 
 
-      conda deactivate rc_env
+      conda deactivate
       conda activate rc_env
       
   and then, should pip still not be located in the active environment by "which pip", install pip explicitly:

@@ -38,8 +38,6 @@ class esn(object):
     :regularization_parameter: weight for the Tikhonov-regularization term
         in the cost function (self.train())
     :spectral_radius: spectral radius of the actual reservoir network
-    :input_weight: weight of the input state over the reservoir state in
-        the neurons
     :edge_prob: the probability with which an edge is created in a random
         network
     :epsilon: threshold distance between y_test and y_pred for the
@@ -66,7 +64,7 @@ class esn(object):
                  dt=2e-2, training_steps=5000,
                  prediction_steps=5000, discard_steps=5000,
                  regularization_parameter=0.0001, spectral_radius=0.1,
-                 input_weight=1., avg_degree=6., epsilon=None, W_in_sparse=True,
+                 avg_degree=6., epsilon=None, W_in_sparse=True,
                  W_in_scale=1., activation_function_flag='tanh', bias_scale=0.,
                  normalize_data=False, r_squared=False):
 
@@ -83,7 +81,6 @@ class esn(object):
         self.discard_steps = discard_steps
         self.reg_param = regularization_parameter
         self.spectral_radius = spectral_radius
-        self.input_weight = input_weight
         self.avg_degree = float(avg_degree)  # = self.network.sum()/self.ndim
         self.edge_prob = self.avg_degree / (self.ndim - 1)
         self.b_out = np.ones((self.training_steps, 1))  # bias in fitting W_out
@@ -176,7 +173,7 @@ class esn(object):
         """
         standard activation function tanh()
         """
-        return np.tanh(self.input_weight * self.W_in @ x + self.network @ r + self.bias)
+        return np.tanh(self.W_in @ x + self.network @ r + self.bias)
 
     def calc_binary_network(self):
         """
@@ -244,7 +241,6 @@ class esn(object):
             given trajectory.
         - 'fix_start' passes        for t in np.arange(self.discard_steps):
             self.r[0] = np.tanh(
-                self.input_weight *
                 np.matmul(self.W_in, self.x_discard[t]) + \
                 np.matmul(self.network, self.r[0]) ) starting_point to lorenz.record_trajectory
         - 'data_from_file' loads a timeseries from file without further

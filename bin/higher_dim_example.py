@@ -10,9 +10,12 @@ from rescomp.simulations import ks_pde_simulation
 
 if __name__ == "__main__":
 
+
+    print("Start the KS simulation")
     # Create 100 dimensional input by simulating the Kuramoto–Sivashinsky PDE
-    data = ks_pde_simulation(dimensions=100, system_size=25, t_max=500,
+    data = ks_pde_simulation(dimensions=100, system_size=22, t_max=3000,
                              time_step=0.05)
+    print("KS Simulation done")
 
     # Used to always create the same random network and hence prediction
     np.random.seed(0)
@@ -24,14 +27,18 @@ if __name__ == "__main__":
     # the spectral radius to 0.9 or, for a completely failed prediction, set it
     # to 1.6 or higher
     esn = esn(network_dimension=5000, input_dimension=data.shape[1],
-              output_dimension=data.shape[1], training_steps=6000,
+              output_dimension=data.shape[1], training_steps=50000,
               prediction_steps=500, discard_steps=999,
               regularization_parameter=0.01, spectral_radius=0.3,
               avg_degree=100)
 
+    print("Start Reservoir Computing")
+
     esn.load_data(data)
     esn.train()
     esn.predict()
+
+    print("Reservoir Computing Done")
 
     # --- Plot the results
 

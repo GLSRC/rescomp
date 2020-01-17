@@ -7,7 +7,7 @@ from setuptools import setup
 
 setup(
     name='rescomp',
-    version='0.0.1',
+    version='0.0.2',
     description='Reservoir Computing package developed at the DLR',
     # long_description=long_description,  # TODO
     # long_description_content_type="text/markdown",

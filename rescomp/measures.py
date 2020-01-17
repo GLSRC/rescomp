@@ -14,13 +14,11 @@ import scipy.signal
 import scipy.sparse.linalg
 import scipy.spatial
 
-import sys
-sys.path.append("..")
-sys.path.append(".")
+#from . import esn
 #try: import esn_rescomp
 #except ModuleNotFoundError: from . import esn_rescomp
 
-def RMSE(reservoir, flag, interval_end):
+def rmse(reservoir, flag, interval_end=-1):
     """
     Measures an average over the spatial distance of predicted and actual
     trajectory
@@ -124,7 +122,7 @@ def dimension(reservoir, r_min=0.5, r_max=5., r_steps=0.15,
         plt.show()
     return dimension
 
-def calc_lyapunov(reservoir, threshold=int(10),
+def lyapunov(reservoir, threshold=int(10),
                   plot=False, print_switch=False, test_measure=False):
     """
     Calculates the maximal Lyapunov Exponent of reservoir.y_pred (or reservoir.y_test),
@@ -146,8 +144,6 @@ def calc_lyapunov(reservoir, threshold=int(10),
     remove the loop over taus, since the slope is calculated with single
     values only
     """
-    t0 = time.time()
-
     ###Definition of taus:        
     tau_min = int(0.5 / reservoir.dt)
     tau_max = int(3.8 / reservoir.dt)
@@ -225,7 +221,7 @@ def calc_lyapunov(reservoir, threshold=int(10),
 #     self.out_strength = np.abs(self.network).sum(axis=1)
 #     self.avg_out_strength = self.out_strength.mean()
 
-def calc_clustering_coeff(reservoir):
+def clustering_coeff(reservoir):
     """
     clustering coefficient for each node and returns it.
     """
@@ -236,7 +232,7 @@ def calc_clustering_coeff(reservoir):
     reservoir.clustering_coeff = C
 
 
-def plt(reservoir, flag='y', save_switch=False, path=''):
+def plot(reservoir, flag='y', save_switch=False, path=''):
     """
     Shows timeresolved plots of:
     'r': some of the reservoir states
@@ -353,7 +349,7 @@ def calc_tt(reservoir, flag='bool', split=0.1):
             elif flag == 'arg':
                 return top_ten_arg
             
-def calc_weighted_clustering_coeff_onnela(self):
+def weighted_clustering_coeff_onnela(reservoir):
     """
     Calculates the weighted clustering coefficient of abs(self.network)
     according to Onnela paper from 2005.

@@ -40,7 +40,7 @@ def mod_lorenz(x):
     returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     with dz/dt += x(t) to break symmetry
     
-    >>>mod_lorenz(np.array([1.,2.,3.]))
+    >>> mod_lorenz(np.array([1.,2.,3.]))
     array([10., 23., -5.])
     '''
     sigma = 10.

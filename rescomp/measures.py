@@ -100,9 +100,10 @@ def dimension(reservoir, r_min=0.5, r_max=5., r_steps=0.15,
         traj = reservoir.y_pred  # for evaluating prediction
     
     #adapt parameters to input size:
-    r_min *= 8.5/traj.std(axis=0).mean()
-    r_max *= 8.5/traj.std(axis=0).mean()
-    r_steps *= 8.5/traj.std(axis=0).mean()
+    r_min *= traj.std(axis=0).mean()/8.5
+    r_max *= traj.std(axis=0).mean()/8.5
+    r_steps *= traj.std(axis=0).mean()/8.5
+    
     
     nr_points = float(traj.shape[0])
     radii = np.arange(r_min, r_max, r_steps)

@@ -1,7 +1,13 @@
-# This is the global git ignore file
+# This is the git ignore file for the entire rescomp repository
+
+# Precompiled python files
+__pycache__/
 *.pyc
 
 # Python package build files
 build/
 dist/
 rescomp.egg-info/
+
+# IDE specific files
+.idea/

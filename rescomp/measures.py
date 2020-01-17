@@ -26,11 +26,11 @@ def rmse(reservoir, flag, interval_end=-1):
     if flag == 'train':
         error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r[:interval_end].T) - \
                           reservoir.y_train[:interval_end].T) ** 2).sum() \
-                        / (reservoir.y_train[:interval_end] ** 2).sum())
+                        / (reservoir.y_train[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
     elif flag == 'pred':
         error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r_pred[:interval_end].T) - \
                           reservoir.y_test[:interval_end].T) ** 2).sum() \
-                        / (reservoir.y_test[:interval_end] ** 2).sum())
+                        / (reservoir.y_test[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
     else:
         raise Exception('use "train" or "pred" as flag')
     return error

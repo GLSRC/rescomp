@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jan 16 15:13:21 2020
+""" Measures ann analysis functions for the ESN class
 
-@author: aumeier
+@author: aumeier, baur, herteux
 """
 
 # from importlib import reload
@@ -20,31 +19,61 @@ import scipy.spatial
 # except ModuleNotFoundError: from . import esn_rescomp
 
 
-# TODO: This currently only works for r_squared = False
-def rmse(reservoir, flag, interval_start=0, interval_end=-1):
+def nrmse(*args, normalized=True, **kwargs):
+    return rmse(*args, normalized=normalized, **kwargs)
+
+# TODO: For flag train, this currently only works for r_squared = False. I.g.
+# TODO: this function should probably not do any real calculations by itself, it
+# TODO: should just get the simulated and predicted y's and return the rmse
+def rmse(reservoir, flag, interval_start=0, interval_end=-1, normalized=False):
+    """
+    Measures an average over the spatial distance of predicted and actual
+    trajectory
+    """
+    w_out = reservoir.W_out
+
+    if flag == 'train':
+        y_cut = reservoir.y_train[interval_start:interval_end]
+        if reservoir.r_squared == False:
+            r_cut = reservoir.r[interval_start:interval_end]
+            y_pred_cut = w_out @ r_cut.T
+        else:
+            raise Exception('For flag \'train\', the rmse calculation currently'
+                            ' only works for r_squared = False')
+    elif flag == 'pred':
+        y_cut = reservoir.y_test[interval_start:interval_end]
+        if reservoir.y_pred is not None:
+            y_pred_cut = reservoir.y_pred[interval_start:interval_end].T
+        else:
+            r_cut = reservoir.r_pred[interval_start:interval_end]
+            y_pred_cut = w_out @ r_cut.T
+    else:
+        raise Exception('use "train" or "pred" as flag')
+
+    if normalized: norm = (y_cut ** 2).sum()
+    else: norm = y_cut.shape[0]
+
+    error = np.sqrt(((y_pred_cut - y_cut.T) ** 2).sum() / norm)
+
+    return error
+
+# Pre 2020-01-19. Remove once the new one is finished
+def rmse_old(reservoir, flag, interval_end=-1):
     """
     Measures an average over the spatial distance of predicted and actual
     trajectory
     """
     if flag == 'train':
-        r = reservoir.r
-        y = reservoir.y_train
+        error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r[:interval_end].T) - \
+                          reservoir.y_train[:interval_end].T) ** 2).sum() \
+                        / (reservoir.y_train[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
     elif flag == 'pred':
-        r = reservoir.r_pred
-        y = reservoir.y_test
+        error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r_pred[:interval_end].T) - \
+                          reservoir.y_test[:interval_end].T) ** 2).sum() \
+                        / (reservoir.y_test[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
     else:
         raise Exception('use "train" or "pred" as flag')
-
-    w_out = reservoir.W_out
-
-    r_cut = r[interval_start:interval_end]
-    y_cut = y[interval_start:interval_end]
-    error = np.sqrt(
-            ((w_out @ r_cut.T - y_cut.T) ** 2).sum() / (y_cut ** 2).sum()) / \
-            r_cut.shape[0]
-
     return error
-
 
 def demerge_time(reservoir):
     """

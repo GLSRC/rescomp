@@ -24,15 +24,17 @@ def rmse(reservoir, flag, interval_end=-1):
     trajectory
     """
     if flag == 'train':
-        error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r[:interval_end].T) - \
-                          reservoir.y_train[:interval_end].T) ** 2).sum() \
-                        / (reservoir.y_train[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
+        r = reservoir.r
+        y = reservoir.y_train
     elif flag == 'pred':
-        error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r_pred[:interval_end].T) - \
-                          reservoir.y_test[:interval_end].T) ** 2).sum() \
-                        / (reservoir.y_test[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
+        r = reservoir.r_pred
+        y = reservoir.y_test
     else:
         raise Exception('use "train" or "pred" as flag')
+
+    w_out = reservoir.W_out
+
+    error = np.sqrt(((w_out @ r[:interval_end].T - y[:interval_end].T) ** 2).sum() / (y[:interval_end] ** 2).sum()) / r[:interval_end].shape[0]
     return error
 
 def demerge_time(reservoir):

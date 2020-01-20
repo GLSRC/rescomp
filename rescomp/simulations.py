@@ -68,6 +68,33 @@ def mod_lorenz_wrong(x):
         return np.array([sigma * (x[1] - x[0]), x[0] * (rho - x[2]) - x[1], x[0] * x[1] - b * x[2]] + x[0])
     else:
         raise Exception('check shape of x, should have 3 components')
+        
+def chua(x):
+    '''
+    Simulates the chua attractor with the parameters of Matsumoto, Chua, Komuro
+    1985.
+    Returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
+    '''
+    C1 = 1./9.
+    C2 = 1.
+    L = 1./7.
+    G=0.7
+    
+    np.array(x)
+    if x.shape == (3,):
+        return np.array([(G*(x[1]-x[0])-g_chua(x[0]))/C1,
+                         (G*(x[0]-x[1])+x[2])/C2, -x[1]/L])
+    else:
+        raise Exception('check shape of x, should have 3 components')
+
+def g_chua(x):
+    '''
+    function needed for Chua ODEs
+    '''
+    m0=-0.5
+    m1=-0.8
+    Bp=1.
+    return m0*x+0.5*(m1-m0)*(np.abs(x+Bp)-np.abs(x-Bp))
 
 
 # def lorenz_96(x, dim=11, force=8):
@@ -138,6 +165,8 @@ def record_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
         f = roessler
     elif sys_flag == 'lorenz_96':
         f = lambda x: lorenz_96(x, **kwargs)
+    elif sys_flag == 'chua':
+        f = lambda x: chua(x, **kwargs)
     else:
         raise Exception('sys_flag not recoginized')
 

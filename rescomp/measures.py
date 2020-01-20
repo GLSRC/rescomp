@@ -13,47 +13,64 @@ import scipy.signal
 import scipy.sparse.linalg
 import scipy.spatial
 
+from . import esn  # Currently imported for type hints only
 
 # from . import esn
 # try: import esn_rescomp
 # except ModuleNotFoundError: from . import esn_rescomp
 
-
 def nrmse(*args, normalized=True, **kwargs):
     return rmse(*args, normalized=normalized, **kwargs)
 
-# TODO: For flag train, this currently only works for r_squared = False. I.g.
-# TODO: this function should probably not do any real calculations by itself, it
-# TODO: should just get the simulated and predicted y's and return the rmse
-def rmse(reservoir, flag, interval_start=0, interval_end=-1, normalized=False):
+# TODO: This should be more general
+def rmse(reservoir, interval_start=0, interval_end=-1, normalized=False):
     """
-    Measures an average over the spatial distance of predicted and actual
-    trajectory
+    Calculates the RMSE between predicted and measured trajectory
+
+    Args:
+        reservoir (esn): esn with esn.y_test and esn.y_pred set
+        interval_start (int): start of the data interval
+        interval_end (int): end of the data interval
+        normalized (bool): If true, calculate NRMSE instead of RMSE
+
+    Returns:
+        float:
     """
-    w_out = reservoir.W_out
 
-    if flag == 'train':
-        y_cut = reservoir.y_train[interval_start:interval_end]
-        if reservoir.r_squared == False:
-            r_cut = reservoir.r[interval_start:interval_end]
-            y_pred_cut = w_out @ r_cut.T
-        else:
-            raise Exception('For flag \'train\', the rmse calculation currently'
-                            ' only works for r_squared = False')
-    elif flag == 'pred':
-        y_cut = reservoir.y_test[interval_start:interval_end]
-        if reservoir.y_pred is not None:
-            y_pred_cut = reservoir.y_pred[interval_start:interval_end].T
-        else:
-            r_cut = reservoir.r_pred[interval_start:interval_end]
-            y_pred_cut = w_out @ r_cut.T
-    else:
-        raise Exception('use "train" or "pred" as flag')
+    y_real_cut = reservoir.y_test[interval_start:interval_end]
+    y_pred_cut = reservoir.y_pred[interval_start:interval_end]
 
-    if normalized: norm = (y_cut ** 2).sum()
-    else: norm = y_cut.shape[0]
+    if normalized: norm = (y_real_cut ** 2).sum()
+    else: norm = y_real_cut.shape[0]
 
-    error = np.sqrt(((y_pred_cut - y_cut.T) ** 2).sum() / norm)
+    error = np.sqrt(((y_pred_cut - y_real_cut.T) ** 2).sum() / norm)
+
+    # # old and wrong:
+    #
+    # w_out = reservoir.W_out
+    #
+    # if flag == 'train':
+    #     y_cut = reservoir.y_train[interval_start:interval_end]
+    #     if reservoir.r_squared == False:
+    #         r_cut = reservoir.r[interval_start:interval_end]
+    #         y_pred_cut = w_out @ r_cut.T
+    #     else:
+    #         raise Exception('For flag \'train\', the rmse calculation currently'
+    #                         ' only works for r_squared = False')
+    # elif flag == 'pred':
+    #     y_cut = reservoir.y_test[interval_start:interval_end]
+    #     if reservoir.y_pred is not None:
+    #         y_pred_cut = reservoir.y_pred[interval_start:interval_end].T
+    #     else:
+    #         r_cut = reservoir.r_pred[interval_start:interval_end]
+    #         y_pred_cut = w_out @ r_cut.T
+    # else:
+    #     raise Exception('use "train" or "pred" as flag')
+    #
+    # if normalized: norm = (y_cut ** 2).sum()
+    # else: norm = y_cut.shape[0]
+    #
+    # error = np.sqrt(((y_pred_cut - y_cut.T) ** 2).sum() / norm)
 
     return error
 

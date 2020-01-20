@@ -43,7 +43,7 @@ def rmse(reservoir, interval_start=0, interval_end=-1, normalized=False):
     if normalized: norm = (y_real_cut ** 2).sum()
     else: norm = y_real_cut.shape[0]
 
-    error = np.sqrt(((y_pred_cut - y_real_cut.T) ** 2).sum() / norm)
+    error = np.sqrt(((y_pred_cut - y_real_cut) ** 2).sum() / norm)
 
     # # old and wrong:
     #

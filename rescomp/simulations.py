@@ -95,6 +95,76 @@ def g_chua(x):
     m1=-0.8
     Bp=1.
     return m0*x+0.5*(m1-m0)*(np.abs(x+Bp)-np.abs(x-Bp))
+    
+def ueda(x):
+    '''
+    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
+    '''
+    delta = 0.05
+    beta = 0.
+    alpha = 1.
+    gamma=7.5
+    omega=1.
+    np.array(x)
+    if x.shape == (3,):
+        return np.array([x[1],
+                -delta*x[1] - beta*x[0] - alpha*x[0]**3 + gamma*np.cos(x[2]),
+                omega])
+    else:
+        raise Exception('check shape of x, should have 3 components')
+        
+def complex_butterfly(x):
+    '''
+    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
+    '''
+    a=0.55
+    np.array(x)
+    if x.shape == (3,):
+        return np.array([a*(x[1]-x[0]), -x[2]*np.sign(x[0]), np.abs(x[0]) - 1])
+    else:
+        raise Exception('check shape of x, should have 3 components')
+
+def chen(x):
+    '''
+    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
+    '''
+    a = 35.
+    b = 3.
+    c = 28.
+    np.array(x)
+    if x.shape == (3,):
+        return np.array([a * (x[1] - x[0]), (c-a)*x[0] -x[0]*x[2]+c*x[1], x[0] * x[1] - b * x[2]])
+    else:
+        raise Exception('check shape of x, should have 3 components')
+   
+def rucklidge(x):
+    '''
+    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
+    '''
+    kappa = 2.
+    lam = 6.7
+    
+    np.array(x)
+    if x.shape == (3,):
+        return np.array([-kappa*x[0] + lam*x[1] - x[1]*x[2],
+                         x[0], -x[2] + x[1]**2])
+    else:
+        raise Exception('check shape of x, should have 3 components')
+        
+def rabinovich(x):
+    '''
+    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
+    '''
+    alpha = 1.1
+    gamma = 0.87
+    
+    np.array(x)
+    if x.shape == (3,):
+        return np.array([x[1]*(x[2]-1+x[0]**2)+gamma*x[0],
+                         x[0]*(3*x[2]+1-x[0]**2)+gamma*x[1],
+                         -2*x[2]*(alpha + x[1]*x[0])])
+    else:
+        raise Exception('check shape of x, should have 3 components')
 
 
 # def lorenz_96(x, dim=11, force=8):
@@ -165,8 +235,18 @@ def record_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
         f = roessler
     elif sys_flag == 'lorenz_96':
         f = lambda x: lorenz_96(x, **kwargs)
+    elif sys_flag == 'ueda':
+        f = lambda x: ueda(x, **kwargs)
     elif sys_flag == 'chua':
         f = lambda x: chua(x, **kwargs)
+    elif sys_flag == 'complex_butterfly':
+        f = lambda x: complex_butterfly(x, **kwargs)
+    elif sys_flag == 'chen':
+        f = lambda x: chen(x, **kwargs)
+    elif sys_flag == 'rucklidge':
+        f = lambda x: rucklidge(x, **kwargs)
+    elif sys_flag == 'rabinovich':
+        f = lambda x: rabinovich(x, **kwargs)
     else:
         raise Exception('sys_flag not recoginized')
 

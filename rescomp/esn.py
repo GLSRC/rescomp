@@ -7,6 +7,7 @@
 import numpy as np
 import scipy.sparse
 import scipy.sparse.linalg
+from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence
 import networkx as nx
 import time
 # import pickle
@@ -118,27 +119,13 @@ class esn(object):
         self.complete_network = None  # complete_network() assigns value
 
         self.timestamp = None  # timestamp; value assigned in save_realization()
-
-        # network type flags are handled:
-        if type_of_network == 'random':
-            network = nx.fast_gnp_random_graph(self.ndim, self.edge_prob, seed=np.random)
-
-        elif type_of_network == 'scale_free':
-            network = nx.barabasi_albert_graph(self.ndim, int(self.avg_degree / 2), seed=np.random)
-            # radius, dimension have to be specified
-        elif type_of_network == 'small_world':
-            network = nx.watts_strogatz_graph(self.ndim, k=int(self.avg_degree), p=0.1, seed=np.random)
-        else:
-            raise Exception("wrong self.type_of_network")
-
-        # make a numpy array out of the network's adjacency matrix,
-        # will be converted to scipy sparse in train(), predict()
-
-        self.network = np.asarray(nx.to_numpy_matrix(network))
-
-        self.calc_binary_network()
-
-        self.vary_network() # previously: self.scale_network() can someone explain why? vary contains scale
+        while True:
+            try:
+                self.create_network()        
+                self.vary_network() # previously: self.scale_network() can someone explain why? vary contains scale
+            except ArpackNoConvergence:
+                continue
+            break
         self.set_bias()
         
         if self.W_in_sparse:
@@ -152,6 +139,25 @@ class esn(object):
             self.W_in = np.random.uniform(low=-self.W_in_scale,
                                           high=self.W_in_scale,
                                           size=(self.ndim, self.xdim))
+    def create_network(self):
+        # network type flags are handled:
+        if self.type == 'random':
+            network = nx.fast_gnp_random_graph(self.ndim, self.edge_prob, seed=np.random)
+        elif self.type == 'scale_free':
+            network = nx.barabasi_albert_graph(self.ndim, int(self.avg_degree / 2), seed=np.random)
+            # radius, dimension have to be specified
+        elif self.type == 'small_world':
+            network = nx.watts_strogatz_graph(self.ndim, k=int(self.avg_degree), p=0.1, seed=np.random)
+        else:
+            raise Exception("wrong self.type")
+
+        # make a numpy array out of the network's adjacency matrix,
+        # will be converted to scipy sparse in train(), predict()
+
+        self.network = np.asarray(nx.to_numpy_matrix(network))
+
+        self.calc_binary_network()
+        
     def set_bias(self):
         #bias for each node to enrich the used interval of activation function:
         #if unwanted set self.bias_scale to zero.
@@ -211,18 +217,19 @@ class esn(object):
         """
         """
         Can cause problems due to non converging of the eigenvalue evaluation
-        """
+        """            
         self.network = scipy.sparse.csr_matrix(self.network)
         try:
             eigenvals = scipy.sparse.linalg.eigs(self.network, k=1, v0=np.ones(self.ndim))[0]
-            maximum = np.absolute(eigenvals).max()
-
-            self.network = ((self.spectral_radius / maximum) * self.network)
-        except:
-            print('scaling failed due to non-convergence of eigenvalue \
-            evaluation.')
+        except ArpackNoConvergence as error:
+            print('here')
+            meh = error 
+            meh2 = error.args
+            raise ArpackNoConvergence('Eigenvalue in scale_network could not be calculated!', error.args[1], error.args[2])
+            
+        maximum = np.absolute(eigenvals).max()
+        self.network = ((self.spectral_radius / maximum) * self.network)
         self.network = self.network.toarray()
-
     #        self.network = self.spectral_radius*(self.network/np.absolute(
     #            np.linalg.eigvals(self.network)).max())
 

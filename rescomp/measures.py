@@ -14,9 +14,7 @@ import scipy.signal
 import scipy.sparse.linalg
 import scipy.spatial
 
-#from . import esn
-#try: import esn_rescomp
-#except ModuleNotFoundError: from . import esn_rescomp
+import rescomp
 
 def rmse(reservoir, flag, interval_end=-1):
     """
@@ -405,7 +403,7 @@ def remove_nodes(reservoir, split):
         raise Exception('values in split not between -1. and 1., type: ', type(split))
 
     remaining_size = sum(np.abs(split))
-    new = reservoir(sys_flag=reservoir.sys_flag, network_dimension=int(round(reservoir.ndim * (1 - remaining_size))),
+    new = rescomp.esn(sys_flag=reservoir.sys_flag, network_dimension=int(round(reservoir.ndim * (1 - remaining_size))),
                     input_dimension=3, output_dimension=3,
                     type_of_network=reservoir.type, dt=reservoir.dt,
                     training_steps=reservoir.training_steps,
@@ -415,7 +413,7 @@ def remove_nodes(reservoir, split):
                     spectral_radius=reservoir.spectral_radius, 
                     avg_degree=reservoir.avg_degree,
                     epsilon=reservoir.epsilon,
-                    activation_function_flag=reservoir.activation_function_flag,
+                    #activation_function_flag=reservoir.activation_function_flag,
                     W_in_sparse=reservoir.W_in_sparse, W_in_scale=reservoir.W_in_scale,
                     bias_scale=reservoir.bias_scale,
                     normalize_data=reservoir.normalize_data,
@@ -423,7 +421,7 @@ def remove_nodes(reservoir, split):
     # gather to be removed nodes arguments in rm_args:
     rm_args = np.empty(0)
     for s in split:
-        rm_args = np.append(calc_tt(flag='arg', split=s), rm_args)
+        rm_args = np.append(calc_tt(reservoir, flag='arg', split=s), rm_args)
         # print(s, rm_args.shape)
 
     # rows and columns of network are deleted according to rm_args:
@@ -435,7 +433,7 @@ def remove_nodes(reservoir, split):
     # the new spectral radius is calculated:
     new.network = scipy.sparse.csr_matrix(new.network)
     try:
-        eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM')[0]
+        eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM', v0=np.ones(self.ndim))[0]
         new.spectral_radius = np.absolute(eigenvals).max()
         # try:
         #     eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM')[0]

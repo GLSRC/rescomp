@@ -165,6 +165,17 @@ def rabinovich(x):
                          -2*x[2]*(alpha + x[1]*x[0])])
     else:
         raise Exception('check shape of x, should have 3 components')
+        
+def thomas(x): 
+    '''
+    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
+    '''
+    b=0.18
+    np.array(x)
+    if x.shape == (3,):
+        return np.array([-b*x[0]+np.sin(x[1]), -b*x[1]+np.sin(x[2]), -b*x[2]+np.sin(x[0])])
+    else:
+        raise Exception('check shape of x, should have 3 components')
 
 
 # def lorenz_96(x, dim=11, force=8):
@@ -247,6 +258,8 @@ def record_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
         f = lambda x: rucklidge(x, **kwargs)
     elif sys_flag == 'rabinovich':
         f = lambda x: rabinovich(x, **kwargs)
+    elif sys_flag == 'thomas':
+        f = lambda x: thomas(x, **kwargs)
     else:
         raise Exception('sys_flag not recoginized')
 

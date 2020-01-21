@@ -221,11 +221,9 @@ class esn(object):
         self.network = scipy.sparse.csr_matrix(self.network)
         try:
             eigenvals = scipy.sparse.linalg.eigs(self.network, k=1, v0=np.ones(self.ndim))[0]
-        except ArpackNoConvergence as error:
-            print('here')
-            meh = error 
-            meh2 = error.args
-            raise ArpackNoConvergence('Eigenvalue in scale_network could not be calculated!', error.args[1], error.args[2])
+        except ArpackNoConvergence:
+            print('Eigenvalue in scale_network could not be calculated!')
+            raise ArpackNoConvergence
             
         maximum = np.absolute(eigenvals).max()
         self.network = ((self.spectral_radius / maximum) * self.network)

@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 import scipy.signal
 import scipy.sparse.linalg
 import scipy.spatial
+from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence
+
 
 from . import esn  # Currently imported for type hints only
 
@@ -480,32 +482,25 @@ def remove_nodes(reservoir, split):
                         type(split))
 
     remaining_size = sum(np.abs(split))
-<<<<<<< HEAD
-    new = rescomp.esn(sys_flag=reservoir.sys_flag, network_dimension=int(round(reservoir.ndim * (1 - remaining_size))),
-=======
-    new = reservoir(sys_flag=reservoir.sys_flag, network_dimension=int(
-        round(reservoir.ndim * (1 - remaining_size))),
->>>>>>> 854de5d724297f7adce92449db31b47f88c9094c
-                    input_dimension=3, output_dimension=3,
-                    type_of_network=reservoir.type, dt=reservoir.dt,
-                    training_steps=reservoir.training_steps,
-                    prediction_steps=reservoir.prediction_steps,
-                    discard_steps=reservoir.discard_steps,
-                    regularization_parameter=reservoir.reg_param,
-                    spectral_radius=reservoir.spectral_radius,
-                    avg_degree=reservoir.avg_degree,
-                    epsilon=reservoir.epsilon,
-<<<<<<< HEAD
-                    #activation_function_flag=reservoir.activation_function_flag,
-                    W_in_sparse=reservoir.W_in_sparse, W_in_scale=reservoir.W_in_scale,
-=======
-                    activation_function_flag=reservoir.activation_function_flag,
-                    W_in_sparse=reservoir.W_in_sparse,
-                    W_in_scale=reservoir.W_in_scale,
->>>>>>> 854de5d724297f7adce92449db31b47f88c9094c
-                    bias_scale=reservoir.bias_scale,
-                    normalize_data=reservoir.normalize_data,
-                    r_squared=reservoir.r_squared)
+
+    new = esn(sys_flag=reservoir.sys_flag,
+                      network_dimension=int(
+                          round(reservoir.ndim * (1 - remaining_size))),
+                      input_dimension=3, output_dimension=3,
+                      type_of_network=reservoir.type, dt=reservoir.dt,
+                      training_steps=reservoir.training_steps,
+                      prediction_steps=reservoir.prediction_steps,
+                      discard_steps=reservoir.discard_steps,
+                      regularization_parameter=reservoir.reg_param,
+                      spectral_radius=reservoir.spectral_radius,
+                      avg_degree=reservoir.avg_degree,
+                      epsilon=reservoir.epsilon,
+                      # activation_function_flag=reservoir.activation_function_flag,
+                      W_in_sparse=reservoir.W_in_sparse,
+                      W_in_scale=reservoir.W_in_scale,
+                      bias_scale=reservoir.bias_scale,
+                      normalize_data=reservoir.normalize_data,
+                      r_squared=reservoir.r_squared)
     # gather to be removed nodes arguments in rm_args:
     rm_args = np.empty(0)
     for s in split:
@@ -522,8 +517,9 @@ def remove_nodes(reservoir, split):
     # the new spectral radius is calculated:
     new.network = scipy.sparse.csr_matrix(new.network)
     try:
-        eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM', v0=np.ones(self.ndim))[0]
+        eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, v0=np.ones(reservoir.ndim))[0]
         new.spectral_radius = np.absolute(eigenvals).max()
+
         # try:
         #     eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM')[0]
         #     new.spectral_radius = np.absolute(eigenvals).max()
@@ -532,8 +528,9 @@ def remove_nodes(reservoir, split):
 
         new.network = new.network.toarray()
 
-    except ArpackNoConvergence as conv_error:
-        print(conv_error)
+    except ArpackNoConvergence:
+        print('Eigenvalue in remove_nodes could not be calculated!')
+        raise ArpackNoConvergence
 
     # Adjust W_in
     new.W_in = np.delete(reservoir.W_in, rm_args, 0)

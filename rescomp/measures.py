@@ -510,14 +510,13 @@ def remove_nodes(reservoir, split):
     # rows and columns of network are deleted according to rm_args:
     new.network = np.delete(np.delete(reservoir.network, rm_args, 0), rm_args,
                             1)
-
     # the new average degree is calculated:
     new.calc_binary_network()
     new.avg_degree = new.binary_network.sum(axis=0).mean(axis=0)
     # the new spectral radius is calculated:
     new.network = scipy.sparse.csr_matrix(new.network)
     try:
-        eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, v0=np.ones(reservoir.ndim))[0]
+        eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, v0=np.ones(new.ndim))[0]
         new.spectral_radius = np.absolute(eigenvals).max()
 
         # try:
@@ -530,7 +529,7 @@ def remove_nodes(reservoir, split):
 
     except ArpackNoConvergence:
         print('Eigenvalue in remove_nodes could not be calculated!')
-        raise ArpackNoConvergence
+        raise
 
     # Adjust W_in
     new.W_in = np.delete(reservoir.W_in, rm_args, 0)

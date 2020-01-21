@@ -304,6 +304,7 @@ class esn(object):
             self.r2 = np.hstack((self.r, self.r**2))
         else:
             self.r2 = self.r
+
         self.W_out = np.linalg.solve((
                 self.r2.T @ self.r2 + self.reg_param * np.eye(self.r2.shape[1])),
             (self.r2.T @ (self.y_train))).T
@@ -349,10 +350,11 @@ class esn(object):
         for t in range(self.prediction_steps - 1):
             # update r:
             self.r_pred[t + 1] = self.activation_function(
-                self.y_pred[t] + self.noise[t],
-                self.r_pred[t])
+                self.y_pred[t] + self.noise[t], self.r_pred[t])
             if self.r_squared:
-                self.r_pred2 = np.hstack((self.r_pred, self.r_pred**2))
+                self.r_pred2[t + 1][:self.ndim] = self.r_pred[t + 1]
+                self.r_pred2[t + 1][self.ndim:] = self.r_pred[t + 1] ** 2
+                # self.r_pred2 = np.hstack((self.r_pred, self.r_pred**2))
             else:
                 self.r_pred2 = self.r_pred
             # update y:

@@ -1,22 +1,81 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jan 16 15:13:21 2020
+""" Measures ann analysis functions for the ESN class
 
-@author: aumeier
+@author: aumeier, baur, herteux
 """
 
-#from importlib import reload
+# from importlib import reload
 import numpy as np
 import matplotlib.pyplot as plt
-#import time
+# import time
 import scipy.signal
 import scipy.sparse.linalg
 import scipy.spatial
 
-import rescomp
+from . import esn  # Currently imported for type hints only
 
-def rmse(reservoir, flag, interval_end=-1):
+# from . import esn
+# try: import esn_rescomp
+# except ModuleNotFoundError: from . import esn_rescomp
+
+def nrmse(*args, normalized=True, **kwargs):
+    return rmse(*args, normalized=normalized, **kwargs)
+
+# TODO: This should be more general
+def rmse(reservoir, interval_start=0, interval_end=-1, normalized=False):
+    """
+    Calculates the RMSE between predicted and measured trajectory
+
+    Args:
+        reservoir (esn): esn with esn.y_test and esn.y_pred set
+        interval_start (int): start of the data interval
+        interval_end (int): end of the data interval
+        normalized (bool): If true, calculate NRMSE instead of RMSE
+
+    Returns:
+        float:
+    """
+
+    y_real_cut = reservoir.y_test[interval_start:interval_end]
+    y_pred_cut = reservoir.y_pred[interval_start:interval_end]
+
+    if normalized: norm = (y_real_cut ** 2).sum()
+    else: norm = y_real_cut.shape[0]
+
+    error = np.sqrt(((y_pred_cut - y_real_cut) ** 2).sum() / norm)
+
+    # # old and wrong:
+    #
+    # w_out = reservoir.W_out
+    #
+    # if flag == 'train':
+    #     y_cut = reservoir.y_train[interval_start:interval_end]
+    #     if reservoir.r_squared == False:
+    #         r_cut = reservoir.r[interval_start:interval_end]
+    #         y_pred_cut = w_out @ r_cut.T
+    #     else:
+    #         raise Exception('For flag \'train\', the rmse calculation currently'
+    #                         ' only works for r_squared = False')
+    # elif flag == 'pred':
+    #     y_cut = reservoir.y_test[interval_start:interval_end]
+    #     if reservoir.y_pred is not None:
+    #         y_pred_cut = reservoir.y_pred[interval_start:interval_end].T
+    #     else:
+    #         r_cut = reservoir.r_pred[interval_start:interval_end]
+    #         y_pred_cut = w_out @ r_cut.T
+    # else:
+    #     raise Exception('use "train" or "pred" as flag')
+    #
+    # if normalized: norm = (y_cut ** 2).sum()
+    # else: norm = y_cut.shape[0]
+    #
+    # error = np.sqrt(((y_pred_cut - y_cut.T) ** 2).sum() / norm)
+
+    return error
+
+# Pre 2020-01-19. Remove once the new one is finished
+def rmse_old(reservoir, flag, interval_end=-1):
     """
     Measures an average over the spatial distance of predicted and actual
     trajectory
@@ -60,6 +119,7 @@ def demerge_time(reservoir):
     """
     return demerge_time
 
+
 # def return_map(self, axis=2):
 #     """
 #     Shows the recurrence plot of the maxima of a given axis
@@ -76,7 +136,7 @@ def demerge_time(reservoir):
 #     plt.show()
 
 def dimension(reservoir, r_min=0.5, r_max=5., r_steps=0.15,
-                   plot=False, test_measure=False):
+              plot=False, test_measure=False):
     """
     Calculates correlation dimension for reservoir.y_pred (or reservoir.y_test) using
     the algorithm by Grassberger and Procaccia and returns dimension.
@@ -96,13 +156,12 @@ def dimension(reservoir, r_min=0.5, r_max=5., r_steps=0.15,
         traj = reservoir.y_test  # for measure assessing
     else:
         traj = reservoir.y_pred  # for evaluating prediction
-    
-    #adapt parameters to input size:
-    r_min *= traj.std(axis=0).mean()/8.5
-    r_max *= traj.std(axis=0).mean()/8.5
-    r_steps *= traj.std(axis=0).mean()/8.5
-    
-    
+
+    # adapt parameters to input size:
+    r_min *= traj.std(axis=0).mean() / 8.5
+    r_max *= traj.std(axis=0).mean() / 8.5
+    r_steps *= traj.std(axis=0).mean() / 8.5
+
     nr_points = float(traj.shape[0])
     radii = np.arange(r_min, r_max, r_steps)
 
@@ -121,8 +180,9 @@ def dimension(reservoir, r_min=0.5, r_max=5., r_steps=0.15,
         plt.show()
     return dimension
 
+
 def lyapunov(reservoir, threshold=int(10),
-                  plot=False, print_switch=False, test_measure=False):
+             plot=False, print_switch=False, test_measure=False):
     """
     Calculates the maximal Lyapunov Exponent of reservoir.y_pred (or reservoir.y_test),
     by estimating the time derivative of the mean logarithmic distances of
@@ -146,7 +206,8 @@ def lyapunov(reservoir, threshold=int(10),
     ###Definition of taus:        
     tau_min = int(0.5 / reservoir.dt)
     tau_max = int(3.8 / reservoir.dt)
-    taus = np.arange(tau_min, tau_max, 10)  # taus = np.array([tau_min, tau_max])
+    taus = np.arange(tau_min, tau_max,
+                     10)  # taus = np.array([tau_min, tau_max])
 
     if test_measure:
         traj = reservoir.y_test  # for measure assessing
@@ -155,13 +216,14 @@ def lyapunov(reservoir, threshold=int(10),
 
     tree = scipy.spatial.cKDTree(traj)
     nn_index = tree.query(traj, k=2)[1]
-    
-    #drop all elements in nn_index lists where the neighbour is:
-    #1. less than threshold timesteps away
-    #2. where we cannot calculate the neighbours future in tau_max timesteps:
-    
-    #contains indices of points and the indices of their nn:
-    reservoir.nn_index = nn_index[np.abs(nn_index[:, 0] - nn_index[:, 1]) > threshold]
+
+    # drop all elements in nn_index lists where the neighbour is:
+    # 1. less than threshold timesteps away
+    # 2. where we cannot calculate the neighbours future in tau_max timesteps:
+
+    # contains indices of points and the indices of their nn:
+    reservoir.nn_index = nn_index[
+        np.abs(nn_index[:, 0] - nn_index[:, 1]) > threshold]
 
     nn_index = nn_index[nn_index[:, 1] + tau_max < traj.shape[0]]
     nn_index = nn_index[nn_index[:, 0] + tau_max < traj.shape[0]]
@@ -178,7 +240,8 @@ def lyapunov(reservoir, threshold=int(10),
         # loop over every point in the trajectory, where we can calclutate
         # the future in tau_max timesteps:
         for point, nn in nn_index:
-            S.append(np.log(np.linalg.norm(traj[point + tau] - traj[nn + tau])))  # add one points average s to S
+            S.append(np.log(np.linalg.norm(traj[point + tau] - traj[
+                nn + tau])))  # add one points average s to S
 
             # since there is no else, we only avg over the points that have
             # points in their epsilon environment
@@ -196,6 +259,7 @@ def lyapunov(reservoir, threshold=int(10),
         plt.show()
 
     return slope
+
 
 # def W_out_distr(self):
 #     """
@@ -258,13 +322,15 @@ def plot(reservoir, flag='y', save_switch=False, path=''):
         ax1.set_ylim((-1.05, 1.05))
         ax1.set_title('network during training')
         ax1.plot(np.arange(reservoir.r.shape[0]),
-                 reservoir.r[:, calc_tt(reservoir, flag='bool_1d', split=split)])
+                 reservoir.r[:,
+                 calc_tt(reservoir, flag='bool_1d', split=split)])
 
         ax2 = f.add_subplot(122)
         ax2.set_ylim((-1.05, 1.05))
         ax2.set_title('network during prediction')
         ax2.plot(np.arange(reservoir.r_pred.shape[0]),
-                 reservoir.r_pred[:, calc_tt(reservoir, flag='bool_1d', split=split)])
+                 reservoir.r_pred[:,
+                 calc_tt(reservoir, flag='bool_1d', split=split)])
 
     elif flag == 'y':
         # f = plt.figure(figsize = (15,15))
@@ -283,7 +349,8 @@ def plot(reservoir, flag='y', save_switch=False, path=''):
             ylimits = ((-25, 20), (-30, 30), (0, 50))
         else:
             traj = np.concatenate((reservoir.y_test, reservoir.y_train), axis=0)
-            ylimits = [[traj[:, dim].min(), traj[:, dim].max()] for dim in np.arange(reservoir.ydim)]
+            ylimits = [[traj[:, dim].min(), traj[:, dim].max()] for dim in
+                       np.arange(reservoir.ydim)]
         for i, ylim in enumerate(ylimits):
             ax1 = axes[i][0]
             ax1.set_ylim(ylim)
@@ -310,44 +377,51 @@ def plot(reservoir, flag='y', save_switch=False, path=''):
     else:
         print('normal show')
         f.show()
-        
+
+
 def calc_tt(reservoir, flag='bool', split=0.1):
-        """
-        selects depending on if the abs(entry) of reservoir.W_out is one of the
-        largest, depending on split.
-        If split is negative the abs(entry) smallest are selected depending
-        on flag:
-        - 'bool': reservoir.W_out.shape with True/False 
-        - 'bool_1d': is a projection to 1d
-        - 'arg': returns args of the selection
-        
-        """
-        if reservoir.r_squared:
-            print('no tt_calc for r_squared implemented yet')
+    """
+    selects depending on if the abs(entry) of reservoir.W_out is one of the
+    largest, depending on split.
+    If split is negative the abs(entry) smallest are selected depending
+    on flag:
+    - 'bool': reservoir.W_out.shape with True/False
+    - 'bool_1d': is a projection to 1d
+    - 'arg': returns args of the selection
+
+    """
+    if reservoir.r_squared:
+        print('no tt_calc for r_squared implemented yet')
+    else:
+        absolute = int(reservoir.ndim * split)
+        n = reservoir.ydim * reservoir.ndim  # dof in W_out
+        top_ten_bool = np.zeros(n, dtype=bool)  # False array
+        arg = np.argsort(
+            np.reshape(np.abs(reservoir.W_out), -1))  # order of abs(W_out)
+        if absolute > 0:
+            top_ten_bool[arg[-absolute:]] = True  # set largest entries True
+            top_ten_arg = np.argsort(np.max(np.abs(reservoir.W_out), axis=0))[
+                          -absolute:]
+        elif absolute < 0:
+            top_ten_bool[arg[:-absolute]] = True  # set largest entries True
+            top_ten_arg = np.argsort(np.max(np.abs(reservoir.W_out), axis=0))[
+                          :-absolute]
         else:
-            absolute = int(reservoir.ndim * split)
-            n = reservoir.ydim * reservoir.ndim  # dof in W_out
-            top_ten_bool = np.zeros(n, dtype=bool)  # False array
-            arg = np.argsort(np.reshape(np.abs(reservoir.W_out), -1))  # order of abs(W_out)
-            if absolute > 0:
-                top_ten_bool[arg[-absolute:]] = True  # set largest entries True
-                top_ten_arg = np.argsort(np.max(np.abs(reservoir.W_out), axis=0))[-absolute:]
-            elif absolute < 0:
-                top_ten_bool[arg[:-absolute]] = True  # set largest entries True
-                top_ten_arg = np.argsort(np.max(np.abs(reservoir.W_out), axis=0))[:-absolute]
-            else:
-                top_ten_arg = np.empty(0)
-    
-            top_ten_bool = np.reshape(top_ten_bool, reservoir.W_out.shape)  # reshape to original shape
-            top_ten_bool_1d = np.array(top_ten_bool.sum(axis=0), dtype=bool)  # project to 1d
-    
-            if flag == 'bool':
-                return top_ten_bool
-            elif flag == 'bool_1d':
-                return top_ten_bool_1d
-            elif flag == 'arg':
-                return top_ten_arg
-            
+            top_ten_arg = np.empty(0)
+
+        top_ten_bool = np.reshape(top_ten_bool,
+                                  reservoir.W_out.shape)  # reshape to original shape
+        top_ten_bool_1d = np.array(top_ten_bool.sum(axis=0),
+                                   dtype=bool)  # project to 1d
+
+        if flag == 'bool':
+            return top_ten_bool
+        elif flag == 'bool_1d':
+            return top_ten_bool_1d
+        elif flag == 'arg':
+            return top_ten_arg
+
+
 def weighted_clustering_coeff_onnela(reservoir):
     """
     Calculates the weighted clustering coefficient of abs(self.network)
@@ -360,11 +434,13 @@ def weighted_clustering_coeff_onnela(reservoir):
     network = abs(reservoir.network) / abs(reservoir.network).max()
 
     weighted_cc = np.diag(np.matmul(np.cbrt(network),
-                        np.matmul(np.cbrt(network), np.cbrt(network)))) \
-                       / (k * (k - 1))
+                                    np.matmul(np.cbrt(network),
+                                              np.cbrt(network)))) \
+                  / (k * (k - 1))
     # assign 0. to infinit values:
     weighted_cc[np.isnan(weighted_cc)] = 0.
     return weighted_cc
+
 
 #    def calc_covar_rank(reservoir, flag='train'):
 #        """
@@ -383,7 +459,7 @@ def weighted_clustering_coeff_onnela(reservoir):
 #        covar = np.matmul(res_dyn.T, res_dyn)
 #        #self.covar_rank = np.linalg.matrix_rank(covar)
 #        print(np.linalg.matrix_rank(covar))
-    
+
 def remove_nodes(reservoir, split):
     """
     This method removes nodes from the network and W_in according to split,
@@ -400,21 +476,33 @@ def remove_nodes(reservoir, split):
     elif type(split) == float and split >= -1. and split <= 1.:
         split = [split]
     else:
-        raise Exception('values in split not between -1. and 1., type: ', type(split))
+        raise Exception('values in split not between -1. and 1., type: ',
+                        type(split))
 
     remaining_size = sum(np.abs(split))
+<<<<<<< HEAD
     new = rescomp.esn(sys_flag=reservoir.sys_flag, network_dimension=int(round(reservoir.ndim * (1 - remaining_size))),
+=======
+    new = reservoir(sys_flag=reservoir.sys_flag, network_dimension=int(
+        round(reservoir.ndim * (1 - remaining_size))),
+>>>>>>> 854de5d724297f7adce92449db31b47f88c9094c
                     input_dimension=3, output_dimension=3,
                     type_of_network=reservoir.type, dt=reservoir.dt,
                     training_steps=reservoir.training_steps,
                     prediction_steps=reservoir.prediction_steps,
                     discard_steps=reservoir.discard_steps,
                     regularization_parameter=reservoir.reg_param,
-                    spectral_radius=reservoir.spectral_radius, 
+                    spectral_radius=reservoir.spectral_radius,
                     avg_degree=reservoir.avg_degree,
                     epsilon=reservoir.epsilon,
+<<<<<<< HEAD
                     #activation_function_flag=reservoir.activation_function_flag,
                     W_in_sparse=reservoir.W_in_sparse, W_in_scale=reservoir.W_in_scale,
+=======
+                    activation_function_flag=reservoir.activation_function_flag,
+                    W_in_sparse=reservoir.W_in_sparse,
+                    W_in_scale=reservoir.W_in_scale,
+>>>>>>> 854de5d724297f7adce92449db31b47f88c9094c
                     bias_scale=reservoir.bias_scale,
                     normalize_data=reservoir.normalize_data,
                     r_squared=reservoir.r_squared)
@@ -425,7 +513,8 @@ def remove_nodes(reservoir, split):
         # print(s, rm_args.shape)
 
     # rows and columns of network are deleted according to rm_args:
-    new.network = np.delete(np.delete(reservoir.network, rm_args, 0), rm_args, 1)
+    new.network = np.delete(np.delete(reservoir.network, rm_args, 0), rm_args,
+                            1)
 
     # the new average degree is calculated:
     new.calc_binary_network()
@@ -445,8 +534,7 @@ def remove_nodes(reservoir, split):
 
     except ArpackNoConvergence as conv_error:
         print(conv_error)
-        
-    
+
     # Adjust W_in
     new.W_in = np.delete(reservoir.W_in, rm_args, 0)
     # pass x,y to new_reservoir
@@ -454,5 +542,5 @@ def remove_nodes(reservoir, split):
     new.x_discard = reservoir.x_discard
     new.y_test = reservoir.y_test
     new.y_train = reservoir.y_train
-    
+
     return new

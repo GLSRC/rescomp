@@ -516,7 +516,10 @@ def remove_nodes(reservoir, split):
     # the new spectral radius is calculated:
     new.network = scipy.sparse.csr_matrix(new.network)
     try:
-        eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, v0=np.ones(new.ndim))[0]
+        eigenvals = scipy.sparse.linalg.eigs(new.network,
+                                             k=1,
+                                             v0=np.ones(new.ndim),
+                                             maxiter=1e3*new.ndim)[0]
         new.spectral_radius = np.absolute(eigenvals).max()
 
         # try:

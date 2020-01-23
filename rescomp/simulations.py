@@ -19,6 +19,21 @@ def roessler(x):
         return np.array([-x[1] - x[2], x[0] + a * x[1], b + x[2] * (x[0] - c)])
     else:
         raise Exception('check shape of x, should have 3 components')
+        
+def roessler_sprott(x):
+    '''
+    Returns (dx/dt, dy/dt, dz/dt) for given (x,y,z).
+    This version is identical to roessler(), but uses the parameters from Sprott.
+    Implemented as its own function for now to make sure not to interfere.
+    '''
+    a = 0.2
+    b = 0.2
+    c = 5.7
+    np.array(x)
+    if x.shape == (3,):
+        return np.array([-x[1] - x[2], x[0] + a * x[1], b + x[2] * (x[0] - c)])
+    else:
+        raise Exception('check shape of x, should have 3 components')
 
 
 def normal_lorenz(x):
@@ -71,30 +86,29 @@ def mod_lorenz_wrong(x):
         
 def chua(x):
     '''
-    Simulates the chua attractor with the parameters of Matsumoto, Chua, Komuro
-    1985.
     Returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     '''
-    C1 = 1./9.
-    C2 = 1.
-    L = 1./7.
-    G=0.7
+    alpha=9.
+    beta=100./7.
+    a=8./7.
+    b=5./7.
     
     np.array(x)
     if x.shape == (3,):
-        return np.array([(G*(x[1]-x[0])-g_chua(x[0]))/C1,
-                         (G*(x[0]-x[1])+x[2])/C2, -x[1]/L])
+        return np.array([alpha*(x[1]-x[0]+b*x[0]+0.5*(a-b)*(np.abs(x[0]+1)
+                        -np.abs(x[0]-1))),x[0]-x[1]+x[2], -beta*x[1]])
     else:
         raise Exception('check shape of x, should have 3 components')
 
-def g_chua(x):
-    '''
-    function needed for Chua ODEs
-    '''
-    m0=-0.5
-    m1=-0.8
-    Bp=1.
-    return m0*x+0.5*(m1-m0)*(np.abs(x+Bp)-np.abs(x-Bp))
+
+#def g_chua(x):
+#    '''
+#    function needed for Chua ODEs
+#    '''
+#    m0=-0.5
+#    m1=-0.8
+#    Bp=1.
+#    return m0*x+0.5*(m1-m0)*(np.abs(x+Bp)-np.abs(x-Bp))
     
 def ueda(x):
     '''
@@ -260,6 +274,8 @@ def record_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
         f = lambda x: rabinovich(x, **kwargs)
     elif sys_flag == 'thomas':
         f = lambda x: thomas(x, **kwargs)
+    elif sys_flag == 'roessler_sprott':
+        f = lambda x: roessler_sprott(x, **kwargs)
     else:
         raise Exception('sys_flag not recoginized')
 

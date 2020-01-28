@@ -128,6 +128,9 @@ class esn(object):
             break
         self.set_bias()
         
+        self.create_W_in()
+                                          
+    def create_W_in(self):
         if self.W_in_sparse:
             # W_in such that one element in each row is non-zero (Lu,Hunt, Ott 2018):
             self.W_in = np.zeros((self.ndim, self.xdim))
@@ -139,6 +142,8 @@ class esn(object):
             self.W_in = np.random.uniform(low=-self.W_in_scale,
                                           high=self.W_in_scale,
                                           size=(self.ndim, self.xdim))
+        
+        
     def create_network(self):
         # network type flags are handled:
         if self.type == 'random':

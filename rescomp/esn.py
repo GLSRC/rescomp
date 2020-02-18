@@ -120,13 +120,19 @@ class ESN(object):
         self.complete_network = None  # complete_network() assigns value
 
         self.timestamp = None  # timestamp; value assigned in save_realization()
-        while True:
+
+        network_creation_attempts = 10
+        for i in range(network_creation_attempts):
             try:
                 self.create_network()        
                 self.vary_network() # previously: self.scale_network() can someone explain why? vary contains scale
             except ArpackNoConvergence:
                 continue
             break
+        else:
+            raise Exception("Network creation during ESN init failed %d times"
+                            %network_creation_attempts)
+
         self.set_bias()
         
         self.create_w_in()
@@ -205,12 +211,23 @@ class ESN(object):
         # contains tuples of non-zero elements:
         arg_binary_network = np.argwhere(self.network)
 
-        # uniform entries from [-0.5, 0.5) at the former non-zero locations:
-        self.network[arg_binary_network[:, 0],
-                     arg_binary_network[:, 1]] = np.random.random(
-            size=self.network[self.network != 0.].shape) - 0.5
+        network_variation_attempts = 10
+        for i in range(network_variation_attempts):
+            try:
+                # uniform entries from [-0.5, 0.5) at non-zero locations:
+                rand_shape = self.network[self.network != 0.].shape
+                self.network[
+                    arg_binary_network[:, 0], arg_binary_network[:, 1]] = \
+                    np.random.random(size=rand_shape) - 0.5
 
-        self.scale_network()
+                self.scale_network()
+
+            except ArpackNoConvergence:
+                continue
+            break
+        else:
+            raise Exception("Network variation failed %d times"
+                            %network_variation_attempts)
 
         t1 = time.time()
         if print_switch:
@@ -237,8 +254,6 @@ class ESN(object):
         maximum = np.absolute(eigenvals).max()
         self.network = ((self.spectral_radius / maximum) * self.network)
         self.network = self.network.toarray()
-    #        self.network = self.spectral_radius*(self.network/np.absolute(
-    #            np.linalg.eigvals(self.network)).max())
 
     def load_data(self, data_input=None, mode='data_from_array', starting_point=None,
                   add_noise=False, std_noise=0., print_switch=False):

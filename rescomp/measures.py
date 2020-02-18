@@ -20,53 +20,90 @@ from . import ESN  # Currently imported for type hints only
 # try: import esn_rescomp
 # except ModuleNotFoundError: from . import esn_rescomp
 
+
+def nrmse_over_time(test_data, pred_data, *args, **kwargs):
+    nrmse_list = []
+    for interval_start in range(0, test_data.shape[0]):
+        interval_end = interval_start + 1
+        # interval_end = interval_start
+        # local_nrmse = rescomp.measures.nrmse(esn, interval_start=interval_start, interval_end=interval_end)
+        local_nrmse = nrmse(test_data, pred_data, interval_start=interval_start,
+                            interval_end=interval_end)
+        nrmse_list.append(local_nrmse)
+
+    return np.array(nrmse_list)
+
+
 def nrmse(*args, normalized=True, **kwargs):
     return rmse(*args, normalized=normalized, **kwargs)
+
 
 # TODO: This should be more general, preferably implemented as a function for
 # TODO: any two time series that then is applied to our reservoir class
 # TODO: Also, one should be able to choose between train and pred data
-def rmse(reservoir, interval_start=0, interval_end=-1, normalized=False):
-    """
-    Calculates the RMSE between predicted and measured trajectory
+def rmse(test_data, pred_data, interval_start=0, interval_end=-1, normalized=False):
+    y_real_cut = test_data[interval_start:interval_end]
+    y_pred_cut = pred_data[interval_start:interval_end]
 
-    Args:
-        reservoir (ESN): ESN with ESN.y_test and ESN.y_pred set
-        interval_start (int): start of the data interval
-        interval_end (int): end of the data interval
-        normalized (bool): If true, calculate NRMSE instead of RMSE
-
-    Returns:
-        float:
-    """
-
-    y_real_cut = reservoir.y_test[interval_start:interval_end]
-    y_pred_cut = reservoir.y_pred[interval_start:interval_end]
-
-    if normalized: norm = (y_real_cut ** 2).sum()
-    else: norm = y_real_cut.shape[0]
-
-    error = np.sqrt(((y_pred_cut - y_real_cut) ** 2).sum() / norm)
-
-    return error
-
-# Pre 2020-01-19. Remove once the new one is finished
-def rmse_old(reservoir, flag, interval_end=-1):
-    """
-    Measures an average over the spatial distance of predicted and actual
-    trajectory
-    """
-    if flag == 'train':
-        error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r[:interval_end].T) - \
-                          reservoir.y_train[:interval_end].T) ** 2).sum() \
-                        / (reservoir.y_train[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
-    elif flag == 'pred':
-        error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r_pred[:interval_end].T) - \
-                          reservoir.y_test[:interval_end].T) ** 2).sum() \
-                        / (reservoir.y_test[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
+    # if normalized: norm = (y_real_cut ** 2).sum()
+    # else: norm = y_real_cut.shape[0]
+    # error = np.sqrt(((y_pred_cut - y_real_cut) ** 2).sum() / norm)
+    #
+    # if normalized: norm = np.linalg.norm(y_real_cut) ** 2
+    # else: norm = y_real_cut.shape[0]
+    # error = np.sqrt(np.linalg.norm(y_pred_cut - y_real_cut) ** 2 / norm)
+    #
+    if normalized:
+        error = np.linalg.norm(y_pred_cut - y_real_cut) / np.linalg.norm(y_real_cut)
     else:
-        raise Exception('use "train" or "pred" as flag')
+        error = np.linalg.norm(y_pred_cut - y_real_cut) / np.sqrt(y_real_cut.shape[0])
+
     return error
+#
+# def rmse(reservoir, interval_start=0, interval_end=-1, normalized=False):
+#     """
+#     Calculates the RMSE between predicted and measured trajectory
+#
+#     Args:
+#         reservoir (ESN): ESN with ESN.y_test and ESN.y_pred set
+#         interval_start (int): start of the data interval
+#         interval_end (int): end of the data interval
+#         normalized (bool): If true, calculate NRMSE instead of RMSE
+#
+#     Returns:
+#         float:
+#     """
+#
+#     y_real_cut = reservoir.y_test[interval_start:interval_end]
+#     y_pred_cut = reservoir.y_pred[interval_start:interval_end]
+#
+#     # if normalized: norm = (y_real_cut ** 2).sum()
+#     # else: norm = y_real_cut.shape[0]
+#     # error = np.sqrt(((y_pred_cut - y_real_cut) ** 2).sum() / norm)
+#
+#     if normalized: norm = np.linalg.norm(y_real_cut) ** 2
+#     else: norm = y_real_cut.shape[0]
+#     error = np.sqrt(((y_pred_cut - y_real_cut) ** 2).sum() / norm)
+#
+#     return error
+#
+# # Pre 2020-01-19. Remove once the new one is finished
+# def rmse_old(reservoir, flag, interval_end=-1):
+#     """
+#     Measures an average over the spatial distance of predicted and actual
+#     trajectory
+#     """
+#     if flag == 'train':
+#         error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r[:interval_end].T) - \
+#                           reservoir.y_train[:interval_end].T) ** 2).sum() \
+#                         / (reservoir.y_train[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
+#     elif flag == 'pred':
+#         error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r_pred[:interval_end].T) - \
+#                           reservoir.y_test[:interval_end].T) ** 2).sum() \
+#                         / (reservoir.y_test[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
+#     else:
+#         raise Exception('use "train" or "pred" as flag')
+#     return error
 
 def demerge_time(reservoir):
     """

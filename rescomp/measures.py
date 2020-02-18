@@ -293,7 +293,7 @@ def clustering_coeff(reservoir):
     reservoir.calc_binary_network()
     network = reservoir.binary_network
     k = network.sum(axis=0)
-    C = np.diag(np.matmul(np.matmul(network, network), network)) / k * (k - 1)
+    C = np.diag(network @ network @ network) / k * (k - 1)
     reservoir.clustering_coeff = C
 
 
@@ -435,10 +435,9 @@ def weighted_clustering_coeff_onnela(reservoir):
     # print(k)
     network = abs(reservoir.network) / abs(reservoir.network).max()
 
-    weighted_cc = np.diag(np.matmul(np.cbrt(network),
-                                    np.matmul(np.cbrt(network),
-                                              np.cbrt(network)))) \
-                  / (k * (k - 1))
+    network_cbrt = np.cbrt(network)
+    weighted_cc = np.diag(network_cbrt @ network_cbrt @ network_cbrt) / \
+                  (k * (k - 1))
     # assign 0. to infinit values:
     weighted_cc[np.isnan(weighted_cc)] = 0.
     return weighted_cc

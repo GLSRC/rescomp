@@ -252,10 +252,11 @@ class esn(object):
         - 'start_from_attractor' uses lorenz.record_trajectory for 
             generating a timeseries, by randomly picking starting points from a 
             given trajectory.
-        - 'fix_start' passes        for t in np.arange(self.discard_steps):
-            self.r[0] = np.tanh(
-                np.matmul(self.W_in, self.x_discard[t]) + \
-                np.matmul(self.network, self.r[0]) ) starting_point to lorenz.record_trajectory
+        - 'fix_start' passes
+            for t in np.arange(self.discard_steps):
+                self.r[0] = np.tanh(self.W_in @ self.x_discard[t] +
+                            self.network @ self.r[0] )
+            starting_point to lorenz.record_trajectory
         - 'data_from_file' loads a timeseries from file without further
         checking for reasonability - use with care!
         
@@ -350,7 +351,7 @@ class esn(object):
             self.r_pred2 = np.hstack((self.r_pred, self.r_pred**2))
         else:
             self.r_pred2 = self.r_pred
-        self.y_pred[0] = np.matmul(self.W_out, self.r_pred2[0])
+        self.y_pred[0] = self.W_out @ self.r_pred2[0]
 
         # prediction:
         for t in range(self.prediction_steps - 1):
@@ -364,7 +365,7 @@ class esn(object):
             else:
                 self.r_pred2 = self.r_pred
             # update y:
-            self.y_pred[t + 1] = np.matmul(self.W_out, self.r_pred2[t + 1])
+            self.y_pred[t + 1] = self.W_out @ self.r_pred2[t + 1]
 
         # array (backtransform from sparse)
         self.network = self.network.toarray()

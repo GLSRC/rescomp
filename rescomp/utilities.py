@@ -72,28 +72,28 @@ def load_data(reservoir, data_input=None, mode='data_from_array', starting_point
         if print_switch:
             print('random index for starting_point: ', random_index)
 
-        starting_point = simulations.record_trajectory(
+        starting_point = simulations.simulate_trajectory(
             sys_flag=reservoir.sys_flag,
             dt=reservoir.dt,
             timesteps=length,
             starting_point=original_start,
             print_switch=print_switch)[random_index]
 
-        vals = simulations.record_trajectory(sys_flag=reservoir.sys_flag,
-                                             dt=reservoir.dt,
-                                             timesteps=timesteps,
-                                             starting_point=starting_point,
-                                             print_switch=print_switch)
+        vals = simulations.simulate_trajectory(sys_flag=reservoir.sys_flag,
+                                               dt=reservoir.dt,
+                                               timesteps=timesteps,
+                                               starting_point=starting_point,
+                                               print_switch=print_switch)
 
     elif mode == 'fix_start':
         if starting_point is None:
             raise Exception('set starting_point to use fix_start')
         else:
-            vals = simulations.record_trajectory(sys_flag=reservoir.sys_flag,
-                                                 dt=reservoir.dt,
-                                                 timesteps=timesteps,
-                                                 starting_point=starting_point,
-                                                 print_switch=print_switch)
+            vals = simulations.simulate_trajectory(sys_flag=reservoir.sys_flag,
+                                                   dt=reservoir.dt,
+                                                   timesteps=timesteps,
+                                                   starting_point=starting_point,
+                                                   print_switch=print_switch)
     else:
         raise Exception(mode, ' mode not recognized')
         # print(mode, ' mode not recognized')

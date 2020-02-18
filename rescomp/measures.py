@@ -14,8 +14,7 @@ import scipy.sparse.linalg
 import scipy.spatial
 from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence
 
-
-from . import esn  # Currently imported for type hints only
+from . import ESN  # Currently imported for type hints only
 
 # from . import esn
 # try: import esn_rescomp
@@ -24,13 +23,15 @@ from . import esn  # Currently imported for type hints only
 def nrmse(*args, normalized=True, **kwargs):
     return rmse(*args, normalized=normalized, **kwargs)
 
-# TODO: This should be more general
+# TODO: This should be more general, preferably implemented as a function for
+# TODO: any two time series that then is applied to our reservoir class
+# TODO: Also, one should be able to choose between train and pred data
 def rmse(reservoir, interval_start=0, interval_end=-1, normalized=False):
     """
     Calculates the RMSE between predicted and measured trajectory
 
     Args:
-        reservoir (esn): esn with esn.y_test and esn.y_pred set
+        reservoir (ESN): ESN with ESN.y_test and ESN.y_pred set
         interval_start (int): start of the data interval
         interval_end (int): end of the data interval
         normalized (bool): If true, calculate NRMSE instead of RMSE
@@ -46,33 +47,6 @@ def rmse(reservoir, interval_start=0, interval_end=-1, normalized=False):
     else: norm = y_real_cut.shape[0]
 
     error = np.sqrt(((y_pred_cut - y_real_cut) ** 2).sum() / norm)
-
-    # # old and wrong:
-    #
-    # w_out = reservoir.W_out
-    #
-    # if flag == 'train':
-    #     y_cut = reservoir.y_train[interval_start:interval_end]
-    #     if reservoir.r_squared == False:
-    #         r_cut = reservoir.r[interval_start:interval_end]
-    #         y_pred_cut = w_out @ r_cut.T
-    #     else:
-    #         raise Exception('For flag \'train\', the rmse calculation currently'
-    #                         ' only works for r_squared = False')
-    # elif flag == 'pred':
-    #     y_cut = reservoir.y_test[interval_start:interval_end]
-    #     if reservoir.y_pred is not None:
-    #         y_pred_cut = reservoir.y_pred[interval_start:interval_end].T
-    #     else:
-    #         r_cut = reservoir.r_pred[interval_start:interval_end]
-    #         y_pred_cut = w_out @ r_cut.T
-    # else:
-    #     raise Exception('use "train" or "pred" as flag')
-    #
-    # if normalized: norm = (y_cut ** 2).sum()
-    # else: norm = y_cut.shape[0]
-    #
-    # error = np.sqrt(((y_pred_cut - y_cut.T) ** 2).sum() / norm)
 
     return error
 
@@ -265,12 +239,12 @@ def lyapunov(reservoir, threshold=int(10),
 
 # def W_out_distr(self):
 #     """
-#     Shows a histogram of the fitted parameters of self.W_out, each output
+#     Shows a histogram of the fitted parameters of self.w_out, each output
 #     dimension in an other color
 #     """
 #     f = plt.figure(figsize=(10, 10))
-#     for i in np.arange(self.ydim):
-#         plt.hist(self.W_out[i], bins=30, alpha=0.5, label='W_out[' + str(i) + ']')
+#     for i in np.arange(self.y_dim):
+#         plt.hist(self.w_out[i], bins=30, alpha=0.5, label='w_out[' + str(i) + ']')
 #     plt.legend(fontsize=10)
 #     f.show()
 
@@ -359,7 +333,7 @@ def plot(reservoir, flag='y', save_switch=False, path=''):
             ax1.set_title('y[' + str(i) + ']_value_train')
             ax1.plot(time_range_train, reservoir.y_train[:, i], **train_dict)
 
-            # ax2 = plt.subplot(reservoir.ydim,2,2*i+2)
+            # ax2 = plt.subplot(reservoir.y_dim,2,2*i+2)
             ax2 = axes[i][1]
             ax2.set_title('y[' + str(i) + ']_value_pred')
             ax2.set_ylim(ylim)
@@ -383,11 +357,11 @@ def plot(reservoir, flag='y', save_switch=False, path=''):
 
 def calc_tt(reservoir, flag='bool', split=0.1):
     """
-    selects depending on if the abs(entry) of reservoir.W_out is one of the
+    selects depending on if the abs(entry) of reservoir.w_out is one of the
     largest, depending on split.
     If split is negative the abs(entry) smallest are selected depending
     on flag:
-    - 'bool': reservoir.W_out.shape with True/False
+    - 'bool': reservoir.w_out.shape with True/False
     - 'bool_1d': is a projection to 1d
     - 'arg': returns args of the selection
 
@@ -396,10 +370,10 @@ def calc_tt(reservoir, flag='bool', split=0.1):
         print('no tt_calc for r_squared implemented yet')
     else:
         absolute = int(reservoir.ndim * split)
-        n = reservoir.ydim * reservoir.ndim  # dof in W_out
+        n = reservoir.ydim * reservoir.ndim  # dof in w_out
         top_ten_bool = np.zeros(n, dtype=bool)  # False array
         arg = np.argsort(
-            np.reshape(np.abs(reservoir.W_out), -1))  # order of abs(W_out)
+            np.reshape(np.abs(reservoir.W_out), -1))  # order of abs(w_out)
         if absolute > 0:
             top_ten_bool[arg[-absolute:]] = True  # set largest entries True
             top_ten_arg = np.argsort(np.max(np.abs(reservoir.W_out), axis=0))[
@@ -463,7 +437,7 @@ def weighted_clustering_coeff_onnela(reservoir):
 
 def remove_nodes(reservoir, split):
     """
-    This method removes nodes from the network and W_in according to split,
+    This method removes nodes from the network and w_in according to split,
     updates avg_degree, spectral_radius, 
     This new reservoir is returned
     split should be given as a list of two values or a float e [-1. and 1.]
@@ -482,24 +456,24 @@ def remove_nodes(reservoir, split):
 
     remaining_size = sum(np.abs(split))
 
-    new = esn(sys_flag=reservoir.sys_flag,
-                      network_dimension=int(
+    new = ESN(sys_flag=reservoir.sys_flag,
+              network_dimension=int(
                           round(reservoir.ndim * (1 - remaining_size))),
-                      input_dimension=3, output_dimension=3,
-                      type_of_network=reservoir.type, dt=reservoir.dt,
-                      training_steps=reservoir.training_steps,
-                      prediction_steps=reservoir.prediction_steps,
-                      discard_steps=reservoir.discard_steps,
-                      regularization_parameter=reservoir.reg_param,
-                      spectral_radius=reservoir.spectral_radius,
-                      avg_degree=reservoir.avg_degree,
-                      epsilon=reservoir.epsilon,
-                      # activation_function_flag=reservoir.activation_function_flag,
-                      W_in_sparse=reservoir.W_in_sparse,
-                      W_in_scale=reservoir.W_in_scale,
-                      bias_scale=reservoir.bias_scale,
-                      normalize_data=reservoir.normalize_data,
-                      r_squared=reservoir.r_squared)
+              input_dimension=3, output_dimension=3,
+              type_of_network=reservoir.type, dt=reservoir.dt,
+              training_steps=reservoir.training_steps,
+              prediction_steps=reservoir.prediction_steps,
+              discard_steps=reservoir.discard_steps,
+              regularization_parameter=reservoir.reg_param,
+              spectral_radius=reservoir.spectral_radius,
+              avg_degree=reservoir.avg_degree,
+              epsilon=reservoir.epsilon,
+              # activation_function_flag=reservoir.activation_function_flag,
+              w_in_sparse=reservoir.W_in_sparse,
+              w_in_scale=reservoir.W_in_scale,
+              bias_scale=reservoir.bias_scale,
+              normalize_data=reservoir.normalize_data,
+              r_squared=reservoir.r_squared)
     # gather to be removed nodes arguments in rm_args:
     rm_args = np.empty(0)
     for s in split:
@@ -517,8 +491,8 @@ def remove_nodes(reservoir, split):
     try:
         eigenvals = scipy.sparse.linalg.eigs(new.network,
                                              k=1,
-                                             v0=np.ones(new.ndim),
-                                             maxiter=1e3*new.ndim)[0]
+                                             v0=np.ones(new.n_dim),
+                                             maxiter=1e3*new.n_dim)[0]
         new.spectral_radius = np.absolute(eigenvals).max()
 
         # try:
@@ -533,8 +507,8 @@ def remove_nodes(reservoir, split):
         print('Eigenvalue in remove_nodes could not be calculated!')
         raise
 
-    # Adjust W_in
-    new.W_in = np.delete(reservoir.W_in, rm_args, 0)
+    # Adjust w_in
+    new.w_in = np.delete(reservoir.W_in, rm_args, 0)
     # pass x,y to new_reservoir
     new.x_train = reservoir.x_train
     new.x_discard = reservoir.x_discard

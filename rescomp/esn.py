@@ -15,7 +15,8 @@ import time
 # import datetime
 from . import utilities
 
-class esn(object):
+
+class ESN(object):
     """
     reservoir is a class for reservoir computing, using different network
     structures to predict (chaotic) time series
@@ -45,11 +46,11 @@ class esn(object):
         prediction to be consided close (self.demerge_time())
     :extended_state: bool: if True: an extended state of the form [b,x,r]
         is used for updating the reservoir state, the prediction and
-        fitting W_out.
+        fitting w_out.
         if False: only [r] is used
-    :W_in_sparse: if True, each node only gets input from one dimension,
+    :w_in_sparse: if True, each node only gets input from one dimension,
         if False, all dimensions are superimposed at each node
-    :W_in_scale: Defines the absolute scale of uniformly distributed random
+    :w_in_scale: Defines the absolute scale of uniformly distributed random
         numbers, centered at zero
     :activation_function_flag: selects the type of activation function 
         (steepness, offset)
@@ -65,29 +66,29 @@ class esn(object):
                  dt=2e-2, training_steps=5000,
                  prediction_steps=5000, discard_steps=5000,
                  regularization_parameter=0.0001, spectral_radius=0.1,
-                 avg_degree=6., epsilon=None, W_in_sparse=True,
-                 W_in_scale=1., activation_function_flag='tanh', bias_scale=0.,
+                 avg_degree=6., epsilon=None, w_in_sparse=True,
+                 w_in_scale=1., activation_function_flag='tanh', bias_scale=0.,
                  normalize_data=False, r_squared=False):
 
         if epsilon is None: epsilon = np.array([5, 10, 5])
 
         self.sys_flag = sys_flag
-        self.ndim = network_dimension
+        self.n_dim = network_dimension
         self.type = type_of_network
-        self.xdim = input_dimension
-        self.ydim = output_dimension
+        self.x_dim = input_dimension
+        self.y_dim = output_dimension
         self.dt = dt
         self.training_steps = training_steps
         self.prediction_steps = prediction_steps
         self.discard_steps = discard_steps
         self.reg_param = regularization_parameter
         self.spectral_radius = spectral_radius
-        self.avg_degree = float(avg_degree)  # = self.network.sum()/self.ndim
-        self.edge_prob = self.avg_degree / (self.ndim - 1)
-        self.b_out = np.ones((self.training_steps, 1))  # bias in fitting W_out
+        self.avg_degree = float(avg_degree)  # = self.network.sum()/self.n_dim
+        self.edge_prob = self.avg_degree / (self.n_dim - 1)
+        self.b_out = np.ones((self.training_steps, 1))  # bias in fitting w_out
         self.epsilon = epsilon
-        self.W_in_sparse = W_in_sparse
-        self.W_in_scale = W_in_scale
+        self.w_in_sparse = w_in_sparse
+        self.w_in_scale = w_in_scale
         self.activation_function = None
         self.set_activation_function(activation_function_flag)
         self.bias_scale = bias_scale
@@ -102,12 +103,12 @@ class esn(object):
         self.x_discard = None
         self.y_train = None
         self.y_test = None
-        self.W_in = None
+        self.w_in = None
 
         # train() assigns values to:
-        self.W_out = None
+        self.w_out = None
         self.r = None
-        self.r2 = None #if self.squared is True
+        self.r2 = None #if self.r_squared is True
 
         # predict() assigns values to:
         self.r_pred = None
@@ -128,31 +129,31 @@ class esn(object):
             break
         self.set_bias()
         
-        self.create_W_in()
+        self.create_w_in()
                                           
-    def create_W_in(self):
-        if self.W_in_sparse:
-            # W_in such that one element in each row is non-zero (Lu,Hunt, Ott 2018):
-            self.W_in = np.zeros((self.ndim, self.xdim))
-            for i in range(self.ndim):
-                random_x_coord = np.random.choice(np.arange(self.xdim))
-                self.W_in[i, random_x_coord] = np.random.uniform(
-                    low=-self.W_in_scale, high=self.W_in_scale)  # maps input values to reservoir
+    def create_w_in(self):
+        if self.w_in_sparse:
+            # w_in such that one element in each row is non-zero (Lu,Hunt, Ott 2018):
+            self.w_in = np.zeros((self.n_dim, self.x_dim))
+            for i in range(self.n_dim):
+                random_x_coord = np.random.choice(np.arange(self.x_dim))
+                self.w_in[i, random_x_coord] = np.random.uniform(
+                    low=-self.w_in_scale, high=self.w_in_scale)  # maps input values to reservoir
         else:
-            self.W_in = np.random.uniform(low=-self.W_in_scale,
-                                          high=self.W_in_scale,
-                                          size=(self.ndim, self.xdim))
+            self.w_in = np.random.uniform(low=-self.w_in_scale,
+                                          high=self.w_in_scale,
+                                          size=(self.n_dim, self.x_dim))
         
         
     def create_network(self):
         # network type flags are handled:
         if self.type == 'random':
-            network = nx.fast_gnp_random_graph(self.ndim, self.edge_prob, seed=np.random)
+            network = nx.fast_gnp_random_graph(self.n_dim, self.edge_prob, seed=np.random)
         elif self.type == 'scale_free':
-            network = nx.barabasi_albert_graph(self.ndim, int(self.avg_degree / 2), seed=np.random)
+            network = nx.barabasi_albert_graph(self.n_dim, int(self.avg_degree / 2), seed=np.random)
             # radius, dimension have to be specified
         elif self.type == 'small_world':
-            network = nx.watts_strogatz_graph(self.ndim, k=int(self.avg_degree), p=0.1, seed=np.random)
+            network = nx.watts_strogatz_graph(self.n_dim, k=int(self.avg_degree), p=0.1, seed=np.random)
         else:
             raise Exception("wrong self.type")
 
@@ -166,7 +167,7 @@ class esn(object):
     def set_bias(self):
         #bias for each node to enrich the used interval of activation function:
         #if unwanted set self.bias_scale to zero.
-        self.bias = self.bias_scale * np.random.uniform(low=-1.0, high=1.0, size=self.ndim)
+        self.bias = self.bias_scale * np.random.uniform(low=-1.0, high=1.0, size=self.n_dim)
         
     def set_activation_function(self, activation_function_flag):
         """
@@ -184,7 +185,7 @@ class esn(object):
         """
         standard activation function tanh()
         """
-        return np.tanh(self.W_in @ x + self.network @ r + self.bias)
+        return np.tanh(self.w_in @ x + self.network @ r + self.bias)
 
     def calc_binary_network(self):
         """
@@ -227,8 +228,8 @@ class esn(object):
         try:
             eigenvals = scipy.sparse.linalg.eigs(self.network,
                                                  k=1,
-                                                 v0=np.ones(self.ndim),
-                                                 maxiter=1e3*self.ndim)[0]
+                                                 v0=np.ones(self.n_dim),
+                                                 maxiter=1e3*self.n_dim)[0]
         except ArpackNoConvergence:
             print('Eigenvalue in scale_network could not be calculated!')
             raise
@@ -245,7 +246,7 @@ class esn(object):
         Method to load data from a file or function (depending on mode)
         for training and testing the network.
         If the file does not exist, it is created according to the parameters.
-        self.W_in is initialized.
+        self.w_in is initialized.
         
         :parameters:
         :mode:
@@ -254,7 +255,7 @@ class esn(object):
             given trajectory.
         - 'fix_start' passes
             for t in np.arange(self.discard_steps):
-                self.r[0] = np.tanh(self.W_in @ self.x_discard[t] +
+                self.r[0] = np.tanh(self.w_in @ self.x_discard[t] +
                             self.network @ self.r[0] )
             starting_point to lorenz.record_trajectory
         - 'data_from_file' loads a timeseries from file without further
@@ -270,10 +271,10 @@ class esn(object):
 
     def train(self, print_switch=False):
         """
-        Fits self.W_out, which connects the reservoir states and the input to
+        Fits self.w_out, which connects the reservoir states and the input to
         the desired output, using linear regression and Tikhonov
         regularization.
-        The convention is as follows: self.y[t+1] = self.W_out*self.r[t]
+        The convention is as follows: self.y[t+1] = self.w_out*self.r[t]
         Discards self.discard_steps steps befor recording the internal states
         of the reservoir (self.r),
         to synchronize the network dynamics with the input.
@@ -288,7 +289,7 @@ class esn(object):
         self.network = scipy.sparse.csr_matrix(self.network)
 
         # states of the reservoir:
-        self.r = np.zeros((self.training_steps, self.ndim))
+        self.r = np.zeros((self.training_steps, self.n_dim))
 
         # reservoir is synchronized with trajectory during discard_steps:
         for t in np.arange(self.discard_steps):
@@ -305,14 +306,14 @@ class esn(object):
         for t in range(self.training_steps - 1):
             self.r[t + 1] = self.activation_function(self.x_train[t + 1], self.r[t])
             # vector equation with
-            # self.ndim entries
+            # self.n_dim entries
 
         if self.r_squared:
             self.r2 = np.hstack((self.r, self.r**2))
         else:
             self.r2 = self.r
 
-        self.W_out = np.linalg.solve((
+        self.w_out = np.linalg.solve((
                 self.r2.T @ self.r2 + self.reg_param * np.eye(self.r2.shape[1])),
             (self.r2.T @ (self.y_train))).T
 
@@ -325,7 +326,7 @@ class esn(object):
 
     def predict(self, print_switch=False, prediction_noise=False, noise_scale=0.1):
         """
-        Uses the self.W_out to predict output, using the network as
+        Uses the self.w_out to predict output, using the network as
         recurrent network, feeding back in the (noisy) output.
         Internally converts network in scipy.sparse object   
         """
@@ -335,14 +336,14 @@ class esn(object):
         self.network = scipy.sparse.csr_matrix(self.network)
 
         ### predicting, fixed P, and using output as input again
-        self.r_pred = np.zeros((self.prediction_steps, self.ndim))
-        self.y_pred = np.zeros((self.prediction_steps, self.ydim))
+        self.r_pred = np.zeros((self.prediction_steps, self.n_dim))
+        self.y_pred = np.zeros((self.prediction_steps, self.y_dim))
         ### add noise to reinserted input
         if prediction_noise:
             self.noise = np.random.normal(loc=0.0, scale=noise_scale,
-                                          size=(self.prediction_steps, self.ydim))
+                                          size=(self.prediction_steps, self.y_dim))
         else:
-            self.noise = np.zeros((self.prediction_steps, self.ydim))
+            self.noise = np.zeros((self.prediction_steps, self.y_dim))
 
         self.r_pred[0] = self.activation_function(self.y_train[-1], self.r[-1])
 
@@ -351,7 +352,7 @@ class esn(object):
             self.r_pred2 = np.hstack((self.r_pred, self.r_pred**2))
         else:
             self.r_pred2 = self.r_pred
-        self.y_pred[0] = self.W_out @ self.r_pred2[0]
+        self.y_pred[0] = self.w_out @ self.r_pred2[0]
 
         # prediction:
         for t in range(self.prediction_steps - 1):
@@ -359,13 +360,13 @@ class esn(object):
             self.r_pred[t + 1] = self.activation_function(
                 self.y_pred[t] + self.noise[t], self.r_pred[t])
             if self.r_squared:
-                self.r_pred2[t + 1][:self.ndim] = self.r_pred[t + 1]
-                self.r_pred2[t + 1][self.ndim:] = self.r_pred[t + 1] ** 2
+                self.r_pred2[t + 1][:self.n_dim] = self.r_pred[t + 1]
+                self.r_pred2[t + 1][self.n_dim:] = self.r_pred[t + 1] ** 2
                 # self.r_pred2 = np.hstack((self.r_pred, self.r_pred**2))
             else:
                 self.r_pred2 = self.r_pred
             # update y:
-            self.y_pred[t + 1] = self.W_out @ self.r_pred2[t + 1]
+            self.y_pred[t + 1] = self.w_out @ self.r_pred2[t + 1]
 
         # array (backtransform from sparse)
         self.network = self.network.toarray()

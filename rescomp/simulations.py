@@ -244,8 +244,8 @@ def runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
     return y + 1. / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
 
 
-def record_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
-                      print_switch=False, starting_point=None, **kwargs):
+def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
+                        print_switch=False, starting_point=None, **kwargs):
     if print_switch:
         print(sys_flag)
 
@@ -296,7 +296,7 @@ def record_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
 
 
 # TODO: Refactor to make more legible, then add a docstring, remove/add print statements etc.
-def ks_pde_simulation(dimensions, system_size, t_max, time_step):
+def kuramoto_sivashinsky(dimensions, system_size, t_max, time_step):
     # This function simulates the Kuramoto–Sivashinsky PDE
     # reference for the numerical integration : "fourth order time stepping for stiff pde-kassam trefethen 2005" at
     # https://people.maths.ox.ac.uk/trefethen/publication/PDF/2005_111.pdf

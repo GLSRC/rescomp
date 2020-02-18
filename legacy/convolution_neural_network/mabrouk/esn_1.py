@@ -235,14 +235,14 @@ class reservoir(object):
             random_index = np.random.choice(np.arange(2000, 10000, 1))
             if print_switch:
                 print('random index for starting_point: ', random_index)
-            starting_point = lorenz.record_trajectory(f=self.system, dt=self.dt, timesteps=length+1000,
-                                        starting_point=original_start, fix_start=True)[random_index]
-            vals = lorenz.record_trajectory(f=self.system, dt=self.dt, timesteps=timesteps,
-                                        starting_point=starting_point, fix_start=True)
+            starting_point = lorenz.simulate_trajectory(f=self.system, dt=self.dt, timesteps=length + 1000,
+                                                        starting_point=original_start, fix_start=True)[random_index]
+            vals = lorenz.simulate_trajectory(f=self.system, dt=self.dt, timesteps=timesteps,
+                                              starting_point=starting_point, fix_start=True)
         else:   
         
-            vals = lorenz.record_trajectory(f=self.system, dt=self.dt, timesteps=timesteps,
-                                        starting_point=starting_point, fix_start=fix_start)
+            vals = lorenz.simulate_trajectory(f=self.system, dt=self.dt, timesteps=timesteps,
+                                              starting_point=starting_point, fix_start=fix_start)
                 
         #print('data loading successfull')
         if add_noise:

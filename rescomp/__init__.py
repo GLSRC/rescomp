@@ -1,3 +1,3 @@
 # __init__.py
 
-from .esn import esn
+from .esn import ESN

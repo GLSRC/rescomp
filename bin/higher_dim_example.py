@@ -10,11 +10,16 @@ from rescomp.simulations import kuramoto_sivashinsky
 
 if __name__ == "__main__":
 
+    # Setup data length variables
+    discard_steps = 1000
+    training_steps = 50000
+    prediction_steps = 500
+    total_steps = discard_steps + training_steps + prediction_steps + 1
 
     print("Start the KS simulation")
     # Create 100 dimensional input by simulating the Kuramoto–Sivashinsky PDE
-    data = kuramoto_sivashinsky(dimensions=100, system_size=22, t_max=3000,
-                                time_step=0.05)
+    data = kuramoto_sivashinsky(dimensions=100, system_size=22, dt=0.05,
+                                time_steps=total_steps)
     print("KS Simulation done")
 
     # Used to always create the same random network and hence prediction
@@ -27,8 +32,8 @@ if __name__ == "__main__":
     # the spectral radius to 0.9 or, for a completely failed prediction, set it
     # to 1.6 or higher
     esn = ESN(network_dimension=5000, input_dimension=data.shape[1],
-              output_dimension=data.shape[1], training_steps=50000,
-              prediction_steps=500, discard_steps=999,
+              output_dimension=data.shape[1], training_steps=training_steps,
+              prediction_steps=prediction_steps, discard_steps=discard_steps,
               regularization_parameter=0.01, spectral_radius=0.3,
               avg_degree=100)
 

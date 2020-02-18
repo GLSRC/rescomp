@@ -30,7 +30,7 @@ class ESN(object):
     :type_of_network: network type, choose from 'random', 'scale_free' and
         'random_geometric' that is used as topological structure of the
         network
-    :dt: timestep for approximating the differential equation generating
+    :dt: time step for approximating the differential equation generating
         the timeseries
     :training_steps: number of datapoints used for training the output
         matrix

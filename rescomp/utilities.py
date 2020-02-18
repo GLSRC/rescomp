@@ -35,7 +35,7 @@ def load_data(reservoir, data_input=None, mode='data_from_array', starting_point
             np.matmul(reservoir.network, reservoir.r[0]) ) starting_point to lorenz.record_trajectory
     - 'data_from_array' loads a timeseries from array without further
     checking for reasonability - use with care! For a d-dimensional time series
-    with T timesteps use shape (T,d).
+    with T time_steps use shape (T,d).
 
     :add_noise: boolean: if normal distributed noise should be added to the
         imported timeseries
@@ -55,7 +55,7 @@ def load_data(reservoir, data_input=None, mode='data_from_array', starting_point
 
     if mode == 'data_from_array':
 
-        #            check for dimension and timesteps
+        #            check for dimension and time_steps
         #            reservoir.discard_steps + reservoir.training_steps + \
         #            reservoir.prediction_steps (+1) == vals.shape
 
@@ -75,13 +75,13 @@ def load_data(reservoir, data_input=None, mode='data_from_array', starting_point
         starting_point = simulations.simulate_trajectory(
             sys_flag=reservoir.sys_flag,
             dt=reservoir.dt,
-            timesteps=length,
+            time_steps=length,
             starting_point=original_start,
             print_switch=print_switch)[random_index]
 
         vals = simulations.simulate_trajectory(sys_flag=reservoir.sys_flag,
                                                dt=reservoir.dt,
-                                               timesteps=timesteps,
+                                               time_steps=timesteps,
                                                starting_point=starting_point,
                                                print_switch=print_switch)
 
@@ -91,7 +91,7 @@ def load_data(reservoir, data_input=None, mode='data_from_array', starting_point
         else:
             vals = simulations.simulate_trajectory(sys_flag=reservoir.sys_flag,
                                                    dt=reservoir.dt,
-                                                   timesteps=timesteps,
+                                                   time_steps=timesteps,
                                                    starting_point=starting_point,
                                                    print_switch=print_switch)
     else:

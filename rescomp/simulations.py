@@ -244,10 +244,12 @@ def runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
     return y + 1. / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
 
 
-def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
+def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
                         print_switch=False, starting_point=None, **kwargs):
     if print_switch:
         print(sys_flag)
+
+    if starting_point is None: starting_point = np.array([1, 2, 3])
 
     if sys_flag == 'mod_lorenz':
         f = mod_lorenz
@@ -259,6 +261,7 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
     elif sys_flag == 'roessler':
         f = roessler
     elif sys_flag == 'lorenz_96':
+        # Starting point is ignored here atm
         f = lambda x: lorenz_96(x, **kwargs)
     elif sys_flag == 'ueda':
         f = lambda x: ueda(x, **kwargs)
@@ -276,10 +279,13 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
         f = lambda x: thomas(x, **kwargs)
     elif sys_flag == 'roessler_sprott':
         f = lambda x: roessler_sprott(x, **kwargs)
+    elif sys_flag == 'kuramoto_sivashinsky':
+        # Starting point is ignored here atm
+        return kuramoto_sivashinsky(dt=dt, time_steps=time_steps, **kwargs)
     else:
         raise Exception('sys_flag not recoginized')
 
-    traj_size = ((timesteps, starting_point.shape[0]))
+    traj_size = ((time_steps, starting_point.shape[0]))
     traj = np.zeros(traj_size)
     if print_switch:
         print('record_trajector received and used: starting_point: ', starting_point)
@@ -291,12 +297,12 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, timesteps=int(2e4),
     return traj
 
 # not used currently:
-# def save_trajectory(timesteps, dt): #starting_point=np.array([-13.5,10.8,-17.9])
-#     np.savetxt('lorenz_attractor_'+str(timesteps)+'_a_'+str(dt)+'.dat', record_trajectory(timesteps=timesteps, dt=dt))
+# def save_trajectory(time_steps, dt): #starting_point=np.array([-13.5,10.8,-17.9])
+#     np.savetxt('lorenz_attractor_'+str(time_steps)+'_a_'+str(dt)+'.dat', record_trajectory(time_steps=time_steps, dt=dt))
 
 
 # TODO: Refactor to make more legible, then add a docstring, remove/add print statements etc.
-def kuramoto_sivashinsky(dimensions, system_size, t_max, time_step):
+def kuramoto_sivashinsky(dimensions, system_size, dt, time_steps):
     # This function simulates the Kuramoto–Sivashinsky PDE
     # reference for the numerical integration : "fourth order time stepping for stiff pde-kassam trefethen 2005" at
     # https://people.maths.ox.ac.uk/trefethen/publication/PDF/2005_111.pdf
@@ -305,15 +311,15 @@ def kuramoto_sivashinsky(dimensions, system_size, t_max, time_step):
     # print("Start PDE simulation")
 
     n = dimensions  # No. of grid points in real space (and hence dimensionality of the output)
-    size = system_size  # grid points for the PDE simulation #TODO: I think
+    size = system_size  # grid points for the PDE simulation
 
     # Define initial conditions and Fourier Transform them
     x = np.transpose(np.conj(np.arange(1, n + 1))) / n
     u = np.cos(2 * np.pi * x / size) * (1 + np.sin(2 * np.pi * x / size))
     v = np.fft.fft(u)
 
-    h = time_step  # time step
-
+    h = dt  # time step
+    nmax = time_steps # No. of time steps to simulate
     # Wave numbers
     k = np.transpose(
         np.conj(np.concatenate((np.arange(0, n / 2), np.array([0]), np.arange(-n / 2 + 1, 0))))) * 2 * np.pi / size
@@ -331,8 +337,6 @@ def kuramoto_sivashinsky(dimensions, system_size, t_max, time_step):
     f3 = h * np.real(np.mean((-4 - 3 * LR - LR ** 2 + np.exp(LR) * (4 - LR)) / LR ** 3, axis=1))
 
     uu = [np.array(u)]  # List of Real space solutions, later converted to a np.array
-    tmax = t_max  # Length of time to simulate
-    nmax = round(tmax / h)  # No. of time steps to simulate
 
     g = -0.5j * k  # TODO: Meaning?
 

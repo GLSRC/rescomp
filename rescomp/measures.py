@@ -71,7 +71,7 @@ def rmse_old(reservoir, flag, interval_end=-1):
 def demerge_time(reservoir):
     """
     Measure for the quality of the predicted trajectory
-    Number of timesteps it takes for the prediction to loose track of the real
+    Number of time_steps it takes for the prediction to loose track of the real
     trajectory.
     Returns the number of steps for which y_test and y_pred are separated less
     than epsilon in each dimension.
@@ -194,8 +194,8 @@ def lyapunov(reservoir, threshold=int(10),
     nn_index = tree.query(traj, k=2)[1]
 
     # drop all elements in nn_index lists where the neighbour is:
-    # 1. less than threshold timesteps away
-    # 2. where we cannot calculate the neighbours future in tau_max timesteps:
+    # 1. less than threshold time_steps away
+    # 2. where we cannot calculate the neighbours future in tau_max time_steps:
 
     # contains indices of points and the indices of their nn:
     reservoir.nn_index = nn_index[
@@ -214,7 +214,7 @@ def lyapunov(reservoir, threshold=int(10),
         S = []  # the summed values for all basis points
 
         # loop over every point in the trajectory, where we can calclutate
-        # the future in tau_max timesteps:
+        # the future in tau_max time_steps:
         for point, nn in nn_index:
             S.append(np.log(np.linalg.norm(traj[point + tau] - traj[
                 nn + tau])))  # add one points average s to S

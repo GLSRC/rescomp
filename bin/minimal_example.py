@@ -11,7 +11,7 @@ from rescomp.simulations import simulate_trajectory
 
 # Create some example data by simulating the Lorenz63 system
 data = simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2,
-                           timesteps=int(5e4), print_switch=False,
+                           time_steps=int(5e4), print_switch=False,
                            starting_point=np.array(
                     [-2.00384153, -5.34877257, -1.20401106]))[int(-1e4):]
 

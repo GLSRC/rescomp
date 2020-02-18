@@ -281,7 +281,7 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
         f = lambda x: roessler_sprott(x, **kwargs)
     elif sys_flag == 'kuramoto_sivashinsky':
         # Starting point is ignored here atm
-        return kuramoto_sivashinsky(dt=dt, time_steps=time_steps, **kwargs)
+        return kuramoto_sivashinsky(dt=dt, time_steps=time_steps-1, **kwargs)
     else:
         raise Exception('sys_flag not recoginized')
 

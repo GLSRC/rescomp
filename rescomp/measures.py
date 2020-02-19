@@ -172,10 +172,15 @@ def dimension(reservoir, r_min=0.5, r_max=5., r_steps=0.15,
     else:
         traj = reservoir.y_pred  # for evaluating prediction
 
+    # TODO: This rescale factor only works for the 3D Lorenz-63 System and has
+    # TODO: to be changed for all other Systems! just plot the log-log plot and
+    # TODO: then change the rest of the code accordingly
+    lorenz_rescale_factor = 8.5
+
     # adapt parameters to input size:
-    r_min *= traj.std(axis=0).mean() / 8.5
-    r_max *= traj.std(axis=0).mean() / 8.5
-    r_steps *= traj.std(axis=0).mean() / 8.5
+    r_min *= traj.std(axis=0).mean() / lorenz_rescale_factor
+    r_max *= traj.std(axis=0).mean() / lorenz_rescale_factor
+    r_steps *= traj.std(axis=0).mean() / lorenz_rescale_factor
 
     nr_points = float(traj.shape[0])
     radii = np.arange(r_min, r_max, r_steps)

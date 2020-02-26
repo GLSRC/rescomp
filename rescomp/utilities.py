@@ -8,11 +8,64 @@ import numpy as np
 import pickle
 import time
 import datetime
+import logging
 # import scipy.sparse
 # import scipy.sparse.linalg
 # import matplotlib.pyplot as plt
 # import networkx as nx
 from . import simulations
+
+
+class ESNLogging:
+    """ Custom logging class, logging both to stdout as well as to file
+
+    Use this as you would use the standard logging module, by calling
+    ESNLogging.logger.logLevel(msg) with logLevel being on of [DEBUG, INFO,
+    WARNING, ERROR, CRITICAL] and msg a human readable message string
+
+    Args:
+        log_file_path (str): if not None, this is specifies the log_file path
+        console_log_level (): loglevel for the console output as specified in
+            https://docs.python.org/3/library/logging.html#logging-levels
+        file_log_level (): loglevel for the file output as specified in
+            https://docs.python.org/3/library/logging.html#logging-levels
+
+    Inspired by
+    https://docs.python.org/3/howto/logging-cookbook.html#using-logging-in-multiple-modules
+    and
+    https://docs.python.org/3/howto/logging-cookbook.html#logging-to-multiple-destinations
+    and
+    https://stackoverflow.com/a/13733863
+    """
+
+    def __init__(self, log_file_path=None, console_log_level=logging.INFO,
+                 file_log_level=logging.DEBUG):
+
+        # Create logger. Note that the 2nd line is necessary, even if the
+        # desired loglevel is not DEBUG
+        self.logger = logging.getLogger('esn_logger')
+        self.logger.setLevel(logging.DEBUG)
+
+        # Create formatters
+        fh_formatter = logging.Formatter(
+            '%(asctime)s %(name)s [%(threadName)-12s] [%(levelname)-7s] %(message)s')
+        ch_formatter = logging.Formatter(
+            '%(asctime)s [%(levelname)-7s] %(message)s',
+            datefmt='%m-%d %H:%M:%S')
+
+        # Create console handler with loglevel "console_log_level"
+        ch = logging.StreamHandler()
+        ch.setLevel(console_log_level)
+        ch.setFormatter(ch_formatter)
+        self.logger.addHandler(ch)
+
+        # Create file handler with a (probably higher) loglevel of
+        # "file_log_level"
+        if log_file_path is not None:
+            fh = logging.FileHandler(log_file_path)
+            fh.setLevel(file_log_level)
+            fh.setFormatter(fh_formatter)
+            self.logger.addHandler(fh)
 
 
 def load_data(reservoir, data_input=None, mode='data_from_array', starting_point=None,

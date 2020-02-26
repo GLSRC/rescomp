@@ -10,13 +10,96 @@ import scipy.sparse.linalg
 from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence
 import networkx as nx
 import time
+import logging
 # import pickle
 # import matplotlib.pyplot as plt
 # import datetime
 from . import utilities
 
 
-class ESN(object):
+class ESNCore(utilities.ESNLogging):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        pass
+
+    # def __init__(self, w_in, network, w_out, activation_function, last_r=None, last_r_nl=None):
+    #
+    #     self.w_in = w_in # Input matrix
+    #
+    #     if scipy.sparse.issparse(network):
+    #         self.network = network  # Network matrix, saved as scipy sparse (unambiguous, memory saving, faster to compute)
+    #     else:
+    #         self.network = scipy.sparse.csr_matrix(network)
+    #
+    #     self.w_out = w_out # Output matrix, both for r and it's nonlinear transformations
+    #     self.act_fct = activation_function  # Activation function used during training and prediction
+    #     self.last_r = last_r  # Last reservoir state r
+    #     self.last_r_nl = last_r_nl  # Last nonlinear transformation of r
+    #
+    #     self._n_dim = self.network.shape[0]
+
+
+    # def discard(self, input_data):
+    #
+    #
+    #     logging.debug('Start discarding')
+    #
+    #     # reservoir is synchronized with trajectory during discard_steps:
+    #     for t in np.arange(self.discard_steps):
+    #         self.r[0] = self.activation_function(self.x_discard[t], self.r[0])
+    #
+    #
+    #     logging.debug('Finished discarding')
+    #
+    #
+    # def train(self, input_data):
+    #     """
+    #     Fits self.w_out, which connects the reservoir states and the input to
+    #     the desired output, using linear regression and Tikhonov
+    #     regularization.
+    #     The convention is as follows: self.y[t+1] = self.w_out*self.r[t]
+    #     Discards self.discard_steps steps befor recording the internal states
+    #     of the reservoir (self.r),
+    #     to synchronize the network dynamics with the input.
+    #
+    #     Requires load_data() first, to pass values to x_train, y_train, y_test
+    #     -> extend to test!
+    #     Internally converts network in scipy.sparse object
+    #     """
+    #
+    #     logging.debug('Start training')
+    #
+    #     # states of the reservoir:
+    #     self.r = np.zeros((self.training_steps, self._ndim))
+    #
+    #     self.r[0] = self.activation_function(self.x_train[0], self.r[0])
+    #
+    #     # states are then used to fit the target y_train:
+    #     for t in range(self.training_steps - 1):
+    #         self.r[t + 1] = self.activation_function(self.x_train[t + 1], self.r[t])
+    #
+    #     if self.r_squared:
+    #         self.r2 = np.hstack((self.r, self.r**2))
+    #     else:
+    #         self.r2 = self.r
+    #
+    #     self.w_out = np.linalg.solve((
+    #             self.r2.T @ self.r2 + self.reg_param * np.eye(self.r2.shape[1])),
+    #         (self.r2.T @ (self.y_train))).T
+    #
+    #     logging.debug('Training done')
+
+
+# class ESNBase(ESNCore):
+#     pass
+#
+# class ESNWrapper(ESNBase):
+#     #  logfile and loglevel. Add datetimestring here as well
+#     pass
+
+
+class ESN:
     """
     reservoir is a class for reservoir computing, using different network
     structures to predict (chaotic) time series

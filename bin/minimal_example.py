@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from rescomp import ESN
+from rescomp.esn import ESNOld
 from rescomp.simulations import simulate_trajectory
 
 # Create some example data by simulating the Lorenz63 system
@@ -27,7 +28,7 @@ data = simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2,
 # For systems that don't start out on their attractor (like here) throwing away
 # the initial trajectory also ensures that transient dynamics don't influencing
 # the training.
-esn = ESN(network_dimension=500, input_dimension=data.shape[1],
+esn = ESNOld(network_dimension=500, input_dimension=data.shape[1],
           output_dimension=data.shape[1], training_steps=4000,
           prediction_steps=4000, discard_steps=1999)
 

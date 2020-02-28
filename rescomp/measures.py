@@ -8,7 +8,7 @@
 # from importlib import reload
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 # import time
 import scipy.signal
@@ -552,7 +552,7 @@ def remove_nodes(reservoir, split):
         raise
 
     # Adjust w_in
-    new.w_in = np.delete(reservoir.W_in, rm_args, 0)
+    new._w_in = np.delete(reservoir.W_in, rm_args, 0)
     # pass x,y to new_reservoir
     new.x_train = reservoir.x_train
     new.x_discard = reservoir.x_discard

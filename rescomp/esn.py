@@ -16,90 +16,607 @@ import logging
 # import datetime
 from . import utilities
 
+# dictionary defining synonyms for the different methods to generalize the
+# reservoir state r(t) to a nonlinear fit for _w_out
 
-class ESNCore(utilities.ESNLogging):
+class _ESNCore(utilities.ESNLogging):
+    """ The non-reducible core of ESN RC training and prediction
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        pass
+    While technically possible to be used on it's own, this is very much not
+    recommended. Use the child class ESN instead.
 
-    # def __init__(self, w_in, network, w_out, activation_function, last_r=None, last_r_nl=None):
-    #
-    #     self.w_in = w_in # Input matrix
-    #
-    #     if scipy.sparse.issparse(network):
-    #         self.network = network  # Network matrix, saved as scipy sparse (unambiguous, memory saving, faster to compute)
-    #     else:
-    #         self.network = scipy.sparse.csr_matrix(network)
-    #
-    #     self.w_out = w_out # Output matrix, both for r and it's nonlinear transformations
-    #     self.act_fct = activation_function  # Activation function used during training and prediction
-    #     self.last_r = last_r  # Last reservoir state r
-    #     self.last_r_nl = last_r_nl  # Last nonlinear transformation of r
-    #
-    #     self._n_dim = self.network.shape[0]
+    Args:
+        **kwargs (): Everything passed to the init of utilities.ESNLogging
+    """
+
+    def __init__(self):
+
+        super().__init__()
+
+        self._w_in = None
+
+        self._network = None
+
+        self._w_out = None
+
+        self._act_fct = None
+
+        self._w_out_fit_flag_synonyms = utilities.SynonymDict()
+        self._w_out_fit_flag_synonyms.add_synonyms(0, ["linear_r", "simple"])
+        self._w_out_fit_flag_synonyms.add_synonyms(1, "linear_and_square_r")
+
+        self._w_out_fit_flag = None
+
+        self._last_r = None
+        self._last_r_gen = None
+        # self._last_r = np.zeros(self._network.shape[0])
+        # self._last_r_gen = self._r_to_generalized_r(self._last_r)
+
+        self._reg_param = None
+
+    def synchronize(self, x, save_r=False):
+        """ Synchronize the reservoir state with the input time series
+
+        Args:
+            x (ndarray): shape (T,d)
+            save_r (bool): If true, saves and returns r
+
+        Returns:
+            2dim ndarray containing all r(t) states if save_r is True
+            None else
+
+        """
+        self.logger.debug('Start syncing the reservoir state')
+
+        if save_r:
+            r = np.zeros((x.shape[0], self._network.shape[0]))
+            r[0] = self._act_fct(x[0], r[0])
+            for t in np.arange(x.shape[0] - 1):
+                r[t+1] = self._act_fct(x[t + 1], r[t])
+            return r
+        else:
+            self._last_r = np.zeros(self._network.shape[0])
+            for t in np.arange(x.shape[0] - 1):
+                self._last_r = self._act_fct(x[t], self._last_r)
+            return None
+
+    def _r_to_generalized_r(self, r):
+        # This needs to work for both 2d r of shape (T, d) as well as 1d _last_r
+        # of shape (d)
+        if self._w_out_fit_flag is 0:
+            return r
+        elif self._w_out_fit_flag is 1:
+            return np.hstack((r, r ** 2))
+        else:
+            raise Exception("self._w_out_fit_flag incorrectly specified")
+
+    def _fit_w_out(self, y_train, r):
+        """ Fit the output matrix self._w_out after training
+
+        self._w_out connects the reservoir states and the input to
+        the desired output, using linear regression and Tikhonov
+        regularization.
+        Note: There is no need for a save_r parameter as r_gen needs to be
+        calculated anyway.
+
+        Args:
+            y_train (ndarray): Desired prediction from the reservoir states
+            r (ndarray): reservoir states
+        Returns:
+            r_gen (ndarray): generalized nonlinear reservoir states form
+        """
+
+        self.logger.debug('Fit _w_out according to method%s' %
+                          str(self._w_out_fit_flag))
+
+        r_gen = self._r_to_generalized_r(r)
+
+        self._w_out = np.linalg.solve(
+            r_gen.T @ r_gen + self._reg_param * np.eye(r_gen.shape[1]),
+            r_gen.T @ y_train).T
+
+        return r_gen
+
+    def train(self, x_train, w_out_fit_flag="simple"):
+        """
+        Assumes a synchronized reservoir.
+
+        """
+
+        self._w_out_fit_flag = \
+            self._w_out_fit_flag_synonyms.get_flag(w_out_fit_flag)
+
+        self.logger.debug('Start training')
+
+        # The last value of r can't be used for the training, see comment below
+        r = self.synchronize(x_train, save_r=True)[:-1]
+
+        # NOTE: This is slightly different than the old ESN as y_train was as
+        # long as x_train, but shifted by one time step. Hence to get the same
+        # results as for the old ESN one has to specify an x_train one time step
+        # longer than before. Nonetheless, it's still true that r[t] is
+        # calculated from x[t] and used to calculate y[t] (all the same t)
+        y_train = x_train[1:]
+
+        r_gen = self._fit_w_out(y_train, r)
+
+        return r, r_gen
+
+    def predict_step(self, x):
+        """ Predict a single time step
+
+        Assumes a synchronized reservoir.
+        Changes self._last_r and self._last_r_gen to stay synchronized to the new
+        system state y
+
+        Args:
+            x (ndarray): current state of the d-dim. system, shape (d)
+
+        Returns:
+            y (ndarray): the next time step as predicted from last_x, _w_out and
+            _last_r, shape (d)
+        
+        """
+
+        self._last_r = self._act_fct(x, self._last_r)
+        self._last_r_gen = self._r_to_generalized_r(self._last_r)
+
+        y = self._w_out @ self._last_r_gen
+
+        return y
 
 
-    # def discard(self, input_data):
-    #
-    #
-    #     logging.debug('Start discarding')
-    #
-    #     # reservoir is synchronized with trajectory during discard_steps:
-    #     for t in np.arange(self.discard_steps):
-    #         self.r[0] = self.activation_function(self.x_discard[t], self.r[0])
-    #
-    #
-    #     logging.debug('Finished discarding')
-    #
-    #
-    # def train(self, input_data):
-    #     """
-    #     Fits self.w_out, which connects the reservoir states and the input to
-    #     the desired output, using linear regression and Tikhonov
-    #     regularization.
-    #     The convention is as follows: self.y[t+1] = self.w_out*self.r[t]
-    #     Discards self.discard_steps steps befor recording the internal states
-    #     of the reservoir (self.r),
-    #     to synchronize the network dynamics with the input.
-    #
-    #     Requires load_data() first, to pass values to x_train, y_train, y_test
-    #     -> extend to test!
-    #     Internally converts network in scipy.sparse object
-    #     """
-    #
-    #     logging.debug('Start training')
-    #
-    #     # states of the reservoir:
-    #     self.r = np.zeros((self.training_steps, self._ndim))
-    #
-    #     self.r[0] = self.activation_function(self.x_train[0], self.r[0])
-    #
-    #     # states are then used to fit the target y_train:
-    #     for t in range(self.training_steps - 1):
-    #         self.r[t + 1] = self.activation_function(self.x_train[t + 1], self.r[t])
-    #
-    #     if self.r_squared:
-    #         self.r2 = np.hstack((self.r, self.r**2))
-    #     else:
-    #         self.r2 = self.r
-    #
-    #     self.w_out = np.linalg.solve((
-    #             self.r2.T @ self.r2 + self.reg_param * np.eye(self.r2.shape[1])),
-    #         (self.r2.T @ (self.y_train))).T
-    #
-    #     logging.debug('Training done')
+class ESN(_ESNCore):
+    # save_r: bool
+    # should be called ESN
+    # logfile and loglevel.
+    # save instances/parameters to file
+    # prediction noise in predict
+    """
+    input: training data and (list of) x_pred_test data, sync_steps
+    specified/created: network, _w_in, activation_function
+    internal: trained ESNCore instance
+    output: prediction and desired prediction
+
+    Goal: written such that one can easily implement both normal, full RC as
+        well as local RC with arbitrary neighborhoods by calling this class with
+        the right training and prediction data
+    """
+
+    # def __init__(self, network_dimension=500, input_dimension=None,
+    #              type_of_network='random', avg_degree=6., spectral_radius=0.1,
+    #              regularization_parameter=1e-5, w_in_sparse=True, w_in_scale=1.,
+    #              act_fct_flag='tanh', bias_scale=0., **kwargs):
+
+    def __init__(self):
+
+        super().__init__()
+
+        # create_network() assigns values to:
+        self._n_dim = None  # network_dimension
+        self._n_rad = None  # network_spectral_radius
+        self._n_avg_deg = None  # network_average_degree
+        self._n_edge_prob = None
+        self._n_type_flag = None  #  network_type
+        self._network = self._network
+
+        # _create_w_in() which is called from train() assigns values to:
+        self._w_in_sparse = None
+        self._w_in_scale = None
+        self._w_in = self._w_in
+
+        # set_activation_function assigns values to:
+        self._bias_scale = None
+        self._bias = None
+        self._act_fct_flag = None
+        self._act_fct = self._act_fct
+
+        # train() assigns values to:
+        self._x_dim = None  # Typically called d
+        self._reg_param = self._reg_param
+        self._w_out = self._w_out
+        # if save_input is true, train() also assigns values to:
+        self._x_train_sync = None  # data used to sync before training
+        self._x_train = None  # data used for training to fit w_out
+        # if save_r is true, train() also assigns values to:
+        self._r_train = None
+        self._r_train_gen = None
+
+        # predict() assigns values to:
+        self._y_pred = None
+        # if save_input is true, predict() also assigns values to:
+        self._x_pred_sync = None  # data used to sync before prediction
+        self._y_test = None  # data used to compare the prediction to
+        # if save_r is true, predict() also assigns values to:
+        self._r_pred = None
+        self._r_pred_gen = None
+
+        # Dictionary defining synonyms for the different ways to choose the
+        # activation function. Internally the corresponding integers are used
+        self._act_fct_flag_synonyms = utilities.SynonymDict()
+        self._act_fct_flag_synonyms.add_synonyms(0, ["tanh_simple", "simple"])
+        self._act_fct_flag_synonyms.add_synonyms(1, "tanh_bias")
+
+        # Dictionary defining synonyms for the different ways to create the
+        # network. Internally the corresponding integers are used
+        self._n_type_flag_synonyms = utilities.SynonymDict()
+        self._n_type_flag_synonyms.add_synonyms(0, ["random", "erdos_renyi"])
+        self._n_type_flag_synonyms.add_synonyms(1, ["scale_free", "barabasi_albert"])
+        self._n_type_flag_synonyms.add_synonyms(2, ["small_world", "watts_strogatz"])
+
+    def _create_w_in(self):
+        """ Create the input matrix w_in """
+        self.logger.debug("Create w_in")
+
+        if self._w_in_sparse:
+            self._w_in = np.zeros((self._n_dim, self._x_dim))
+            for i in range(self._n_dim):
+                random_x_coord = np.random.choice(np.arange(self._x_dim))
+                self._w_in[i, random_x_coord] = np.random.uniform(
+                    low=-self._w_in_scale,
+                    high=self._w_in_scale)  # maps input values to reservoir
+        else:
+            self._w_in = np.random.uniform(low=-self._w_in_scale,
+                                          high=self._w_in_scale,
+                                          size=(self._n_dim, self._x_dim))
+
+    def create_network(self, n_dim=500, n_rad=0.1, n_avg_deg=6.0,
+                       n_type_flag="erdos_renyi", network_creation_attempts=10):
+
+        self.logger.debug("Create network")
+
+        self._n_dim = n_dim
+        self._n_rad = n_rad
+        self._n_avg_deg = n_avg_deg
+        self._n_edge_prob = self._n_avg_deg / (self._n_dim - 1)
+        self._n_type_flag = self._n_type_flag_synonyms.get_flag(n_type_flag)
+
+        for i in range(network_creation_attempts):
+            try:
+                self._create_network_connections()
+                self._vary_network()
+            except ArpackNoConvergence:
+                continue
+            break
+        else:
+            raise Exception("Network creation during ESN init failed %d times"
+                            %network_creation_attempts)
+
+    def _create_network_connections(self):
+
+        if self._n_type_flag == 0:
+            network = nx.fast_gnp_random_graph(self._n_dim, self._n_edge_prob,
+                                               seed=np.random)
+        elif self._n_type_flag == 1:
+            network = nx.barabasi_albert_graph(self._n_dim,
+                                               int(self._n_avg_deg / 2),
+                                               seed=np.random)
+        elif self._n_type_flag == 2:
+            network = nx.watts_strogatz_graph(self._n_dim,
+                                              k=int(self._n_avg_deg), p=0.1,
+                                              seed=np.random)
+        else:
+            raise Exception("the network type %s is not implemented" %
+                            str(self._n_type_flag))
+
+        self._network = np.asarray(nx.to_numpy_matrix(network))
+
+    def _vary_network(self, network_variation_attempts=10):
+        """ Varies the weights of self.network, while conserving the topology.
+
+        The non-zero elements of the adjacency matrix are uniformly randomized,
+        and the matrix is scaled (self.scale_network()) to self.spectral_radius.
+        """
+
+        # contains tuples of non-zero elements:
+        arg_binary_network = np.argwhere(self._network)
+
+        for i in range(network_variation_attempts):
+            try:
+                # uniform entries from [-0.5, 0.5) at non-zero locations:
+                rand_shape = self._network[self._network != 0.].shape
+                self._network[
+                    arg_binary_network[:, 0], arg_binary_network[:, 1]] = \
+                    np.random.random(size=rand_shape) - 0.5
+
+                self._scale_network()
+
+            except ArpackNoConvergence:
+                self.logger.error(
+                    'Network Variaion failed! -> Try agin!')
+
+                continue
+            break
+        else:
+            #TODO: Better logging of exceptions
+            self.logger.error("Network variation failed %d times"
+                            % network_variation_attempts)
+            raise ArpackNoConvergence
+
+    def _scale_network(self):
+        """ Scale self.network, according to desired self.spectral_radius.
+
+        Converts network in scipy.sparse object internally.
+        """
+        """
+        Can cause problems due to non converging of the eigenvalue evaluation
+        """
+        self._network = scipy.sparse.csr_matrix(self._network)
+        try:
+            eigenvals = scipy.sparse.linalg.eigs(
+                self._network, k=1, v0=np.ones(self._n_dim),
+                maxiter=1e3 * self._n_dim)[0]
+        except ArpackNoConvergence:
+            self.logger.error('Eigenvalue calculation in scale_network failed!')
+            raise
+
+        maximum = np.absolute(eigenvals).max()
+        self._network = ((self._n_rad / maximum) * self._network)
+
+    def set_network(self, network):
+        """ Set the network by passing a matrix or a file path
+
+        Calculates the corresponding properties to match the new network
+
+        Args:
+            network (nd_array_or_csr_matrix_str):
+
+        Returns:
+
+        """
+        raise Exception("Not yet implemented")
+
+    def set_activation_function(self, act_fct_flag, bias_scale=0):
+        """ Set the activation function to the one corresponding to act_fct_flag
+
+        Args:
+            act_fct_flag (): flag corresponding to the activation function one
+                wants to use
+            bias_scale (float): Bias to be used in some activation functions
+                (currently only in :func:`~ESN._act_fct_tanh_bias`)
+
+        """
+        self.logger.debug("Set activation function to flag: %s" % act_fct_flag)
+
+        # self._act_fct_flag = act_fct_flag
+        self._act_fct_flag = self._act_fct_flag_synonyms.get_flag(act_fct_flag)
+
+        self._bias_scale = bias_scale
+        self._bias = self._bias_scale * np.random.uniform(low=-1.0, high=1.0,
+                                                          size=self._n_dim)
+
+        if self._act_fct_flag == 0:
+            self._act_fct = self._act_fct_tanh_simple
+        elif self._act_fct_flag == 1:
+            self._act_fct = self._act_fct_tanh_bias
+        else:
+            raise Exception('self._act_fct_flag %s does not have a activation '
+                            'function implemented!' % str(self._act_fct_flag))
+
+    def _act_fct_tanh_simple(self, x, r):
+        """ Standard activation function of the elementwise np.tanh()
+
+        Args:
+            x (ndarray): d-dim input
+            r (ndarray): n-dim network states
+
+        Returns:
+            (ndarray) n-dim
+
+        """
+
+        return np.tanh(self._w_in @ x + self._network @ r)
+
+    def _act_fct_tanh_bias(self, x, r):
+        """ Activation function of the elementwise np.tanh() with added bias
+
+        Args:
+            x (ndarray): d-dim input
+            r (ndarray): n-dim network states
+
+        Returns:
+            (ndarray) n-dim
+
+        """
+
+        return np.tanh(self._w_in @ x + self._network @ r + self._bias)
+
+    def train(self, x_train, sync_steps=0, reg_param = 1e-5, w_in_scale=1.0, w_in_sparse=True,
+              save_r=False, save_input=False):
+        """ Train the reservoir after synchronizing it
+
+        Args:
+            x_train ():
+            sync_steps ():
+            reg_param ():
+            w_in_scale ():
+            w_in_sparse (bool): If true, creates w_in such that one element in
+                each row is non-zero (Lu,Hunt, Ott 2018)
+            save_r ():
+            save_input ():
+
+        """
+        self._reg_param = reg_param
+        self._w_in_scale = w_in_scale
+        self._w_in_sparse = w_in_sparse
+        self._x_dim = x_train.shape[1]
+        self._create_w_in()
+
+        if sync_steps != 0:
+            x_sync = x_train[:sync_steps]
+            x_train = x_train[sync_steps:]
+            self.synchronize(x_sync)
+        else:
+            x_sync = None
+
+        if save_input:
+            self._x_train_sync = x_sync
+            self._x_train = x_train
+
+        if save_r:
+            self._r_train, self._r_train_gen = super().train(x_train)
+        else:
+            super().train(x_train)
+
+    def predict(self, x_pred, sync_steps=0, prediction_steps=None,
+                save_r=False, save_input=False):
+        """ Predict the system evolution after synchronizing the reservoir
+
+        Changes self._last_r and self._last_r_gen to stay synchronized to the new
+        system state
+        Args:
+            x_pred ():
+            sync_steps ():
+            prediction_steps (int): how many steps to predict
+            save_r ():
+            save_input ():
+
+        Returns:
+            y_pred, y_test
+        """
+
+        if prediction_steps is None:
+            prediction_steps = x_pred.shape[0] - sync_steps
+
+        # Automatically generates a y_test to compare the prediction against, if
+        # the input data is longer than the number of synchronization tests
+        if sync_steps <= x_pred.shape[0]:
+            x_sync = x_pred[:sync_steps + 1]
+            y_test = x_pred[sync_steps + 1:]
+        else:
+            x_sync = x_pred
+            y_test = None
+
+        if save_input:
+            self._x_pred_sync = x_sync
+            self._y_test = y_test
+
+        self.synchronize(x_sync)
+
+        self.logger.debug('Start Prediction')
+
+        self._y_pred = np.zeros((prediction_steps, x_sync.shape[1]))
+
+        self._y_pred[0] = self.predict_step(x_sync[-1])
+
+        if save_r:
+            self._r_pred = np.zeros((prediction_steps, self._network.shape[0]))
+            self._r_pred_gen = self._r_to_generalized_r(self._r_pred)
+            self._r_pred[0] = self._last_r
+            self._r_pred_gen[0] = self._last_r_gen
+
+            for t in range(prediction_steps - 1):
+                self._y_pred[t + 1] = self.predict_step(self._y_pred[t])
+
+                self._r_pred[t + 1] = self._last_r
+                self._r_pred_gen[t + 1] = self._last_r_gen
+
+        else:
+            for t in range(prediction_steps - 1):
+                self._y_pred[t + 1] = self.predict_step(self._y_pred[t])
+
+        # # TODO: Kinda code duplication here, but otherwise there are a million
+        # # TODO: calls to if statements..
+        # if self.save_r:
+        #     r = np.zeros((prediction_steps, self._n_dim))
+        #     r[0] = self._act_fct(x_sync[-1], self._last_r)
+        #     r_gen = self._r_to_generalized_r(r)
+        #
+        #     y[0] = self._w_out @ r_gen[0]
+        #
+        #     for t in range(prediction_steps - 1):
+        #         r[t + 1] = self._act_fct(y[t], r[t])
+        #
+        #         r_gen[t + 1] = self._r_to_generalized_r(r[t+1])
+        #
+        #         y[t + 1] = self._w_out @ r_gen[t + 1]
+        #
+        #     return y, r, r_gen
+        # else:
+        #     self._last_r = self._act_fct(x_sync[-1], self._last_r)
+        #     self._last_r_gen = self._r_to_generalized_r(self._last_r)
+        #
+        #     y[0] = self._w_out @ self._last_r_gen
+        #
+        #     for t in range(prediction_steps - 1):
+        #         self._last_r = self._act_fct(y[t], self._last_r)
+        #         self._last_r_gen = self._r_to_generalized_r(self._last_r)
+        #
+        #         y[t + 1] = self._w_out @ self._last_r_gen
+        #
+        #     return y, None, None
+
+        return self._y_pred, y_test
+
+    def get_network(self, ):
+        raise Exception("Not yet implemented")
+
+    def get_w_in(self, ):
+        raise Exception("Not yet implemented")
+
+    def get_activation_function(self, ):
+        raise Exception("Not yet implemented")
+
+    def get_training(self, ):
+        raise Exception("Not yet implemented")
+
+    def get_prediction(self, ):
+        raise Exception("Not yet implemented")
+
+    def save_realization(self):
+        raise Exception("Not yet implemented")
+
+    def load_realization(self):
+        raise Exception("Not yet implemented")
+
+    # if scipy.sparse.issparse(network):
+    #     self._network = network
+    # else:
+    #     self._network = scipy.sparse.csr_matrix(network)
+
+    # if type(_w_out_fit_flag) is int:
+    #     self._w_out_fit_flag = _w_out_fit_flag
+    # else:
+    #     self._w_out_fit_flag = \
+    #         self._w_out_fit_flag_synonyms[_w_out_fit_flag]
 
 
-# class ESNBase(ESNCore):
-#     pass
+# class ESNWrapper(utilities.ESNLogging):
 #
-# class ESNWrapper(ESNBase):
-#     #  logfile and loglevel. Add datetimestring here as well
+#     def __init__(self):
+#
+#         # train() assigns to:
+#         self._x_train = None
+#
+#         # predict() assigns to:
+#         self._x_sync = None
+#         self._y_test = None
+#
 #     pass
 
 
-class ESN:
+class MegaWrapper(utilities.ESNLogging):
+    # has a class instance as object, that implements train() and predict() functions which should be created beforehand
+    # Just used to feed that instance training and (multiple) prediction data sets and then saves them somewhere for easy plotting
+    # Also allows saving of the parameters used, probably by just calling the instances save() function which should handle the rest
+    pass
+
+
+class LocalESN(utilities.ESNLogging):
+    # has multiple ESN instances in a a list or something
+    # trains them in parallel
+    # takes a global x, transforms it into many local x, feeds that to the corresponding ESNs, lets them all predict their corresponding local y, puts that together into a global y which becomes the global x for the next step
+    # different locality_neighborhood creating methods
+    # for now, all ESNs are have the same parameters, but it should be written such that they can have
+    # different ones
+    # locality neighborhoods need to work for core sizes > 1
+    # save the list of instances parameters to file, write it to save each network's parameters individually, even if right now they are all the same anyway
+        # even better: just call the .save() function of the ESN objects themselves with different file paths
+    pass
+
+
+
+class ESNOld:
     """
     reservoir is a class for reservoir computing, using different network
     structures to predict (chaotic) time series
@@ -344,7 +861,7 @@ class ESN:
         Method to load data from a file or function (depending on mode)
         for training and testing the network.
         If the file does not exist, it is created according to the parameters.
-        self.w_in is initialized.
+        self._w_in is initialized.
         
         :parameters:
         :mode:
@@ -353,7 +870,7 @@ class ESN:
             given trajectory.
         - 'fix_start' passes
             for t in np.arange(self.discard_steps):
-                self.r[0] = np.tanh(self.w_in @ self.x_discard[t] +
+                self.r[0] = np.tanh(self._w_in @ self.x_discard[t] +
                             self.network @ self.r[0] )
             starting_point to lorenz.record_trajectory
         - 'data_from_file' loads a timeseries from file without further
@@ -443,6 +960,8 @@ class ESN:
         else:
             self.noise = np.zeros((self.prediction_steps, self.y_dim))
 
+        # TODO: This line would be super wrong if y_train and r were not zeros
+        # TODO: everywhere!
         self.r_pred[0] = self.activation_function(self.y_train[-1], self.r[-1])
 
         # transition from training to prediction
@@ -488,3 +1007,5 @@ class ESN:
         Original data lost!
         """
         utilities.load_realization(self, filename=filename, print_switch=print_switch)
+
+

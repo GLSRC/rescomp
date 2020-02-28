@@ -23,13 +23,6 @@ class ESNLogging:
     ESNLogging.logger.logLevel(msg) with logLevel being on of [DEBUG, INFO,
     WARNING, ERROR, CRITICAL] and msg a human readable message string
 
-    Args:
-        log_file_path (str): if not None, this is specifies the log_file path
-        console_log_level (): loglevel for the console output as specified in
-            https://docs.python.org/3/library/logging.html#logging-levels
-        file_log_level (): loglevel for the file output as specified in
-            https://docs.python.org/3/library/logging.html#logging-levels
-
     Inspired by
     https://docs.python.org/3/howto/logging-cookbook.html#using-logging-in-multiple-modules
     and
@@ -38,12 +31,87 @@ class ESNLogging:
     https://stackoverflow.com/a/13733863
     """
 
-    def __init__(self, log_file_path=None, console_log_level=logging.INFO,
-                 file_log_level=logging.DEBUG):
+    def __init__(self):
+
+        self.logger = None
+
+        self._log_file_path = None
+        self._console_log_level = None
+        self._file_log_level = None
+        self._logger_name = None
+
+        self._file_handler = None
+        self._console_handler = None
+
+        self._log_level_synonyms = SynonymDict()
+        self._log_level_synonyms.add_synonyms(0, ["NOTSET", "notset", "off"])
+        self._log_level_synonyms.add_synonyms(10, ["DEBUG", "debug"])
+        self._log_level_synonyms.add_synonyms(20, ["INFO", "info"])
+        self._log_level_synonyms.add_synonyms(30, ["WARNING", "warning"])
+        self._log_level_synonyms.add_synonyms(40, ["ERROR", "error"])
+        self._log_level_synonyms.add_synonyms(50, ["CRITICAL", "critical"])
+
+        self.set_console_log_level()
+        self.set_log_file_path()
+        self.set_file_log_level()
+        # self._create_logger()
+
+    def set_log_file_path(self, log_file_path=None):
+        """ Set's the logging file path
+
+        Args:
+            log_file_path (str):
+
+        """
+        self._log_file_path = log_file_path
+        self._create_logger()
+
+    def set_console_log_level(self, log_level="debug"):
+        """ Set loglevel for the console output
+
+        Args:
+            log_level (): console loglevel as specified in:
+                https://docs.python.org/3/library/logging.html#logging-levels
+
+        """
+        self._console_log_level = self._log_level_synonyms.get_flag(log_level)
+        self._create_logger()
+
+    def set_file_log_level(self, log_level="debug"):
+        """ Set loglevel for the file logging
+
+        Does nothing if :func:`~ESNLogger.set_log_file_path has not been used
+        to set a valid logging file path
+
+        Args:
+            log_level (): file loglevel as specified in:
+                https://docs.python.org/3/library/logging.html#logging-levels
+
+        """
+        self._file_log_level = self._log_level_synonyms.get_flag(log_level)
+        self._create_logger()
+
+    def _create_logger(self, logger_name='esn_logger'):
+        """ Creates and/or adjusts self.logger and sets it up for usage
+
+        Args:
+
+            console_log_level ():  as specified in
+            file_log_level (): loglevel for the file output as specified in
+                https://docs.python.org/3/library/logging.html#logging-levels
+            logger_name (str): Name of the logger to be created. Used if one
+                wants muliple different loggers with different properties (e.g.
+                loglevels, etc
+
+        Returns:
+            None
+
+        """
+        self._logger_name = logger_name
 
         # Create logger. Note that the 2nd line is necessary, even if the
         # desired loglevel is not DEBUG
-        self.logger = logging.getLogger('esn_logger')
+        self.logger = logging.getLogger(self._logger_name)
         self.logger.setLevel(logging.DEBUG)
 
         # Create formatters
@@ -54,18 +122,162 @@ class ESNLogging:
             datefmt='%m-%d %H:%M:%S')
 
         # Create console handler with loglevel "console_log_level"
-        ch = logging.StreamHandler()
-        ch.setLevel(console_log_level)
-        ch.setFormatter(ch_formatter)
-        self.logger.addHandler(ch)
+        self._console_handler = logging.StreamHandler()
+        self._console_handler.setLevel(self._console_log_level)
+        self._console_handler.setFormatter(ch_formatter)
+        self.logger.addHandler(self._console_handler)
 
         # Create file handler with a (probably higher) loglevel of
         # "file_log_level"
-        if log_file_path is not None:
-            fh = logging.FileHandler(log_file_path)
-            fh.setLevel(file_log_level)
-            fh.setFormatter(fh_formatter)
-            self.logger.addHandler(fh)
+        if self._log_file_path is not None:
+            self._file_handler = logging.FileHandler(self._log_file_path)
+            self._file_handler.setLevel(self._file_log_level)
+            self._file_handler.setFormatter(fh_formatter)
+            self.logger.addHandler(self._file_handler)
+
+
+class SynonymDict():
+    """ Custom dictionary wrapper to match synonyms with integer flags
+
+    Internally the corresponding integer flags are used, but they are very much
+    not descriptive so with this class one can define (str) synonyms for these
+    flags, similar to how matplotlib does it
+
+    Idea:
+        self._synonym_dict = {flag1 : list of synonyms of flag1,
+                              flag2 : list of synonyms of flag2,
+                              ...}
+    """
+
+    def __init__(self):
+        self._synonym_dict = {}
+        # super().__init__()
+
+    def add_synonyms(self, flag, synonyms):
+        """ Assigns one or more synonyms to the corresponding flag
+
+        Args:
+            flag (int): flag to pair with the synonym(s)
+            synonyms (): Synonym or iterable of synonyms. Technically any type
+                is possible for a synonym but strings are highly recommended
+
+        """
+
+        # self.logger.debug("Add synonym(s) %s to flag %d"%(str(synonyms), flag))
+
+        # Convert the synonym(s) to a list of synonyms
+        if type(synonyms) is str:
+            synonym_list = [synonyms]
+        else:
+            try:
+                synonym_list = list(iter(synonyms))
+            except TypeError:
+                synonym_list = [synonyms]
+
+        # make sure that the synonyms are not already paired to different flags
+        for synonym in synonym_list:
+            found_flag = self._find_flag(synonym)
+            if flag == found_flag:
+                # self.logger.info("Synonym %s was already paired to flag"
+                #                  "%d" % (str(synonym), flag))
+                synonym_list.remove(synonym)
+            elif found_flag is not None:
+                raise Exception("Tried to add Synonym %s to flag %d but"
+                                " it was already paired to flag %d" %
+                                (str(synonym), flag, found_flag))
+
+        # add the synonyms
+        if flag not in self._synonym_dict:
+            self._synonym_dict[flag] = []
+        self._synonym_dict[flag].extend(synonym_list)
+
+    def _find_flag(self, synonym):
+        """ Finds the corresponding flag to a given synonym.
+
+        A flag is always also a synonym for itself
+
+        Args:
+            synonym ():
+
+        Returns:
+            flag (int_or_None): int if found, None if not
+
+        """
+
+        # self.logger.debug("Find flag for synonym %s"%str(synonym))
+
+        flag = None
+        if synonym in self._synonym_dict:
+            flag = synonym
+        else:
+            for item in self._synonym_dict.items():
+                if synonym in item[1]:
+                    flag = item[0]
+
+        return flag
+
+    def get_flag(self, synonym):
+        """ Finds the corresponding flag to a given synonym. Raises exception if
+            not found
+
+        see :func:`~SynonymDict._find_flag_from_synonym`
+
+        """
+        flag = self._find_flag(synonym)
+        if flag is None:
+            raise Exception("Flag corresponding to synonym %s not found" %
+                            str(synonym))
+
+        return flag
+
+    #TODO: Add to tests:
+    #
+    # act_fct_flag_synonyms = rescomp.utilities.SynonymDict()
+    # act_fct_flag_synonyms.add_synonyms(0, ["tanh simple", "simple"])
+    # act_fct_flag_synonyms.add_synonyms(1, "tanh bias")
+    # 0 == act_fct_flag_synonyms.get_flag(0)
+    # 0 == act_fct_flag_synonyms.get_flag("tanh simple")
+    # 1 == act_fct_flag_synonyms.get_flag("tanh bias")
+
+
+
+def unique_key_by_value(dictionary, value):
+    """ Finds key by value in a dict, raise exception if key is not unique
+
+    Args:
+        dictionary ():
+        value ():
+
+    Returns:
+        key (): unique key corresponding to value
+
+    """
+    list_of_keys = keys_by_value(dictionary, value)
+    if len(list_of_keys) == 1:
+        key = list_of_keys[0]
+    else:
+        raise Exception("Key is NOT unique for the given value!\n"
+                        "value=%s\nkeys found=%s," % (value, list_of_keys))
+
+    return key
+
+
+def keys_by_value(dictionary, value):
+    """ Finds all keys corresponding to the given value in a dictionary
+
+    Args:
+        dictionary ():
+        value ():
+
+    Returns:
+        list_of_keys (list): list of keys corresponding to value
+    """
+    list_of_keys = []
+    list_of_items = dictionary.items()
+    for item in list_of_items:
+        if item[1] == value:
+            list_of_keys.append(item[0])
+    return list_of_keys
 
 
 def load_data(reservoir, data_input=None, mode='data_from_array', starting_point=None,

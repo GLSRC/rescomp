@@ -245,9 +245,9 @@ def runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
 
 
 def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
-                        print_switch=False, starting_point=None, **kwargs):
-    if print_switch:
-        print(sys_flag)
+                        starting_point=None, **kwargs):
+    # if print_switch:
+    #     print(sys_flag)
 
     if starting_point is None: starting_point = np.array([1, 2, 3])
 
@@ -264,21 +264,21 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
         # Starting point is ignored here atm
         f = lambda x: lorenz_96(x, **kwargs)
     elif sys_flag == 'ueda':
-        f = lambda x: ueda(x, **kwargs)
+        f = lambda x: ueda(x)
     elif sys_flag == 'chua':
-        f = lambda x: chua(x, **kwargs)
+        f = lambda x: chua(x)
     elif sys_flag == 'complex_butterfly':
-        f = lambda x: complex_butterfly(x, **kwargs)
+        f = lambda x: complex_butterfly(x)
     elif sys_flag == 'chen':
-        f = lambda x: chen(x, **kwargs)
+        f = lambda x: chen(x)
     elif sys_flag == 'rucklidge':
-        f = lambda x: rucklidge(x, **kwargs)
+        f = lambda x: rucklidge(x)
     elif sys_flag == 'rabinovich':
-        f = lambda x: rabinovich(x, **kwargs)
+        f = lambda x: rabinovich(x)
     elif sys_flag == 'thomas':
-        f = lambda x: thomas(x, **kwargs)
+        f = lambda x: thomas(x)
     elif sys_flag == 'roessler_sprott':
-        f = lambda x: roessler_sprott(x, **kwargs)
+        f = lambda x: roessler_sprott(x)
     elif sys_flag == 'kuramoto_sivashinsky':
         # Starting point is ignored here atm
         return kuramoto_sivashinsky(dt=dt, time_steps=time_steps-1, **kwargs)
@@ -287,8 +287,8 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
 
     traj_size = ((time_steps, starting_point.shape[0]))
     traj = np.zeros(traj_size)
-    if print_switch:
-        print('record_trajector received and used: starting_point: ', starting_point)
+    # if print_switch:
+    #     print('record_trajector received and used: starting_point: ', starting_point)
     y = starting_point
 
     for t in range(traj_size[0]):

@@ -9,6 +9,7 @@ import pickle
 import time
 import datetime
 import logging
+import sys
 # import scipy.sparse
 # import scipy.sparse.linalg
 # import matplotlib.pyplot as plt
@@ -51,22 +52,40 @@ class ESNLogging:
         self._log_level_synonyms.add_synonyms(40, ["ERROR", "error"])
         self._log_level_synonyms.add_synonyms(50, ["CRITICAL", "critical"])
 
-        self.set_console_log_level()
-        self.set_log_file_path()
-        self.set_file_log_level()
-        # self._create_logger()
+        self._create_logger()
+        self.set_console_logger()
+        # self.set_file_logger()
 
-    def set_log_file_path(self, log_file_path=None):
+    def set_file_logger(self, log_file_path, log_level="debug"):
         """ Set's the logging file path
 
         Args:
-            log_file_path (str):
+            log_file_path (str): valid path, including file type to store the
+                logfile in. E.g: "folder_structure/log_file.txt"
+            log_level (): file loglevel as specified in:
+                https://docs.python.org/3/library/logging.html#logging-levels
 
         """
         self._log_file_path = log_file_path
-        self._create_logger()
+        self._file_log_level = self._log_level_synonyms.get_flag(log_level)
 
-    def set_console_log_level(self, log_level="debug"):
+        # Remove the old handler if there is one
+        if self._file_handler is not None:
+            self.logger.removeHandler(self._file_handler)
+
+        # file log output format
+        fh_formatter = logging.Formatter(
+            '%(asctime)s %(name)s [%(threadName)-12s] [%(levelname)-7s] %(message)s')
+
+        # Create new file handler
+        self._file_handler = logging.FileHandler(self._log_file_path)
+        self._file_handler.setLevel(self._file_log_level)
+        self._file_handler.setFormatter(fh_formatter)
+
+        # Add file handler to logger
+        self.logger.addHandler(self._file_handler)
+
+    def set_console_logger(self, log_level="debug"):
         """ Set loglevel for the console output
 
         Args:
@@ -75,30 +94,28 @@ class ESNLogging:
 
         """
         self._console_log_level = self._log_level_synonyms.get_flag(log_level)
-        self._create_logger()
 
-    def set_file_log_level(self, log_level="debug"):
-        """ Set loglevel for the file logging
+        # Remove the old handler if there is one
+        if self._console_handler is not None:
+            self.logger.removeHandler(self._console_handler)
 
-        Does nothing if :func:`~ESNLogger.set_log_file_path has not been used
-        to set a valid logging file path
+        # console log output format
+        ch_formatter = logging.Formatter(
+            '%(asctime)s [%(levelname)-7s] %(message)s',
+            datefmt='%m-%d %H:%M:%S')
 
-        Args:
-            log_level (): file loglevel as specified in:
-                https://docs.python.org/3/library/logging.html#logging-levels
+        # Create new console handler
+        self._console_handler = logging.StreamHandler(stream=sys.stdout)
+        self._console_handler.setLevel(self._console_log_level)
+        self._console_handler.setFormatter(ch_formatter)
 
-        """
-        self._file_log_level = self._log_level_synonyms.get_flag(log_level)
-        self._create_logger()
+        # Add console handler to logger
+        self.logger.addHandler(self._console_handler)
 
     def _create_logger(self, logger_name='esn_logger'):
         """ Creates and/or adjusts self.logger and sets it up for usage
 
         Args:
-
-            console_log_level ():  as specified in
-            file_log_level (): loglevel for the file output as specified in
-                https://docs.python.org/3/library/logging.html#logging-levels
             logger_name (str): Name of the logger to be created. Used if one
                 wants muliple different loggers with different properties (e.g.
                 loglevels, etc
@@ -114,26 +131,9 @@ class ESNLogging:
         self.logger = logging.getLogger(self._logger_name)
         self.logger.setLevel(logging.DEBUG)
 
-        # Create formatters
-        fh_formatter = logging.Formatter(
-            '%(asctime)s %(name)s [%(threadName)-12s] [%(levelname)-7s] %(message)s')
-        ch_formatter = logging.Formatter(
-            '%(asctime)s [%(levelname)-7s] %(message)s',
-            datefmt='%m-%d %H:%M:%S')
+    # def _update_logger(self):
+    #     self.logger.addHandler(self._console_handler)
 
-        # Create console handler with loglevel "console_log_level"
-        self._console_handler = logging.StreamHandler()
-        self._console_handler.setLevel(self._console_log_level)
-        self._console_handler.setFormatter(ch_formatter)
-        self.logger.addHandler(self._console_handler)
-
-        # Create file handler with a (probably higher) loglevel of
-        # "file_log_level"
-        if self._log_file_path is not None:
-            self._file_handler = logging.FileHandler(self._log_file_path)
-            self._file_handler.setLevel(self._file_log_level)
-            self._file_handler.setFormatter(fh_formatter)
-            self.logger.addHandler(self._file_handler)
 
 
 class SynonymDict():

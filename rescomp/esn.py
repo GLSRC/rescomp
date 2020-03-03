@@ -366,7 +366,7 @@ class ESN(_ESNCore):
         """
         raise Exception("Not yet implemented")
 
-    def set_activation_function(self, act_fct_flag, bias_scale=0):
+    def _set_activation_function(self, act_fct_flag, bias_scale=0):
         """ Set the activation function to the one corresponding to act_fct_flag
 
         Args:
@@ -421,7 +421,8 @@ class ESN(_ESNCore):
 
         return np.tanh(self._w_in @ x + self._network @ r + self._bias)
 
-    def train(self, x_train, sync_steps=0, reg_param = 1e-5, w_in_scale=1.0, w_in_sparse=True,
+    def train(self, x_train, sync_steps=0, reg_param = 1e-5, w_in_scale=1.0,
+              w_in_sparse=True, act_fct_flag='tanh_simple', bias_scale=0,
               save_r=False, save_input=False):
         """ Train the reservoir after synchronizing it
 
@@ -441,6 +442,9 @@ class ESN(_ESNCore):
         self._w_in_sparse = w_in_sparse
         self._x_dim = x_train.shape[1]
         self._create_w_in()
+
+        self._set_activation_function(act_fct_flag=act_fct_flag,
+                                      bias_scale=bias_scale)
 
         if sync_steps != 0:
             x_sync = x_train[:sync_steps]

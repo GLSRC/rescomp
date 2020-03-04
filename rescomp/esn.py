@@ -68,15 +68,18 @@ class _ESNCore(utilities.ESNLogging):
         """
         self.logger.debug('Start syncing the reservoir state')
 
+        if self._last_r is None:
+            self._last_r = np.zeros(self._network.shape[0])
+
         if save_r:
             r = np.zeros((x.shape[0], self._network.shape[0]))
-            r[0] = self._act_fct(x[0], r[0])
+            r[0] = self._act_fct(x[0], self._last_r)
             for t in np.arange(x.shape[0] - 1):
                 r[t+1] = self._act_fct(x[t + 1], r[t])
+            self._last_r = r[-1]
             return r
         else:
-            self._last_r = np.zeros(self._network.shape[0])
-            for t in np.arange(x.shape[0] - 1):
+            for t in np.arange(x.shape[0]):
                 self._last_r = self._act_fct(x[t], self._last_r)
             return None
 
@@ -129,7 +132,7 @@ class _ESNCore(utilities.ESNLogging):
         self.logger.debug('Start training')
 
         # The last value of r can't be used for the training, see comment below
-        r = self.synchronize(x_train, save_r=True)[:-1]
+        r = self.synchronize(x_train[:-1], save_r=True)
 
         # NOTE: This is slightly different than the old ESN as y_train was as
         # long as x_train, but shifted by one time step. Hence to get the same
@@ -150,7 +153,7 @@ class _ESNCore(utilities.ESNLogging):
         system state y
 
         Args:
-            x (ndarray): current state of the d-dim. system, shape (d)
+            x (ndarray): input for the d-dim. system, shape (d)
 
         Returns:
             y (ndarray): the next time step as predicted from last_x, _w_out and
@@ -480,28 +483,32 @@ class ESN(_ESNCore):
         """
 
         if prediction_steps is None:
-            prediction_steps = x_pred.shape[0] - sync_steps
+            prediction_steps = x_pred.shape[0] - sync_steps - 1
 
         # Automatically generates a y_test to compare the prediction against, if
         # the input data is longer than the number of synchronization tests
-        if sync_steps <= x_pred.shape[0]:
-            x_sync = x_pred[:sync_steps + 1]
+        if sync_steps == 0:
+            x_sync = None
+            y_test = x_pred[1:]
+        elif sync_steps <= x_pred.shape[0]:
+            x_sync = x_pred[:sync_steps]
             y_test = x_pred[sync_steps + 1:]
         else:
-            x_sync = x_pred
+            x_sync = x_pred[:-1]
             y_test = None
 
         if save_input:
             self._x_pred_sync = x_sync
             self._y_test = y_test
 
-        self.synchronize(x_sync)
+        if x_sync is not None:
+            self.synchronize(x_sync)
 
         self.logger.debug('Start Prediction')
 
-        self._y_pred = np.zeros((prediction_steps, x_sync.shape[1]))
+        self._y_pred = np.zeros((prediction_steps, x_pred.shape[1]))
 
-        self._y_pred[0] = self.predict_step(x_sync[-1])
+        self._y_pred[0] = self.predict_step(x_pred[0])
 
         if save_r:
             self._r_pred = np.zeros((prediction_steps, self._network.shape[0]))
@@ -777,7 +784,10 @@ class ESNOld:
     def set_bias(self):
         #bias for each node to enrich the used interval of activation function:
         #if unwanted set self.bias_scale to zero.
-        self.bias = self.bias_scale * np.random.uniform(low=-1.0, high=1.0, size=self.n_dim)
+        if self.bias_scale != 0:
+            self.bias = self.bias_scale * np.random.uniform(low=-1.0, high=1.0, size=self.n_dim)
+        else:
+            self.bias = 0
         
     def set_activation_function(self, activation_function_flag):
         """

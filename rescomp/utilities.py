@@ -45,18 +45,49 @@ class ESNLogging:
         self._console_handler = None
 
         self._log_level_synonyms = SynonymDict()
-        self._log_level_synonyms.add_synonyms(0, ["NOTSET", "notset", "off"])
+        self._log_level_synonyms.add_synonyms(0, ["NOTSET", "notset"])
         self._log_level_synonyms.add_synonyms(10, ["DEBUG", "debug"])
         self._log_level_synonyms.add_synonyms(20, ["INFO", "info"])
         self._log_level_synonyms.add_synonyms(30, ["WARNING", "warning"])
         self._log_level_synonyms.add_synonyms(40, ["ERROR", "error"])
         self._log_level_synonyms.add_synonyms(50, ["CRITICAL", "critical"])
+        self._log_level_synonyms.add_synonyms(100, ["OFF", "off"])
 
         self._create_logger()
-        self.set_console_logger()
+        self.set_console_logger(log_level="debug")
         # self.set_file_logger()
 
-    def set_file_logger(self, log_file_path, log_level="debug"):
+    def set_console_logger(self, log_level):
+        """ Set loglevel for the console output
+
+        Args:
+            log_level (): console loglevel as specified in:
+                https://docs.python.org/3/library/logging.html#logging-levels
+
+        """
+        self._console_log_level = self._log_level_synonyms.get_flag(log_level)
+
+        # Remove the old handler if there is one
+        if self._console_handler is not None:
+            self.logger.removeHandler(self._console_handler)
+
+        if self._console_log_level == 100:
+            pass  # deactivated logger
+        else:
+            # console log output format
+            ch_formatter = logging.Formatter(
+                '%(asctime)s [%(levelname)-7s] %(message)s',
+                datefmt='%m-%d %H:%M:%S')
+
+            # Create new console handler
+            self._console_handler = logging.StreamHandler(stream=sys.stdout)
+            self._console_handler.setLevel(self._console_log_level)
+            self._console_handler.setFormatter(ch_formatter)
+
+            # Add console handler to logger
+            self.logger.addHandler(self._console_handler)
+
+    def set_file_logger(self, log_level, log_file_path):
         """ Set's the logging file path
 
         Args:
@@ -73,44 +104,20 @@ class ESNLogging:
         if self._file_handler is not None:
             self.logger.removeHandler(self._file_handler)
 
-        # file log output format
-        fh_formatter = logging.Formatter(
-            '%(asctime)s %(name)s [%(threadName)-12s] [%(levelname)-7s] %(message)s')
+        if self._file_log_level == 100:
+            pass # deactivated logger
+        else:
+            # file log output format
+            fh_formatter = logging.Formatter(
+                '%(asctime)s %(name)s [%(threadName)-12s] [%(levelname)-7s] %(message)s')
 
-        # Create new file handler
-        self._file_handler = logging.FileHandler(self._log_file_path)
-        self._file_handler.setLevel(self._file_log_level)
-        self._file_handler.setFormatter(fh_formatter)
+            # Create new file handler
+            self._file_handler = logging.FileHandler(self._log_file_path)
+            self._file_handler.setLevel(self._file_log_level)
+            self._file_handler.setFormatter(fh_formatter)
 
-        # Add file handler to logger
-        self.logger.addHandler(self._file_handler)
-
-    def set_console_logger(self, log_level="debug"):
-        """ Set loglevel for the console output
-
-        Args:
-            log_level (): console loglevel as specified in:
-                https://docs.python.org/3/library/logging.html#logging-levels
-
-        """
-        self._console_log_level = self._log_level_synonyms.get_flag(log_level)
-
-        # Remove the old handler if there is one
-        if self._console_handler is not None:
-            self.logger.removeHandler(self._console_handler)
-
-        # console log output format
-        ch_formatter = logging.Formatter(
-            '%(asctime)s [%(levelname)-7s] %(message)s',
-            datefmt='%m-%d %H:%M:%S')
-
-        # Create new console handler
-        self._console_handler = logging.StreamHandler(stream=sys.stdout)
-        self._console_handler.setLevel(self._console_log_level)
-        self._console_handler.setFormatter(ch_formatter)
-
-        # Add console handler to logger
-        self.logger.addHandler(self._console_handler)
+            # Add file handler to logger
+            self.logger.addHandler(self._file_handler)
 
     def _create_logger(self, logger_name='esn_logger'):
         """ Creates and/or adjusts self.logger and sets it up for usage

@@ -15,8 +15,7 @@ import scipy.signal
 import scipy.sparse.linalg
 import scipy.spatial
 from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence
-
-from . import ESN  # Currently imported for type hints only
+from .esn import ESN  # Currently imported for type hints only
 
 # from . import esn
 # try: import esn_rescomp

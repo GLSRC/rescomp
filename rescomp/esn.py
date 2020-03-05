@@ -58,11 +58,11 @@ class _ESNCore(utilities.ESNLogging):
         """ Synchronize the reservoir state with the input time series
 
         Args:
-            x (ndarray): shape (T,d)
+            x (np.ndarray): shape (T,d)
             save_r (bool): If true, saves and returns r
 
         Returns:
-            2dim ndarray containing all r(t) states if save_r is True
+            2dim np.ndarray containing all r(t) states if save_r is True
             None else
 
         """
@@ -103,10 +103,10 @@ class _ESNCore(utilities.ESNLogging):
         calculated anyway.
 
         Args:
-            y_train (ndarray): Desired prediction from the reservoir states
-            r (ndarray): reservoir states
+            y_train (np.ndarray): Desired prediction from the reservoir states
+            r (np.ndarray): reservoir states
         Returns:
-            r_gen (ndarray): generalized nonlinear reservoir states form
+            r_gen (np.ndarray): generalized nonlinear reservoir states form
         """
 
         self.logger.debug('Fit _w_out according to method%s' %
@@ -120,9 +120,8 @@ class _ESNCore(utilities.ESNLogging):
 
         return r_gen
 
-    def train(self, x_train, w_out_fit_flag="simple"):
-        """
-        Assumes a synchronized reservoir.
+    def _train_synced(self, x_train, w_out_fit_flag="simple"):
+        """ Train a synchronized reservoir
 
         """
 
@@ -145,7 +144,7 @@ class _ESNCore(utilities.ESNLogging):
 
         return r, r_gen
 
-    def predict_step(self, x):
+    def _predict_step(self, x):
         """ Predict a single time step
 
         Assumes a synchronized reservoir.
@@ -153,10 +152,10 @@ class _ESNCore(utilities.ESNLogging):
         system state y
 
         Args:
-            x (ndarray): input for the d-dim. system, shape (d)
+            x (np.ndarray): input for the d-dim. system, shape (d)
 
         Returns:
-            y (ndarray): the next time step as predicted from last_x, _w_out and
+            y (np.ndarray): the next time step as predicted from last_x, _w_out and
             _last_r, shape (d)
         
         """
@@ -302,7 +301,9 @@ class ESN(_ESNCore):
             raise Exception("the network type %s is not implemented" %
                             str(self._n_type_flag))
 
-        self._network = np.asarray(nx.to_numpy_matrix(network))
+        self._network = nx.to_numpy_array(network)
+        # meh = nx.to_numpy_matrix(network)
+        # self._network = np.asarray(nx.to_numpy_matrix(network))
 
     def _vary_network(self, network_variation_attempts=10):
         """ Varies the weights of self.network, while conserving the topology.
@@ -400,11 +401,11 @@ class ESN(_ESNCore):
         """ Standard activation function of the elementwise np.tanh()
 
         Args:
-            x (ndarray): d-dim input
-            r (ndarray): n-dim network states
+            x (np.ndarray): d-dim input
+            r (np.ndarray): n-dim network states
 
         Returns:
-            (ndarray) n-dim
+            (np.ndarray) n-dim
 
         """
 
@@ -414,19 +415,19 @@ class ESN(_ESNCore):
         """ Activation function of the elementwise np.tanh() with added bias
 
         Args:
-            x (ndarray): d-dim input
-            r (ndarray): n-dim network states
+            x (np.ndarray): d-dim input
+            r (np.ndarray): n-dim network states
 
         Returns:
-            (ndarray) n-dim
+            (np.ndarray) n-dim
 
         """
 
         return np.tanh(self._w_in @ x + self._network @ r + self._bias)
 
-    def train(self, x_train, sync_steps=0, reg_param = 1e-5, w_in_scale=1.0,
-              w_in_sparse=True, act_fct_flag='tanh_simple', bias_scale=0,
-              save_r=False, save_input=False):
+    def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
+                      w_in_sparse=True, act_fct_flag='tanh_simple', bias_scale=0,
+                      save_r=False, save_input=False):
         """ Train the reservoir after synchronizing it
 
         Args:
@@ -461,11 +462,11 @@ class ESN(_ESNCore):
             self._x_train = x_train
 
         if save_r:
-            self._r_train, self._r_train_gen = super().train(x_train)
+            self._r_train, self._r_train_gen = self._train_synced(x_train)
         else:
-            super().train(x_train)
+            self._train_synced(x_train)
 
-    def predict(self, x_pred, sync_steps=0, prediction_steps=None,
+    def predict(self, x_pred, sync_steps, pred_steps=None,
                 save_r=False, save_input=False):
         """ Predict the system evolution after synchronizing the reservoir
 
@@ -474,7 +475,7 @@ class ESN(_ESNCore):
         Args:
             x_pred ():
             sync_steps ():
-            prediction_steps (int): how many steps to predict
+            pred_steps (int): how many steps to predict
             save_r ():
             save_input ():
 
@@ -482,8 +483,8 @@ class ESN(_ESNCore):
             y_pred, y_test
         """
 
-        if prediction_steps is None:
-            prediction_steps = x_pred.shape[0] - sync_steps - 1
+        if pred_steps is None:
+            pred_steps = x_pred.shape[0] - sync_steps - 1
 
         # Automatically generates a y_test to compare the prediction against, if
         # the input data is longer than the number of synchronization tests
@@ -506,25 +507,25 @@ class ESN(_ESNCore):
 
         self.logger.debug('Start Prediction')
 
-        self._y_pred = np.zeros((prediction_steps, x_pred.shape[1]))
+        self._y_pred = np.zeros((pred_steps, x_pred.shape[1]))
 
-        self._y_pred[0] = self.predict_step(x_pred[0])
+        self._y_pred[0] = self._predict_step(x_pred[0])
 
         if save_r:
-            self._r_pred = np.zeros((prediction_steps, self._network.shape[0]))
+            self._r_pred = np.zeros((pred_steps, self._network.shape[0]))
             self._r_pred_gen = self._r_to_generalized_r(self._r_pred)
             self._r_pred[0] = self._last_r
             self._r_pred_gen[0] = self._last_r_gen
 
-            for t in range(prediction_steps - 1):
-                self._y_pred[t + 1] = self.predict_step(self._y_pred[t])
+            for t in range(pred_steps - 1):
+                self._y_pred[t + 1] = self._predict_step(self._y_pred[t])
 
                 self._r_pred[t + 1] = self._last_r
                 self._r_pred_gen[t + 1] = self._last_r_gen
 
         else:
-            for t in range(prediction_steps - 1):
-                self._y_pred[t + 1] = self.predict_step(self._y_pred[t])
+            for t in range(pred_steps - 1):
+                self._y_pred[t + 1] = self._predict_step(self._y_pred[t])
 
         # # TODO: Kinda code duplication here, but otherwise there are a million
         # # TODO: calls to if statements..
@@ -592,18 +593,24 @@ class ESN(_ESNCore):
     #         self._w_out_fit_flag_synonyms[_w_out_fit_flag]
 
 
-# class ESNWrapper(utilities.ESNLogging):
-#
-#     def __init__(self):
-#
-#         # train() assigns to:
-#         self._x_train = None
-#
-#         # predict() assigns to:
-#         self._x_sync = None
-#         self._y_test = None
-#
-#     pass
+class ESNWrapper(ESN):
+    """ Convenience functions for the ESN class
+    """
+
+    def __init__(self):
+        super().__init__()
+
+        pass
+
+    def train_and_predict(self, ):
+        """ Train, then predict the evolution directly following the train data
+        """
+        raise Exception("Not yet implemented")
+
+    def predict_multiple(self, ):
+        """ Predict system evolution from multiple different starting conditions
+        """
+        raise Exception("Not yet implemented")
 
 
 class MegaWrapper(utilities.ESNLogging):
@@ -631,9 +638,9 @@ class ESNOld:
     """
     reservoir is a class for reservoir computing, using different network
     structures to predict (chaotic) time series
-      
+
     :parameters:
-    :sys: choose from lorenz.lorenz, lorenz.mod_lorenz and 
+    :sys: choose from lorenz.lorenz, lorenz.mod_lorenz and
         lorenz.roessler, eg. the system to predict
     :number_of_nodes: number of nodes for the actual reservoir network
     :input_dimension: dimension of the input to the reservoir
@@ -647,7 +654,7 @@ class ESNOld:
         matrix
     :prediction_steps: number of prediction steps
     :discard_steps: number of steps, that are discarded befor recording r
-        to synchronize the network with the input        
+        to synchronize the network with the input
     :regularization_parameter: weight for the Tikhonov-regularization term
         in the cost function (self.train())
     :spectral_radius: spectral radius of the actual reservoir network
@@ -663,7 +670,7 @@ class ESNOld:
         if False, all dimensions are superimposed at each node
     :w_in_scale: Defines the absolute scale of uniformly distributed random
         numbers, centered at zero
-    :activation_function_flag: selects the type of activation function 
+    :activation_function_flag: selects the type of activation function
         (steepness, offset)
     :bias_scale: ###
     :normalize_data: boolean: if the time series should be normalized to zer
@@ -705,7 +712,7 @@ class ESNOld:
         self.bias_scale = bias_scale
         self.normalize_data = normalize_data
         self.r_squared = r_squared
-        
+
         # topology of the network, adjacency matrix with entries 0. or 1.:
         self.binary_network = None  # calc_bina_scry_network() assigns values
 
@@ -735,7 +742,7 @@ class ESNOld:
         network_creation_attempts = 10
         for i in range(network_creation_attempts):
             try:
-                self.create_network()        
+                self.create_network()
                 self.vary_network() # previously: self.scale_network() can someone explain why? vary contains scale
             except ArpackNoConvergence:
                 continue
@@ -745,9 +752,9 @@ class ESNOld:
                             %network_creation_attempts)
 
         self.set_bias()
-        
+
         self.create_w_in()
-                                          
+
     def create_w_in(self):
         if self.w_in_sparse:
             # w_in such that one element in each row is non-zero (Lu,Hunt, Ott 2018):
@@ -760,8 +767,8 @@ class ESNOld:
             self.w_in = np.random.uniform(low=-self.w_in_scale,
                                           high=self.w_in_scale,
                                           size=(self.n_dim, self.x_dim))
-        
-        
+
+
     def create_network(self):
         # network type flags are handled:
         if self.type == 'random':
@@ -780,7 +787,7 @@ class ESNOld:
         self.network = np.asarray(nx.to_numpy_matrix(network))
 
         self.calc_binary_network()
-        
+
     def set_bias(self):
         #bias for each node to enrich the used interval of activation function:
         #if unwanted set self.bias_scale to zero.
@@ -788,10 +795,10 @@ class ESNOld:
             self.bias = self.bias_scale * np.random.uniform(low=-1.0, high=1.0, size=self.n_dim)
         else:
             self.bias = 0
-        
+
     def set_activation_function(self, activation_function_flag):
         """
-        method to change the activation function according to 
+        method to change the activation function according to
         activation_function_flag variable
         """
         if activation_function_flag == 'tanh':
@@ -854,7 +861,7 @@ class ESNOld:
         """
         """
         Can cause problems due to non converging of the eigenvalue evaluation
-        """            
+        """
         self.network = scipy.sparse.csr_matrix(self.network)
         try:
             eigenvals = scipy.sparse.linalg.eigs(self.network,
@@ -864,7 +871,7 @@ class ESNOld:
         except ArpackNoConvergence:
             print('Eigenvalue in scale_network could not be calculated!')
             raise
-            
+
         maximum = np.absolute(eigenvals).max()
         self.network = ((self.spectral_radius / maximum) * self.network)
         self.network = self.network.toarray()
@@ -876,11 +883,11 @@ class ESNOld:
         for training and testing the network.
         If the file does not exist, it is created according to the parameters.
         self._w_in is initialized.
-        
+
         :parameters:
         :mode:
-        - 'start_from_attractor' uses lorenz.record_trajectory for 
-            generating a timeseries, by randomly picking starting points from a 
+        - 'start_from_attractor' uses lorenz.record_trajectory for
+            generating a timeseries, by randomly picking starting points from a
             given trajectory.
         - 'fix_start' passes
             for t in np.arange(self.discard_steps):
@@ -889,7 +896,7 @@ class ESNOld:
             starting_point to lorenz.record_trajectory
         - 'data_from_file' loads a timeseries from file without further
         checking for reasonability - use with care!
-        
+
         :add_noise: boolean: if normal distributed noise should be added to the
             imported timeseries
         :std_noise: standard deviation of the applied noise
@@ -907,10 +914,10 @@ class ESNOld:
         Discards self.discard_steps steps befor recording the internal states
         of the reservoir (self.r),
         to synchronize the network dynamics with the input.
-        
+
         Requires load_data() first, to pass values to x_train, y_train, y_test
         -> extend to test!
-        Internally converts network in scipy.sparse object        
+        Internally converts network in scipy.sparse object
         """
         t0 = time.time()
 
@@ -957,7 +964,7 @@ class ESNOld:
         """
         Uses the self.w_out to predict output, using the network as
         recurrent network, feeding back in the (noisy) output.
-        Internally converts network in scipy.sparse object   
+        Internally converts network in scipy.sparse object
         """
         t0 = time.time()
 
@@ -1010,7 +1017,7 @@ class ESNOld:
         """
         Saves the network parameters (extracted with self.__dict__ to a file,
         for later reuse.
-        
+
         pickle protocol version 2
         """
         utilities.save_realization(self, filename=filename)

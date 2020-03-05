@@ -19,7 +19,9 @@ class test_ESN(unittest.TestCase):
         del self.esn
         np.random.seed(None)
 
-    # TODO: Tests should be much less broad than this, but I am lazy
+    # TODO: Tests should be much less broad than this, but I am lazy.
+    #   e.g: For a test, there is no reason to use simulated data, random
+    #   data would have less dependencies
     def test_sim_train_pred_mod_lorenz(self):
         train_sync_steps = 3
         train_steps = 3
@@ -53,6 +55,53 @@ class test_ESN(unittest.TestCase):
 
         np.testing.assert_equal(y_pred, y_pred_desired)
         np.testing.assert_equal(y_test, y_test_desired)
+
+class test_ESNWrapper(unittest.TestCase):
+    def setUp(self):
+        np.random.seed(0)
+        self.esn = rescomp.ESNWrapper()
+        self.esn.set_console_logger("off")
+
+    def tearDown(self):
+        del self.esn
+        np.random.seed(None)
+
+    def test_train_and_predict(self):
+        disc_steps = 3
+        train_sync_steps = 2
+        train_steps = 5
+        pred_steps = 4
+        total_time_steps = disc_steps + train_sync_steps + train_steps + \
+                           pred_steps
+
+        x_dim = 3
+        data = np.random.random((total_time_steps, x_dim))
+
+        x_train, x_pred = rescomp.utilities.train_and_predict_input_setup(
+            data, disc_steps=disc_steps, train_sync_steps=train_sync_steps,
+            train_steps=train_steps, pred_steps=pred_steps)
+
+        np.random.seed(1)
+        self.esn.create_network()
+
+        self.esn.train(x_train, train_sync_steps)
+        y_pred_desired, y_test_desired = self.esn.predict(x_pred, sync_steps=0)
+
+        self.tearDown()
+        self.setUp()
+
+        np.random.seed(1)
+        self.esn.create_network()
+
+        y_pred, y_test = self.esn.train_and_predict(
+            data, disc_steps=disc_steps, train_sync_steps=train_sync_steps,
+            train_steps=train_steps, pred_steps=pred_steps)
+
+        # np.testing.assert_equal(data, data2)
+
+        # np.testing.assert_equal(y_test, y_test_desired)
+        np.testing.assert_equal(y_pred, y_pred_desired)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

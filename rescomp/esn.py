@@ -431,14 +431,17 @@ class ESN(_ESNCore):
         """ Train the reservoir after synchronizing it
 
         Args:
-            x_train ():
-            sync_steps ():
-            reg_param ():
-            w_in_scale ():
+            x_train (np.ndarray): Input data used to synchronize and then train
+                the reservoir
+            sync_steps (int): How many steps to use for synchronization before
+                the prediction starts
+            reg_param (float): weight for the Tikhonov-regularization term
+            w_in_scale (float): maximum absolut value of the (random) w_in
+                elements
             w_in_sparse (bool): If true, creates w_in such that one element in
                 each row is non-zero (Lu,Hunt, Ott 2018)
-            save_r ():
-            save_input ():
+            save_r (bool): If true, saves r(t) internally
+            save_input (bool):If true, saves the input data internally
 
         """
         self._reg_param = reg_param
@@ -472,15 +475,21 @@ class ESN(_ESNCore):
 
         Changes self._last_r and self._last_r_gen to stay synchronized to the new
         system state
+
         Args:
-            x_pred ():
-            sync_steps ():
-            pred_steps (int): how many steps to predict
-            save_r ():
-            save_input ():
+            x_pred (np.ndarray): Input data used to synchronize the reservoir, and then
+            sync_steps (int): How many steps to use for synchronization before
+                the prediction starts
+            pred_steps (int): How many steps to predict
+            save_r (bool): If true, saves r(t) internally
+            save_input (bool):If true, saves the input data internally
 
         Returns:
-            y_pred, y_test
+            y_pred (np.ndarray): Predicted future states
+            y_test (np.ndarray_or_None): Data taken from the input to compare
+                the prediction with. If the prediction were "perfect" y_pred and
+                y_test would be equal. Be careful though, y_test might be
+                shorter than y_pred, or even None, if pred_steps is not None
         """
 
         if pred_steps is None:
@@ -527,37 +536,6 @@ class ESN(_ESNCore):
             for t in range(pred_steps - 1):
                 self._y_pred[t + 1] = self._predict_step(self._y_pred[t])
 
-        # # TODO: Kinda code duplication here, but otherwise there are a million
-        # # TODO: calls to if statements..
-        # if self.save_r:
-        #     r = np.zeros((prediction_steps, self._n_dim))
-        #     r[0] = self._act_fct(x_sync[-1], self._last_r)
-        #     r_gen = self._r_to_generalized_r(r)
-        #
-        #     y[0] = self._w_out @ r_gen[0]
-        #
-        #     for t in range(prediction_steps - 1):
-        #         r[t + 1] = self._act_fct(y[t], r[t])
-        #
-        #         r_gen[t + 1] = self._r_to_generalized_r(r[t+1])
-        #
-        #         y[t + 1] = self._w_out @ r_gen[t + 1]
-        #
-        #     return y, r, r_gen
-        # else:
-        #     self._last_r = self._act_fct(x_sync[-1], self._last_r)
-        #     self._last_r_gen = self._r_to_generalized_r(self._last_r)
-        #
-        #     y[0] = self._w_out @ self._last_r_gen
-        #
-        #     for t in range(prediction_steps - 1):
-        #         self._last_r = self._act_fct(y[t], self._last_r)
-        #         self._last_r_gen = self._r_to_generalized_r(self._last_r)
-        #
-        #         y[t + 1] = self._w_out @ self._last_r_gen
-        #
-        #     return y, None, None
-
         return self._y_pred, y_test
 
     def get_network(self, ):
@@ -602,10 +580,36 @@ class ESNWrapper(ESN):
 
         pass
 
-    def train_and_predict(self, ):
+    def train_and_predict(self, x_data, train_sync_steps, train_steps,
+                          pred_steps=None, disc_steps=0, **kwargs):
         """ Train, then predict the evolution directly following the train data
+
+        Args:
+            x_data (np.ndarray): Data used for synchronization, training and
+                prediction (start and comparison)
+            train_sync_steps (int): Steps to synchronize the reservoir with
+                before the 'real' training begins
+            train_steps (int): Steps to use for training and fitting w_in
+            pred_steps (int): How many steps to predict the evolution for
+            **kwargs (): further arguments passed to train() and predict()
+
+        Returns:
+            y_pred (np.ndarray): Predicted future states
+            y_test (np.ndarray_or_None): Data taken from the input to compare
+                the prediction with. If the prediction were "perfect" y_pred and
+                y_test would be equal. Be careful though, y_test might be
+                shorter than y_pred, or even None, if pred_steps is not None
+
         """
-        raise Exception("Not yet implemented")
+        x_train, x_pred = utilities.train_and_predict_input_setup(
+            x_data, disc_steps=disc_steps, train_sync_steps=train_sync_steps,
+            train_steps=train_steps, pred_steps=pred_steps)
+
+        self.train(x_train, train_sync_steps, **kwargs)
+
+        y_pred, y_test = self.predict(x_pred, sync_steps=0, **kwargs)
+
+        return y_pred, y_test
 
     def predict_multiple(self, ):
         """ Predict system evolution from multiple different starting conditions

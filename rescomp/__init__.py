@@ -2,4 +2,4 @@
 
 # from . import *
 from . import simulations, utilities, measures
-from .esn import ESN
+from .esn import ESN, ESNWrapper

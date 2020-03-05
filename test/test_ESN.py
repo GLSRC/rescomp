@@ -19,28 +19,30 @@ class test_ESN(unittest.TestCase):
         del self.esn
         np.random.seed(None)
 
-    # TODO: Test badly written, tests should be much less broad, but I was lazy
-    def test_predict_mod_lorenz(self):
-        n_disc = 0
-        n_train_sync = 3
-        n_train_tot = n_train_sync + 3
-        n_predict = 3
-        simulation_time_steps = n_disc + n_train_tot + n_predict
+    # TODO: Tests should be much less broad than this, but I am lazy
+    def test_sim_train_pred_mod_lorenz(self):
+        train_sync_steps = 3
+        train_steps = 3
+        pred_steps = 2
+        simulation_time_steps = train_sync_steps + train_steps + pred_steps
 
         starting_point = np.array([-2, -5, -1])
         sim_data = rescomp.simulations.simulate_trajectory(
             sys_flag='mod_lorenz', dt=2e-2, time_steps=simulation_time_steps,
             starting_point=starting_point)
 
-        x_train = sim_data[n_disc:n_disc + n_train_tot]
-        x_pred = sim_data[
-                 n_disc + n_train_tot - 1: n_disc + n_train_tot + n_predict - 1]
+        x_train, x_pred = rescomp.utilities.train_and_predict_input_setup(
+            sim_data, train_sync_steps=train_sync_steps,
+            train_steps=train_steps, pred_steps=pred_steps)
+
+        # x_train = sim_data[:n_train_tot]
+        # x_pred = sim_data[n_train_tot - 1: n_train_tot + n_predict]
 
         self.esn.create_network()
 
-        self.esn.train(x_train, sync_steps=n_train_sync, save_r=True)
+        self.esn.train(x_train, sync_steps=train_sync_steps)
 
-        y_pred, y_test = self.esn.predict(x_pred)
+        y_pred, y_test = self.esn.predict(x_pred, sync_steps=0)
 
         y_pred_desired = np.array(
             [[-8.009798237563704, -17.172409021843052, 3.689528434131512],
@@ -51,10 +53,6 @@ class test_ESN(unittest.TestCase):
 
         np.testing.assert_equal(y_pred, y_pred_desired)
         np.testing.assert_equal(y_test, y_test_desired)
-
-        pass
-
-
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

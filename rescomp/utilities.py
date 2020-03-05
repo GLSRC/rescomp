@@ -142,7 +142,6 @@ class ESNLogging:
     #     self.logger.addHandler(self._console_handler)
 
 
-
 class SynonymDict():
     """ Custom dictionary wrapper to match synonyms with integer flags
 
@@ -247,7 +246,6 @@ class SynonymDict():
     # 1 == act_fct_flag_synonyms.get_flag("tanh bias")
 
 
-
 def unique_key_by_value(dictionary, value):
     """ Finds key by value in a dict, raise exception if key is not unique
 
@@ -285,6 +283,34 @@ def keys_by_value(dictionary, value):
         if item[1] == value:
             list_of_keys.append(item[0])
     return list_of_keys
+
+
+def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0, train_steps=None, pred_steps=None):
+    """ Splits ESN input data for consecutive training and prediction
+
+    This function is useful because there is an unintuitive overlap between
+    x_train and x_pred of 1 time step which makes it easy to make mistakes
+
+    Args:
+        data (np.ndarray): data to be split/setup
+        disc_steps (int): steps to discard completely before training begins
+        train_sync_steps (int): steps to sync the reservoir with before training
+        train_steps (int): steps to use for training and fitting w_in
+        pred_steps (int): how many steps to predict the evolution for
+
+    Returns:
+        x_train (np.ndarray): input data for the training
+        x_pred (np.ndarray): input data for the prediction
+
+    """
+    if train_steps is None: train_steps = data.shape[0] - disc_steps
+    if pred_steps is None: pred_steps = data.shape[0] - train_steps - disc_steps
+
+    x_train = data[disc_steps: disc_steps + train_sync_steps + train_steps]
+    x_pred = data[disc_steps + train_sync_steps + train_steps - 1:
+                  disc_steps + train_sync_steps + train_steps + pred_steps]
+
+    return x_train, x_pred
 
 
 def load_data(reservoir, data_input=None, mode='data_from_array', starting_point=None,
@@ -420,6 +446,7 @@ def save_realization(reservoir, filename='parameter/test_pickle_'):
     f.close()
 
     return 'file saved'
+
 
 def load_realization(reservoir, filename='parameter/test_pickle_', print_switch=False):
     """

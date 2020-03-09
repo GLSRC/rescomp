@@ -643,26 +643,10 @@ class ESNWrapper(ESN):
         """
         raise Exception("Not yet implemented")
 
-
-class MegaWrapper(utilities.ESNLogging):
-    # has a class instance as object, that implements train() and predict() functions which should be created beforehand
-    # Just used to feed that instance training and (multiple) prediction data sets and then saves them somewhere for easy plotting
-    # Also allows saving of the parameters used, probably by just calling the instances save() function which should handle the rest
-    pass
-
-
-class LocalESN(utilities.ESNLogging):
-    # has multiple ESN instances in a a list or something
-    # trains them in parallel
-    # takes a global x, transforms it into many local x, feeds that to the corresponding ESNs, lets them all predict their corresponding local y, puts that together into a global y which becomes the global x for the next step
-    # different locality_neighborhood creating methods
-    # for now, all ESNs are have the same parameters, but it should be written such that they can have
-    # different ones
-    # locality neighborhoods need to work for core sizes > 1
-    # save the list of instances parameters to file, write it to save each network's parameters individually, even if right now they are all the same anyway
-        # even better: just call the .save() function of the ESN objects themselves with different file paths
-    pass
-
+    def calc_binary_network(self):
+        """ Returns a binary version of self._network
+        """
+        raise Exception("Not yet implemented")
 
 
 class ESNOld:

@@ -5,7 +5,8 @@
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from rescomp import ESN
+import rescomp
+# from rescomp import ESNOld
 from rescomp.simulations import kuramoto_sivashinsky
 
 if __name__ == "__main__":
@@ -31,7 +32,7 @@ if __name__ == "__main__":
     # If you want to see the effect of badly chosen hyperparameters, set e.g.
     # the spectral radius to 0.9 or, for a completely failed prediction, set it
     # to 1.6 or higher
-    esn = ESN(network_dimension=5000, input_dimension=data.shape[1],
+    esn = rescomp.esn.ESNOld(network_dimension=5000, input_dimension=data.shape[1],
               output_dimension=data.shape[1], training_steps=training_steps,
               prediction_steps=prediction_steps, discard_steps=discard_steps,
               regularization_parameter=0.01, spectral_radius=0.3,

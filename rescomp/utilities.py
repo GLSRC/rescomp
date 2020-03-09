@@ -72,7 +72,7 @@ class ESNLogging:
             self.logger.removeHandler(self._console_handler)
 
         if self._console_log_level == 100:
-            pass  # deactivated logger
+            self._console_handler = None   # deactivated handler
         else:
             # console log output format
             ch_formatter = logging.Formatter(
@@ -91,10 +91,10 @@ class ESNLogging:
         """ Set's the logging file path
 
         Args:
-            log_file_path (str): valid path, including file type to store the
-                logfile in. E.g: "folder_structure/log_file.txt"
             log_level (): file loglevel as specified in:
                 https://docs.python.org/3/library/logging.html#logging-levels
+            log_file_path (str): path, including file type, to store the
+                logfile in. E.g: "folder_structure/log_file.txt"
 
         """
         self._log_file_path = log_file_path
@@ -105,7 +105,7 @@ class ESNLogging:
             self.logger.removeHandler(self._file_handler)
 
         if self._file_log_level == 100:
-            pass # deactivated logger
+            self._file_handler = None   # deactivated handler
         else:
             # file log output format
             fh_formatter = logging.Formatter(
@@ -142,7 +142,7 @@ class ESNLogging:
     #     self.logger.addHandler(self._console_handler)
 
 
-class SynonymDict():
+class SynonymDict:
     """ Custom dictionary wrapper to match synonyms with integer flags
 
     Internally the corresponding integer flags are used, but they are very much

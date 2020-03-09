@@ -648,6 +648,12 @@ class ESNWrapper(ESN):
         """
         raise Exception("Not yet implemented")
 
+    def remove_nodes(self, split):
+        """ See the out-commented remove_nodes fct in measures
+        """
+        raise Exception("Not yet implemented")
+
+
 
 class ESNOld:
     """

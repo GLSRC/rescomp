@@ -463,7 +463,7 @@ def weighted_clustering_coeff_onnela(reservoir):
 #    def calc_covar_rank(reservoir, flag='train'):
 #        """
 #        Calculated the covarianc rank of the squared network dynamics matrix self.r
-#        (or self.r_pred) and stores it in self.covar_rank               
+#        (or self.r_pred) and stores it in self.covar_rank
 #        """
 #        """
 #        Does not calculate the actual covariance matrix!! Fix befor using
@@ -478,84 +478,85 @@ def weighted_clustering_coeff_onnela(reservoir):
 #        #self.covar_rank = np.linalg.matrix_rank(covar)
 #        print(np.linalg.matrix_rank(covar))
 
-def remove_nodes(reservoir, split):
-    """
-    This method removes nodes from the network and w_in according to split,
-    updates avg_degree, spectral_radius, 
-    This new reservoir is returned
-    split should be given as a list of two values or a float e [-1. and 1.]
-    example: split = [-.3, 0.3]
-    """
-    if type(split) == list:
-        if len(split) < 3:
-            pass
-        else:
-            raise Exception('too many entries in split. length: ', len(split))
-    elif type(split) == float and split >= -1. and split <= 1.:
-        split = [split]
-    else:
-        raise Exception('values in split not between -1. and 1., type: ',
-                        type(split))
-
-    remaining_size = sum(np.abs(split))
-
-    new = ESN(sys_flag=reservoir.sys_flag,
-              network_dimension=int(
-                          round(reservoir.ndim * (1 - remaining_size))),
-              input_dimension=3, output_dimension=3,
-              type_of_network=reservoir.type, dt=reservoir.dt,
-              training_steps=reservoir.training_steps,
-              prediction_steps=reservoir.prediction_steps,
-              discard_steps=reservoir.discard_steps,
-              regularization_parameter=reservoir.reg_param,
-              spectral_radius=reservoir.spectral_radius,
-              avg_degree=reservoir.avg_degree,
-              epsilon=reservoir.epsilon,
-              # activation_function_flag=reservoir.activation_function_flag,
-              w_in_sparse=reservoir.W_in_sparse,
-              w_in_scale=reservoir.W_in_scale,
-              bias_scale=reservoir.bias_scale,
-              normalize_data=reservoir.normalize_data,
-              r_squared=reservoir.r_squared)
-    # gather to be removed nodes arguments in rm_args:
-    rm_args = np.empty(0)
-    for s in split:
-        rm_args = np.append(calc_tt(reservoir, flag='arg', split=s), rm_args)
-        # print(s, rm_args.shape)
-
-    # rows and columns of network are deleted according to rm_args:
-    new.network = np.delete(np.delete(reservoir.network, rm_args, 0), rm_args,
-                            1)
-    # the new average degree is calculated:
-    new.calc_binary_network()
-    new.avg_degree = new.binary_network.sum(axis=0).mean(axis=0)
-    # the new spectral radius is calculated:
-    new.network = scipy.sparse.csr_matrix(new.network)
-    try:
-        eigenvals = scipy.sparse.linalg.eigs(new.network,
-                                             k=1,
-                                             v0=np.ones(new.n_dim),
-                                             maxiter=1e3*new.n_dim)[0]
-        new.spectral_radius = np.absolute(eigenvals).max()
-
-        # try:
-        #     eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM')[0]
-        #     new.spectral_radius = np.absolute(eigenvals).max()
-        # except:
-        #     print('eigenvalue calculation failed!, no spectral_radius assigned')
-
-        new.network = new.network.toarray()
-
-    except ArpackNoConvergence:
-        print('Eigenvalue in remove_nodes could not be calculated!')
-        raise
-
-    # Adjust w_in
-    new._w_in = np.delete(reservoir.W_in, rm_args, 0)
-    # pass x,y to new_reservoir
-    new.x_train = reservoir.x_train
-    new.x_discard = reservoir.x_discard
-    new.y_test = reservoir.y_test
-    new.y_train = reservoir.y_train
-
-    return new
+# TODO: Add to ESNWrapper
+# def remove_nodes(reservoir, split):
+#     """
+#     This method removes nodes from the network and w_in according to split,
+#     updates avg_degree, spectral_radius,
+#     This new reservoir is returned
+#     split should be given as a list of two values or a float e [-1. and 1.]
+#     example: split = [-.3, 0.3]
+#     """
+#     if type(split) == list:
+#         if len(split) < 3:
+#             pass
+#         else:
+#             raise Exception('too many entries in split. length: ', len(split))
+#     elif type(split) == float and split >= -1. and split <= 1.:
+#         split = [split]
+#     else:
+#         raise Exception('values in split not between -1. and 1., type: ',
+#                         type(split))
+#
+#     remaining_size = sum(np.abs(split))
+#
+#     new = ESN(sys_flag=reservoir.sys_flag,
+#               network_dimension=int(
+#                           round(reservoir.ndim * (1 - remaining_size))),
+#               input_dimension=3, output_dimension=3,
+#               type_of_network=reservoir.type, dt=reservoir.dt,
+#               training_steps=reservoir.training_steps,
+#               prediction_steps=reservoir.prediction_steps,
+#               discard_steps=reservoir.discard_steps,
+#               regularization_parameter=reservoir.reg_param,
+#               spectral_radius=reservoir.spectral_radius,
+#               avg_degree=reservoir.avg_degree,
+#               epsilon=reservoir.epsilon,
+#               # activation_function_flag=reservoir.activation_function_flag,
+#               w_in_sparse=reservoir.W_in_sparse,
+#               w_in_scale=reservoir.W_in_scale,
+#               bias_scale=reservoir.bias_scale,
+#               normalize_data=reservoir.normalize_data,
+#               r_squared=reservoir.r_squared)
+#     # gather to be removed nodes arguments in rm_args:
+#     rm_args = np.empty(0)
+#     for s in split:
+#         rm_args = np.append(calc_tt(reservoir, flag='arg', split=s), rm_args)
+#         # print(s, rm_args.shape)
+#
+#     # rows and columns of network are deleted according to rm_args:
+#     new.network = np.delete(np.delete(reservoir.network, rm_args, 0), rm_args,
+#                             1)
+#     # the new average degree is calculated:
+#     new.calc_binary_network()
+#     new.avg_degree = new.binary_network.sum(axis=0).mean(axis=0)
+#     # the new spectral radius is calculated:
+#     new.network = scipy.sparse.csr_matrix(new.network)
+#     try:
+#         eigenvals = scipy.sparse.linalg.eigs(new.network,
+#                                              k=1,
+#                                              v0=np.ones(new.n_dim),
+#                                              maxiter=1e3*new.n_dim)[0]
+#         new.spectral_radius = np.absolute(eigenvals).max()
+#
+#         # try:
+#         #     eigenvals = scipy.sparse.linalg.eigs(new.network, k=1, which='LM')[0]
+#         #     new.spectral_radius = np.absolute(eigenvals).max()
+#         # except:
+#         #     print('eigenvalue calculation failed!, no spectral_radius assigned')
+#
+#         new.network = new.network.toarray()
+#
+#     except ArpackNoConvergence:
+#         print('Eigenvalue in remove_nodes could not be calculated!')
+#         raise
+#
+#     # Adjust w_in
+#     new._w_in = np.delete(reservoir.W_in, rm_args, 0)
+#     # pass x,y to new_reservoir
+#     new.x_train = reservoir.x_train
+#     new.x_discard = reservoir.x_discard
+#     new.y_test = reservoir.y_test
+#     new.y_train = reservoir.y_train
+#
+#     return new

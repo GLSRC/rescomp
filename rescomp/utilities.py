@@ -10,11 +10,13 @@ import time
 import datetime
 import logging
 import sys
+import pandas
 # import scipy.sparse
 # import scipy.sparse.linalg
 # import matplotlib.pyplot as plt
 # import networkx as nx
 from . import simulations
+from ._version import __version__
 
 
 class ESNLogging:
@@ -54,8 +56,9 @@ class ESNLogging:
         self._log_level_synonyms.add_synonyms(100, ["OFF", "off"])
 
         self._create_logger()
-        self.set_console_logger(log_level="debug")
+        self.set_console_logger(log_level="warning")
         # self.set_file_logger()
+
 
     def set_console_logger(self, log_level):
         """ Set loglevel for the console output
@@ -244,6 +247,38 @@ class SynonymDict:
     # 0 == act_fct_flag_synonyms.get_flag(0)
     # 0 == act_fct_flag_synonyms.get_flag("tanh simple")
     # 1 == act_fct_flag_synonyms.get_flag("tanh bias")
+
+
+def read_pickle(path, compression="infer"):
+    """ Load pickled (esn) object from file.
+
+    Uses pandas functions internally.
+
+
+    Args:
+        path (str): File path where the pickled object will be loaded.
+        compression ({'infer', 'gzip', 'bz2', 'zip', 'xz', None}) :
+            default 'infer'
+            For on-the-fly decompression of on-disk data. If 'infer', then use
+            gzip, bz2, xz or zip if path ends in '.gz', '.bz2', '.xz',
+            or '.zip' respectively, and no decompression otherwise.
+            Set to None for no decompression.
+
+    Returns:
+        unpickled : same type as object stored in file
+
+    """
+    esn = pandas.read_pickle(path, compression)
+
+    loaded_version = esn.get_internal_version()
+
+    if __version__ != loaded_version:
+        esn.logger.warning(
+            "The rescomp package version used to create the loaded object is "
+            "%s, while the package currently installed on the system is "
+            "version %s)"%(loaded_version, __version__))
+
+    return esn
 
 
 def unique_key_by_value(dictionary, value):

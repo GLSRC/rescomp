@@ -10,11 +10,12 @@ import scipy.sparse.linalg
 from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence
 import networkx as nx
 import time
-import logging
-# import pickle
+import pickle
 # import matplotlib.pyplot as plt
 # import datetime
+import pandas.io.pickle
 from . import utilities
+from ._version import __version__
 
 # dictionary defining synonyms for the different methods to generalize the
 # reservoir state r(t) to a nonlinear fit for _w_out
@@ -245,6 +246,12 @@ class ESN(_ESNCore):
         self._n_type_flag_synonyms.add_synonyms(0, ["random", "erdos_renyi"])
         self._n_type_flag_synonyms.add_synonyms(1, ["scale_free", "barabasi_albert"])
         self._n_type_flag_synonyms.add_synonyms(2, ["small_world", "watts_strogatz"])
+
+        # Set during class creation, used during loading from pickle
+        self._rescomp_version = __version__
+
+        self.logger.debug("Create ESN instance")
+
 
     def _create_w_in(self):
         """ Create the input matrix w_in """
@@ -553,24 +560,43 @@ class ESN(_ESNCore):
     def get_prediction(self, ):
         raise Exception("Not yet implemented")
 
-    def to_pickle(self):
-        raise Exception("Not yet implemented")
+    def get_internal_version(self):
+        """ Returns the rescomp package version used to create the class instance
 
-    # def load_realization(self):
-    #     raise Exception("Not yet implemented")
+        Returns:
+            str: Rescomp package version
 
-    # if scipy.sparse.issparse(network):
-    #     self._network = network
-    # else:
-    #     self._network = scipy.sparse.csr_matrix(network)
+        """
+        return self._rescomp_version
 
-    # if type(_w_out_fit_flag) is int:
-    #     self._w_out_fit_flag = _w_out_fit_flag
-    # else:
-    #     self._w_out_fit_flag = \
-    #         self._w_out_fit_flag_synonyms[_w_out_fit_flag]
+    def to_pickle(self, path, compression="infer",
+                  protocol=pickle.HIGHEST_PROTOCOL):
+        """ Pickle (serialize) object to file.
 
+        Disables logging as logging handlers can not be pickled.
+        Uses pandas functions internally.
 
+        Args:
+            path (str): File path where the pickled object will be stored.
+            compression ({'infer', 'gzip', 'bz2', 'zip', 'xz', None}):
+                default 'infer'
+                A string representing the compression to use in the output file. By
+                default, infers from the file extension in specified path.
+            protocol (int): Int which indicates which protocol should be used by the pickler,
+            default HIGHEST_PROTOCOL (see [1]_ paragraph 12.1.2). The possible
+            values are 0, 1, 2, 3, 4. A negative value for the protocol
+            parameter is equivalent to setting its value to HIGHEST_PROTOCOL.
+
+            .. [1] https://docs.python.org/3/library/pickle.html
+        """
+
+        self.logger.debug("Save to file %s, turn off internal logger to do so"%path)
+
+        self.set_console_logger("off")
+        self.set_file_logger("off", None)
+
+        pandas.io.pickle.to_pickle(self, path, compression=compression,
+                                   protocol=protocol)
 
 class ESNWrapper(ESN):
     """ Convenience functions for the ESN class
@@ -578,8 +604,7 @@ class ESNWrapper(ESN):
 
     def __init__(self):
         super().__init__()
-
-        pass
+        self.logger.debug("Create ESNWrapper instance")
 
     def train_and_predict(self, x_data, train_sync_steps, train_steps,
                           pred_steps=None, disc_steps=0, **kwargs):
@@ -611,6 +636,7 @@ class ESNWrapper(ESN):
         y_pred, y_test = self.predict(x_pred, sync_steps=0, **kwargs)
 
         return y_pred, y_test
+
 
     def predict_multiple(self, ):
         """ Predict system evolution from multiple different starting conditions

@@ -553,11 +553,11 @@ class ESN(_ESNCore):
     def get_prediction(self, ):
         raise Exception("Not yet implemented")
 
-    def save_realization(self):
+    def to_pickle(self):
         raise Exception("Not yet implemented")
 
-    def load_realization(self):
-        raise Exception("Not yet implemented")
+    # def load_realization(self):
+    #     raise Exception("Not yet implemented")
 
     # if scipy.sparse.issparse(network):
     #     self._network = network
@@ -569,6 +569,7 @@ class ESN(_ESNCore):
     # else:
     #     self._w_out_fit_flag = \
     #         self._w_out_fit_flag_synonyms[_w_out_fit_flag]
+
 
 
 class ESNWrapper(ESN):

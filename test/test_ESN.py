@@ -21,7 +21,15 @@ class test_ESN(unittest.TestCase):
 
     # TODO: Tests should be much less broad than this, but I am lazy.
     #   e.g: For a test, there is no reason to use simulated data, random
-    #   data would have less dependencies
+    #   data would have less dependencies.
+    #   Also, this test only works on my (Sebastians) Laptop, the exact floats
+    #   are different on every other system and hence the test has to be
+    #   rewritten anyway to e.g. use the old ESN class as comparison point.
+    #   Because the prediction difference on different systems is surprisingly
+    #   large though, one should keep this test (or one like it) lying around
+    #   somewhere though, as it demonstrates the absolute limit for the
+    #   prediction of chaotic systems, purely due to the minimal differences in
+    #   CPU architecture
     def test_sim_train_pred_mod_lorenz(self):
         train_sync_steps = 3
         train_steps = 3

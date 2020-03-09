@@ -4,10 +4,12 @@
 # from distutils.core import setup
 import setuptools
 from setuptools import setup
+from rescomp._version import __version__
 
 setup(
     name='rescomp',
-    version='0.0.2',
+    # version='0.0.2',
+    version=__version__,
     description='Reservoir Computing package developed at the DLR',
     # long_description=long_description,  # TODO
     # long_description_content_type="text/markdown",

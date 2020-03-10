@@ -528,7 +528,7 @@ class ESN(_ESNCore):
 
         self._y_pred = np.zeros((pred_steps, x_pred.shape[1]))
 
-        self._y_pred[0] = self._predict_step(x_pred[0])
+        self._y_pred[0] = self._predict_step(x_pred[sync_steps])
 
         if save_r:
             self._r_pred = np.zeros((pred_steps, self._network.shape[0]))

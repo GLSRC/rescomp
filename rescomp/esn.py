@@ -434,7 +434,7 @@ class ESN(_ESNCore):
 
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
                       w_in_sparse=True, act_fct_flag='tanh_simple', bias_scale=0,
-                      save_r=False, save_input=False):
+                      save_r=False, save_input=False, **kwargs):
         """ Train the reservoir after synchronizing it
 
         Args:
@@ -477,7 +477,7 @@ class ESN(_ESNCore):
             self._train_synced(x_train)
 
     def predict(self, x_pred, sync_steps, pred_steps=None,
-                save_r=False, save_input=False):
+                save_r=False, save_input=False, **kwargs):
         """ Predict the system evolution after synchronizing the reservoir
 
         Changes self._last_r and self._last_r_gen to stay synchronized to the new

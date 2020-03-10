@@ -501,6 +501,9 @@ class ESN(_ESNCore):
 
         if pred_steps is None:
             pred_steps = x_pred.shape[0] - sync_steps - 1
+            
+        if len(x_pred)>sync_steps+pred_steps+1:
+            x_pred=x_pred[:sync_steps+pred_steps+1]
 
         # Automatically generates a y_test to compare the prediction against, if
         # the input data is longer than the number of synchronization tests

@@ -1,61 +1,151 @@
 # -*- coding: utf-8 -*-
-""" Minimal Reservoir Computing example using the Lorenz63 system
-
-@author: herteux, edited by baur
 """
+Created on Mon Mar  9 18:54:41 2020
+
+@author: herteux, baur
+"""
+import pdb
+
+import rescomp
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 
-from rescomp import ESN
-from rescomp.esn import ESNOld
-from rescomp.simulations import simulate_trajectory
 
-# Create some example data by simulating the Lorenz63 system
-data = simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2,
-                           time_steps=int(5e4), print_switch=False,
-                           starting_point=np.array(
-                    [-2.00384153, -5.34877257, -1.20401106]))[int(-1e4):]
 
-# --- ESN Usage Example
 
-# First create an esn object. You can specify the number of nodes you want to
-# use (default value=500). At the moment it is necessary to explicitly state the
-# dimension of the input and output (default value=3) as well as the number of
-# time steps used for training, prediction(testing) and the number of discarded
-# steps. Since this is inconvenient it will be changed asap.
-# Some initial steps are discarded to synchronizing the reservoir state
-# with the input and are hence not used for training or prediction
-# For systems that don't start out on their attractor (like here) throwing away
-# the initial trajectory also ensures that transient dynamics don't influencing
-# the training.
-esn = ESNOld(network_dimension=500, input_dimension=data.shape[1],
-          output_dimension=data.shape[1], training_steps=4000,
-          prediction_steps=4000, discard_steps=1999)
 
-# Specify the data you want to use for training and testing with esn.load_data()
-# For a d-dimensional time series with T steps the argument should have the
-# shape (T,d). Currently, this function divides the data into discarded steps,
-# training data and test data automatically. The first part of the data will
-# be discarded, the second part used for training and the last part (beginning
-# from time step discard_steps + training_steps + 1) will be used as test data.
-esn.load_data(data)
+#Create some data by simulating the Lorenz63 system
+train_sync_steps = 300
+train_steps = 3000
+pred_steps = 400
+simulation_time_steps = train_sync_steps + train_steps + pred_steps + 5000
 
-# Synchronizes the reservoir and train on the training data.
-esn.train()
+starting_point = np.array([-14.03020521, -20.88693127, 25.53545])
+sim_data = rescomp.simulations.simulate_trajectory(
+            sys_flag='mod_lorenz', dt=2e-2, time_steps=simulation_time_steps,
+            starting_point=starting_point)
+            
+            
+            
+            
 
-# This creates a prediction of the test data set and saves it in esn.y_pred.
-esn.predict()
+# --- ESN Usage Example 1
+
+# Create ESN object. You should use ESNWrapper, which has the full functionality.
+
+esn=rescomp.ESNWrapper()
+
+
+# Optionally you can set a console- or file-logger to print out Information about
+# the process while running. There are different options like 'warning' or 'debug'
+# to control the verbosity
+esn.set_console_logger('warning')
+#esn.set_file_logger('debug', 'esn_log.txt')
+
+
+# Create the actual network of the ESN. Untill now, the object esn was basically
+# empty. Parameters are set in the following methods
+esn.create_network(n_rad=0.5)
+
+
+
+# A typical and natural way to use an ESN is to first synchronize on one section 
+# of a trajectory, train on the next 
+# and then start the prediction immediately. To do this use the method 
+# esn.train_and_predict()
+
+y_pred, y_test = esn.train_and_predict(x_data=sim_data, 
+            train_sync_steps=train_sync_steps, train_steps=train_steps,
+            pred_steps=pred_steps, w_in_scale=0.2)
+ 
+# This is the the predicted trajectory           
+print(y_pred.shape)  
+
+# If x_data.shape[0] is greater than train_sync_steps + train_steps the rest of
+# the data can be used as test set for the prediction. 
+# WARNING: f x_data.shape[0] - (train_sync_steps + train_steps) < pred_steps 
+# then y_test.shape[0]<y_pred.shape[0].    
+print(y_test.shape)           
+
+
+
 
 
 # --- Plotting the results
 
-# You can access the predicted data in esn.y_pred, the test data in esn.y_test,
-# the training data in esn.x_train and esn.y_train respectively (these are just
-# shifted by one time step) and the discarded time steps in esn.x_discard.
-pred = esn.y_pred
-test = esn.y_test
+ax=plt.axes(projection='3d')
 
-plt.plot(test[:, 0], test[:, 1])
-plt.plot(pred[:, 0], pred[:, 1])
+ax.plot(y_test[:, 0], y_test[:, 1],
+        y_test[:,2],alpha=0.8,color='Blue',label='test_data')
+ax.plot(y_pred[:, 0], y_pred[:, 1],y_pred[:,2],alpha=0.8,color='Orange',
+        label='prediction')
+        
+start=y_pred[0]
+ax.plot([start[0]],[start[1]],[start[2]], 'o', label='starting point')
+
+plt.legend()
 
 plt.show()
+
+
+
+
+
+
+# --- ESN Usage Example 2
+
+
+# To start the prediction at any other point, use the methods esn.train() and 
+# esn.predict() separately.
+
+# The reservoir should always be synchronized with the data to make sure outputs
+# are meaningful. This is handled in esn.train() automatically using 
+# x_train[:sync_steps].
+esn.train(x_train=sim_data[train_sync_steps + train_steps:], 
+          sync_steps=train_sync_steps, w_in_scale=0.2) 
+
+# To predict from any part of the trajectory besides the end of the training
+# intervall, the reservoir has to be synchronized again. Specify some intervall
+# of synchronization steps:
+pred_sync_steps=300
+
+#pdb.set_trace()
+
+
+# Again the synchronization happens automatically in esn.predict() using 
+# x_pred[:sync_steps]. The actual prediction starts from the initial point 
+# x_pred[pred_sync_steps+1]
+y_pred, y_test = esn.predict(x_pred=sim_data[train_sync_steps + train_steps +
+                pred_steps + 700:],
+                sync_steps=pred_sync_steps, pred_steps=pred_steps)
+
+
+# This is the the predicted trajectory           
+print(y_pred.shape)  
+
+# If x_pred.shape[0] is greater than sync_steps the rest of
+# the data can be used as test set for the prediction. 
+# WARNING: f x_pred.shape[0] - sync_steps < pred_steps 
+# then y_test.shape[0]<y_pred.shape[0].    
+print(y_test.shape)           
+
+
+
+
+# --- Plotting the results
+ 
+ax=plt.axes(projection='3d')
+
+ax.plot(y_test[:, 0], y_test[:, 1],
+        y_test[:,2],alpha=0.8,color='Blue',label='test_data')
+ax.plot(y_pred[:, 0], y_pred[:, 1],y_pred[:,2],alpha=0.8,color='Orange',
+        label='prediction')
+
+start=y_pred[0]
+ax.plot([start[0]],[start[1]],[start[2]], 'o', label='starting point')
+
+plt.legend()
+
+plt.show()       
+

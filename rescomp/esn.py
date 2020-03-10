@@ -629,11 +629,12 @@ class ESNWrapper(ESN):
         """
         x_train, x_pred = utilities.train_and_predict_input_setup(
             x_data, disc_steps=disc_steps, train_sync_steps=train_sync_steps,
-            train_steps=train_steps, pred_steps=pred_steps)
+            train_steps=train_steps, pred_steps=None)
 
         self.train(x_train, train_sync_steps, **kwargs)
 
-        y_pred, y_test = self.predict(x_pred, sync_steps=0, **kwargs)
+        y_pred, y_test = self.predict(x_pred, sync_steps=0,
+                        pred_steps=pred_steps, **kwargs)
 
         return y_pred, y_test
 

@@ -78,29 +78,29 @@ To uninstall the rescomp package, simply activate the respective environment and
 
 ### Common Installation Problems
 
-* The installation seems to have worked without error, but the package is not found when I try to import it. 
+**Problem:** The installation seems to have worked without error, but the package is not found when I try to import it. 
 
-  Make sure that pip is installed and active in the environment you want to install the package to:
+Make sure that pip is installed and active in the environment you want to install the package to:
+
+    which pip
+
+The output of the above should include the active environment name. For the environment _rc_env_ from above it should be something like
+
+  > "/Users/<username>/anaconda3/envs/rc_env/bin/pip"
+
+If it doesn't include the environment name, you installed the rescomp package in what ever environment the above specifies.   
+To undo this, first uninstall the package,
+
+    pip uninstall rescomp
   
-      which pip
+then deactivate and activate your anaconda environment 
 
-  The output of the above should include the active environment name. For the environment _rc_env_ from above it should be something like
-
-      > "/Users/<username>/anaconda3/envs/rc_env/bin/pip"
-
-  If it doesn't include the environment name, you installed the rescomp package in what ever environment the above specifies.   
-  To undo this, first uninstall the package,
+    conda deactivate
+    conda activate rc_env
   
-      pip uninstall rescomp
-      
-  then deactivate and activate your anaconda environment 
+and then, should pip still not be located in the active environment by "which pip", install pip explicitly:
 
-      conda deactivate
-      conda activate rc_env
-      
-  and then, should pip still not be located in the active environment by "which pip", install pip explicitly:
-  
-      conda install pip
+    conda install pip
 
 * Nothing works, please help me!  
 
@@ -114,21 +114,96 @@ Please read the **FAQ below**.
 Otherwise, just look at the examples in _bin_ to get started. Not many features are implemented yet, hence there is not that much to explain.
 
 ### For Contributors
-
+#### General Information
 * As the package is very much in flux, reading the commits of others is very important! Otherwise you might write code for functions that don't exist anymore or whose syntax has completely changed.  
 As a corrolary, this also means that writing legible, descriptive commit messages is paramount!
 
-* All the old code, before we made everything installable as a package, is in the folder _legacy_. The goal should be to slowly add all the functions from the legacy code base to one, coherent python package.
+* All the old code, before we made everything installable as a package, is in the folder _legacy_. The goal should be to slowly add all the functions from the legacy code base to one, coherent python package.  
 
+#### Branche Usage Intentions:  
+* **master**: 
+    Only for finished, documented features whose signature or functionality won't change much in the future  
+    Changed only by merging with the development branch. Every change is accompanied by a new package version and updated documentation.  
+
+* **develop**: 
+    This is the development branch which is intendet for working features whose signature or functionality probably won't change much in the future, but are not ready yet to be deployed to "the public", possibly because they are incomplete or not yet documented.
+    Also for features and changes to insignificant to make a new release number for.
+
+* **developer branches**:
+    These are your personal branches you can do what you want with.  
+    They should branch off of and merge into the develop branch. It is advisable to keep your developer branch as synchronized as possible with the development branch (see below)
+
+
+#### Create your own developer branch:
+First, go into your local rescomp repository. Then, make sure that you are in the master branch, which you can check via:
+
+    git status
+
+Then, you want to make sure that your local repository is synchronized with the code on the Gitlab servers, which you can enforce by using
+
+    git pull
+
+checkout (i.e. switch to) the developer branch
+    
+    git checkout develop
+    
+create your branch locally
+
+    git branch Your-Gitlab-Username-Here
+    
+and then push the branch to server
+
+    git push --set-upstream origin Your-Gitlab-Username-Here
+
+after which you are done.
+You now have a personal copy of the develop branch, which you can modify to you hearts content without getting in the way of other people!  
+Now you just need to make sure that when you are working on/with the rescomp package, that you are in fact working in your own branch. This is checkable manually via 
+    
+    git status 
+    
+but you can also adjust your terminal to always display the current active branch, which is much safer and more convenient.
+
+
+#### Adjusting the terminal to always show the current branch
+
+The precise way to do this depends on your operating system and shell.  
+For bash on linux the following tutorial works quite well:
+https://coderwall.com/p/fasnya/add-git-branch-name-to-bash-prompt
+
+
+#### Synchronize and merge your developer branch
+
+To synchronize your developer branch with the current state of the development branch do:
+
+    git checkout develop
+    git pull
+    git checkout Your-Developer-Branch-Name
+    git merge develop
+
+To merge your new, commit code from your personal developer branch into the development branch, first synchronize them as above:
+
+    git checkout develop
+    git pull
+    git checkout Your-Developer-Branch-Name
+    git merge develop
+
+and then do:
+
+    git checkout develop
+    git merge Your-Developer-Branch-Name
+    git push
+
+Do **not** merge developer branches into master!  
+Only the development branch should be merged into master, and please only do so if you really know what you are doing.
 
 #### For Internal Contributors
-* When you install the package on the Rechenknecht, instead of using the environment file "environment_rescomp.yml" specified above, use the much more detailed one for the Rechenknecht "environment_rescomp_full_rk.yml". The command to create the environment would then be
+When you install the package on the Rechenknecht, instead of using the environment file "environment_rescomp.yml" specified above, use the much more detailed one for the Rechenknecht "environment_rescomp_full_rk.yml". The command to create the environment would then be
       
       conda env create --name rc_env --file environment_rescomp_full_rk.yml
       
   Doing so should ensure absolute reproducability between all results calculated on the Rechenknecht.
 
-* When importing a new packet, add it to the environment_rescomp.yml file, specifying the newest version that runs on the Rechenknecht, and to the setup.py under "install_requires", specifying the minimal version needed to run the code at all (usually the current major version)
+When importing a new packet, add it to the environment_rescomp.yml file, specifying the newest version that runs on the Rechenknecht, and to the setup.py under "install_requires", specifying the minimal version needed to run the code at all (usually the current major version)
 
 
 ## FAQ  

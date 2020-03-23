@@ -14,7 +14,7 @@ setup(
     # long_description=long_description,  # TODO
     # long_description_content_type="text/markdown",
     # keywords='',  # TODO
-    author='Jonas.Aumeier, Sebastian.Baur, Joschka.Herteux, Youssef.Mabrouk',
+    author='Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk',
     author_email='Jonas.Aumeier@dlr.de, Sebastian.Baur@dlr.de, Joschka.Herteux@dlr.de, Youssef.Mabrouk@dlr.de',
     maintainer='Jonas.Aumeier, Sebastian.Baur, Joschka.Herteux, Youssef.Mabrouk',
     maintainer_email='Jonas.Aumeier@dlr.de, Sebastian.Baur@dlr.de, Joschka.Herteux@dlr.de, Youssef.Mabrouk@dlr.de',

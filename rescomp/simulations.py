@@ -227,9 +227,34 @@ def _runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
 
 def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
                         starting_point=None, **kwargs):
-    # if print_switch:
-    #     print(sys_flag)
+    """ Simulate a trajectory in an artificial chaotic system
 
+    Args:
+        sys_flag (str): The system to be simulated. Acceptable flags are:
+            mod_lorenz
+            mod_lorenz_wrong
+            normal_lorenz
+            roessler
+            lorenz_96
+            ueda
+            chua
+            complex_butterfly
+            chen
+            rucklidge
+            rabinovich
+            thomas
+            roessler_sprott
+            kuramoto_sivashinsky
+        dt (float): Size of time steps
+        time_steps (int): Number of time steps to simulate
+        starting_point (np.ndarray): Starting point of the trajectory
+        **kwargs (): Further Arguments passed to the simulating function,
+            usually not needed
+
+    Returns:
+        trajectory (np.ndarray) the full trajectory, ready to be used for RC
+
+    """
     if starting_point is None: starting_point = np.array([1, 2, 3])
 
     if sys_flag == 'mod_lorenz':

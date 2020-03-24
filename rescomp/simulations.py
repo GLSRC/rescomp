@@ -7,7 +7,7 @@
 import numpy as np
 
 
-def roessler(x):
+def _roessler(x):
     '''
     returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     '''
@@ -20,7 +20,7 @@ def roessler(x):
     else:
         raise Exception('check shape of x, should have 3 components')
         
-def roessler_sprott(x):
+def _roessler_sprott(x):
     '''
     Returns (dx/dt, dy/dt, dz/dt) for given (x,y,z).
     This version is identical to roessler(), but uses the parameters from Sprott.
@@ -36,7 +36,7 @@ def roessler_sprott(x):
         raise Exception('check shape of x, should have 3 components')
 
 
-def normal_lorenz(x):
+def _normal_lorenz(x):
     '''
     returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     '''
@@ -50,12 +50,12 @@ def normal_lorenz(x):
         raise Exception('check shape of x, should have 3 components')
 
 
-def mod_lorenz(x):
+def _mod_lorenz(x):
     '''
     returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     with dz/dt += x(t) to break symmetry
     
-    >>> mod_lorenz(np.array([1.,2.,3.]))
+    >>> _mod_lorenz(np.array([1.,2.,3.]))
     array([10., 23., -5.])
     '''
     sigma = 10.
@@ -69,7 +69,7 @@ def mod_lorenz(x):
         raise Exception('check shape of x, should have 3 components')
 
 
-def mod_lorenz_wrong(x):
+def _mod_lorenz_wrong(x):
     '''
     
     returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
@@ -84,7 +84,7 @@ def mod_lorenz_wrong(x):
     else:
         raise Exception('check shape of x, should have 3 components')
         
-def chua(x):
+def _chua(x):
     '''
     Returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     '''
@@ -110,7 +110,7 @@ def chua(x):
 #    Bp=1.
 #    return m0*x+0.5*(m1-m0)*(np.abs(x+Bp)-np.abs(x-Bp))
     
-def ueda(x):
+def _ueda(x):
     '''
     returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     '''
@@ -127,7 +127,7 @@ def ueda(x):
     else:
         raise Exception('check shape of x, should have 3 components')
         
-def complex_butterfly(x):
+def _complex_butterfly(x):
     '''
     returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     '''
@@ -138,7 +138,7 @@ def complex_butterfly(x):
     else:
         raise Exception('check shape of x, should have 3 components')
 
-def chen(x):
+def _chen(x):
     '''
     returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     '''
@@ -151,7 +151,7 @@ def chen(x):
     else:
         raise Exception('check shape of x, should have 3 components')
    
-def rucklidge(x):
+def _rucklidge(x):
     '''
     returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     '''
@@ -165,7 +165,7 @@ def rucklidge(x):
     else:
         raise Exception('check shape of x, should have 3 components')
         
-def rabinovich(x):
+def _rabinovich(x):
     '''
     returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     '''
@@ -180,7 +180,7 @@ def rabinovich(x):
     else:
         raise Exception('check shape of x, should have 3 components')
         
-def thomas(x): 
+def _thomas(x):
     '''
     returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
     '''
@@ -192,27 +192,8 @@ def thomas(x):
         raise Exception('check shape of x, should have 3 components')
 
 
-# def lorenz_96(x, dim=11, force=8):
-#     # compute state derivatives
-#     der = np.zeros(dim)
-#
-#     # Periodic Boundary Conditions for the 3 edge cases i=1,2,system_dimension
-#     der[0] = (x[1] - x[dim - 2]) * x[dim - 1] - x[0]
-#     der[1] = (x[2] - x[dim - 1]) * x[0] - x[1]
-#     der[dim - 1] = (x[0] - x[dim - 3]) * x[dim - 2] - x[dim - 1]
-#
-#     # then the general case
-#     for i in range(2, dim - 1):
-#         der[i] = (x[i + 1] - x[i - 2]) * x[i - 1] - x[i]
-#
-#     # add the forcing term
-#     der = der + force
-#
-#     # return the state derivatives
-#     return der
-
 #TODO: Rewrite using numpy vectorization to make faster
-def lorenz_96(x, system_dimension=11, force=8):
+def _lorenz_96(x, system_dimension=11, force=8):
     # compute state derivatives
     derivative = np.zeros(system_dimension)
 
@@ -231,7 +212,7 @@ def lorenz_96(x, system_dimension=11, force=8):
     # return the state derivatives
     return derivative
 
-def runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
+def _runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
     '''
     the function approximates differential equations of the form dy/dt = f(t,y)
     returns y(t + dt)
@@ -252,36 +233,36 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
     if starting_point is None: starting_point = np.array([1, 2, 3])
 
     if sys_flag == 'mod_lorenz':
-        f = mod_lorenz
+        f = _mod_lorenz
     elif sys_flag == 'mod_lorenz_wrong':
         print('YOU ARE USING AN UNUSUAL KIND OF LORENZ EQUATION! USE WITH CARE')
-        f = mod_lorenz_wrong
+        f = _mod_lorenz_wrong
     elif sys_flag == 'normal_lorenz':
-        f = normal_lorenz
+        f = _normal_lorenz
     elif sys_flag == 'roessler':
-        f = roessler
+        f = _roessler
     elif sys_flag == 'lorenz_96':
         # Starting point is ignored here atm
-        f = lambda x: lorenz_96(x, **kwargs)
+        f = lambda x: _lorenz_96(x, **kwargs)
     elif sys_flag == 'ueda':
-        f = lambda x: ueda(x)
+        f = lambda x: _ueda(x)
     elif sys_flag == 'chua':
-        f = lambda x: chua(x)
+        f = lambda x: _chua(x)
     elif sys_flag == 'complex_butterfly':
-        f = lambda x: complex_butterfly(x)
+        f = lambda x: _complex_butterfly(x)
     elif sys_flag == 'chen':
-        f = lambda x: chen(x)
+        f = lambda x: _chen(x)
     elif sys_flag == 'rucklidge':
-        f = lambda x: rucklidge(x)
+        f = lambda x: _rucklidge(x)
     elif sys_flag == 'rabinovich':
-        f = lambda x: rabinovich(x)
+        f = lambda x: _rabinovich(x)
     elif sys_flag == 'thomas':
-        f = lambda x: thomas(x)
+        f = lambda x: _thomas(x)
     elif sys_flag == 'roessler_sprott':
-        f = lambda x: roessler_sprott(x)
+        f = lambda x: _roessler_sprott(x)
     elif sys_flag == 'kuramoto_sivashinsky':
         # Starting point is ignored here atm
-        return kuramoto_sivashinsky(dt=dt, time_steps=time_steps-1, **kwargs)
+        return _kuramoto_sivashinsky(dt=dt, time_steps=time_steps - 1, **kwargs)
     else:
         raise Exception('sys_flag not recoginized')
 
@@ -293,7 +274,7 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
 
     for t in range(traj_size[0]):
         traj[t] = y
-        y = runge_kutta(f, dt, y=y)
+        y = _runge_kutta(f, dt, y=y)
     return traj
 
 # not used currently:
@@ -302,7 +283,7 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
 
 
 # TODO: Refactor to make more legible, then add a docstring, remove/add print statements etc.
-def kuramoto_sivashinsky(dimensions, system_size, dt, time_steps):
+def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps):
     # This function simulates the Kuramoto–Sivashinsky PDE
     # reference for the numerical integration : "fourth order time stepping for stiff pde-kassam trefethen 2005" at
     # https://people.maths.ox.ac.uk/trefethen/publication/PDF/2005_111.pdf

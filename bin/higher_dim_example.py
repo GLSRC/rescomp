@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import rescomp
 # from rescomp import ESNOld
-from rescomp.simulations import kuramoto_sivashinsky
+from rescomp.simulations import _kuramoto_sivashinsky
 
 if __name__ == "__main__":
 
@@ -19,8 +19,8 @@ if __name__ == "__main__":
 
     print("Start the KS simulation")
     # Create 100 dimensional input by simulating the Kuramoto–Sivashinsky PDE
-    data = kuramoto_sivashinsky(dimensions=100, system_size=22, dt=0.05,
-                                time_steps=total_steps)
+    data = _kuramoto_sivashinsky(dimensions=100, system_size=22, dt=0.05,
+                                 time_steps=total_steps)
     print("KS Simulation done")
 
     # Used to always create the same random network and hence prediction

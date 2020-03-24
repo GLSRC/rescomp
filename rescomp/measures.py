@@ -107,12 +107,13 @@ def rmse(test_data, pred_data, interval_start=0, interval_end=-1, normalized=Fal
 #     return error
 
 def demerge_time(reservoir):
-    """
-    Measure for the quality of the predicted trajectory
+    """ Measure for the quality of the predicted trajectory
+
     Number of time_steps it takes for the prediction to loose track of the real
     trajectory.
     Returns the number of steps for which y_test and y_pred are separated less
     than epsilon in each dimension.
+
     """
     delta = np.abs(reservoir.y_test - reservoir.y_pred)
     demerge_time = np.argmax(delta > reservoir.epsilon, axis=0).min()
@@ -151,20 +152,31 @@ def demerge_time(reservoir):
 
 def dimension(reservoir, r_min=0.5, r_max=5., r_steps=0.15,
               plot=False, test_measure=False):
-    """
-    Calculates correlation dimension for reservoir.y_pred (or reservoir.y_test) using
+    """ Calculates correlation dimension
+
+    for reservoir.y_pred (or reservoir.y_test) using
     the algorithm by Grassberger and Procaccia and returns dimension.
-    traj: trajectory of an attractor, whos correlation dimension is returned        
+    traj: trajectory of an attractor, whos correlation dimension is returned
     First we calculate a sum over all points within a given radius, then
     average over all basis points and vary the radius
     (grassberger, procaccia).
-    
+
     parameters depend on reservoir.dt and the system itself!
-    
+
     N_r: list of tuples: (radius, average number of neighbours within all
         balls)
-     returns dimension: slope of the log.log plot assumes:
+
+    Args:
+        reservoir ():
+        r_min ():
+        r_max ():
+        r_steps ():
+        plot ():
+        test_measure ():
+
+    Returns: dimension: slope of the log.log plot assumes:
         N_r(radius) ~ radius**dimension
+
     """
     if test_measure:
         traj = reservoir.y_test  # for measure assessing

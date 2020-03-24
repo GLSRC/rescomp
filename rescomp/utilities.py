@@ -19,7 +19,7 @@ from . import simulations
 from ._version import __version__
 
 
-class ESNLogging:
+class _ESNLogging:
     """ Custom logging class, logging both to stdout as well as to file
 
     Use this as you would use the standard logging module, by calling
@@ -46,7 +46,7 @@ class ESNLogging:
         self._file_handler = None
         self._console_handler = None
 
-        self._log_level_synonyms = SynonymDict()
+        self._log_level_synonyms = _SynonymDict()
         self._log_level_synonyms.add_synonyms(0, ["NOTSET", "notset"])
         self._log_level_synonyms.add_synonyms(10, ["DEBUG", "debug"])
         self._log_level_synonyms.add_synonyms(20, ["INFO", "info"])
@@ -145,7 +145,7 @@ class ESNLogging:
     #     self.logger.addHandler(self._console_handler)
 
 
-class SynonymDict:
+class _SynonymDict:
     """ Custom dictionary wrapper to match synonyms with integer flags
 
     Internally the corresponding integer flags are used, but they are very much
@@ -281,7 +281,7 @@ def read_pickle(path, compression="infer"):
     return esn
 
 
-def unique_key_by_value(dictionary, value):
+def _unique_key_by_value(dictionary, value):
     """ Finds key by value in a dict, raise exception if key is not unique
 
     Args:
@@ -292,7 +292,7 @@ def unique_key_by_value(dictionary, value):
         key (): unique key corresponding to value
 
     """
-    list_of_keys = keys_by_value(dictionary, value)
+    list_of_keys = _keys_by_value(dictionary, value)
     if len(list_of_keys) == 1:
         key = list_of_keys[0]
     else:
@@ -302,7 +302,7 @@ def unique_key_by_value(dictionary, value):
     return key
 
 
-def keys_by_value(dictionary, value):
+def _keys_by_value(dictionary, value):
     """ Finds all keys corresponding to the given value in a dictionary
 
     Args:

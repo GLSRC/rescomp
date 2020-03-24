@@ -7,7 +7,7 @@
 import numpy as np
 import scipy.sparse
 import scipy.sparse.linalg
-from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence
+from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence as _ArpackNoConvergence
 import networkx as nx
 import time
 import pickle
@@ -20,7 +20,7 @@ from ._version import __version__
 # dictionary defining synonyms for the different methods to generalize the
 # reservoir state r(t) to a nonlinear fit for _w_out
 
-class _ESNCore(utilities.ESNLogging):
+class _ESNCore(utilities._ESNLogging):
     """ The non-reducible core of ESN RC training and prediction
 
     While technically possible to be used on it's own, this is very much not
@@ -42,7 +42,7 @@ class _ESNCore(utilities.ESNLogging):
 
         self._act_fct = None
 
-        self._w_out_fit_flag_synonyms = utilities.SynonymDict()
+        self._w_out_fit_flag_synonyms = utilities._SynonymDict()
         self._w_out_fit_flag_synonyms.add_synonyms(0, ["linear_r", "simple"])
         self._w_out_fit_flag_synonyms.add_synonyms(1, "linear_and_square_r")
 
@@ -238,13 +238,13 @@ class ESN(_ESNCore):
 
         # Dictionary defining synonyms for the different ways to choose the
         # activation function. Internally the corresponding integers are used
-        self._act_fct_flag_synonyms = utilities.SynonymDict()
+        self._act_fct_flag_synonyms = utilities._SynonymDict()
         self._act_fct_flag_synonyms.add_synonyms(0, ["tanh_simple", "simple"])
         self._act_fct_flag_synonyms.add_synonyms(1, "tanh_bias")
 
         # Dictionary defining synonyms for the different ways to create the
         # network. Internally the corresponding integers are used
-        self._n_type_flag_synonyms = utilities.SynonymDict()
+        self._n_type_flag_synonyms = utilities._SynonymDict()
         self._n_type_flag_synonyms.add_synonyms(0, ["random", "erdos_renyi"])
         self._n_type_flag_synonyms.add_synonyms(1, ["scale_free", "barabasi_albert"])
         self._n_type_flag_synonyms.add_synonyms(2, ["small_world", "watts_strogatz"])

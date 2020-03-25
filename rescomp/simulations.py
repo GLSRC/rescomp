@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
-""" Calculating the lorenz63-attractor and other chaotic systems using 4th order runge kutta method
-
-@author: aumeier, baur, mabrouk
+""" Simulate various chaotic system to generate artificial data
 """
 
 import numpy as np
 
 
 def _roessler(x):
-    '''
-    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
-    '''
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    """
     a = 0.5
     b = 2.
     c = 4.
@@ -19,13 +23,21 @@ def _roessler(x):
         return np.array([-x[1] - x[2], x[0] + a * x[1], b + x[2] * (x[0] - c)])
     else:
         raise Exception('check shape of x, should have 3 components')
-        
+
+
 def _roessler_sprott(x):
-    '''
-    Returns (dx/dt, dy/dt, dz/dt) for given (x,y,z).
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
     This version is identical to roessler(), but uses the parameters from Sprott.
     Implemented as its own function for now to make sure not to interfere.
-    '''
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    """
     a = 0.2
     b = 0.2
     c = 5.7
@@ -37,9 +49,15 @@ def _roessler_sprott(x):
 
 
 def _normal_lorenz(x):
-    '''
-    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
-    '''
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    """
     sigma = 10.
     rho = 28.
     b = 8 / 3
@@ -51,13 +69,21 @@ def _normal_lorenz(x):
 
 
 def _mod_lorenz(x):
-    '''
-    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
     with dz/dt += x(t) to break symmetry
-    
-    >>> _mod_lorenz(np.array([1.,2.,3.]))
-    array([10., 23., -5.])
-    '''
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    Examples:
+        >>> _mod_lorenz(np.array([1.,2.,3.]))
+        array([10., 23., -5.])
+
+    """
     sigma = 10.
     rho = 28.
     b = 8 / 3
@@ -70,11 +96,17 @@ def _mod_lorenz(x):
 
 
 def _mod_lorenz_wrong(x):
-    '''
-    
-    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
     with dz/dt += x(t) to break symmetry
-    '''
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    """
     sigma = 10.
     rho = 28.
     b = 8 / 3
@@ -83,11 +115,18 @@ def _mod_lorenz_wrong(x):
         return np.array([sigma * (x[1] - x[0]), x[0] * (rho - x[2]) - x[1], x[0] * x[1] - b * x[2]] + x[0])
     else:
         raise Exception('check shape of x, should have 3 components')
-        
+
+
 def _chua(x):
-    '''
-    Returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
-    '''
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    """
     alpha=9.
     beta=100./7.
     a=8./7.
@@ -101,19 +140,34 @@ def _chua(x):
         raise Exception('check shape of x, should have 3 components')
 
 
-#def g_chua(x):
-#    '''
-#    function needed for Chua ODEs
-#    '''
+# def g_chua(x):
+#     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+#
+#     for Chua ODEs
+#
+#     Args:
+#         x (np.ndarray): (x,y,z) coordinates
+#
+#     Returns:
+#         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+#
+#     """
 #    m0=-0.5
 #    m1=-0.8
 #    Bp=1.
 #    return m0*x+0.5*(m1-m0)*(np.abs(x+Bp)-np.abs(x-Bp))
-    
+
+
 def _ueda(x):
-    '''
-    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
-    '''
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    """
     delta = 0.05
     beta = 0.
     alpha = 1.
@@ -126,11 +180,18 @@ def _ueda(x):
                 omega])
     else:
         raise Exception('check shape of x, should have 3 components')
-        
+
+
 def _complex_butterfly(x):
-    '''
-    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
-    '''
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    """
     a=0.55
     np.array(x)
     if x.shape == (3,):
@@ -138,10 +199,17 @@ def _complex_butterfly(x):
     else:
         raise Exception('check shape of x, should have 3 components')
 
+
 def _chen(x):
-    '''
-    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
-    '''
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    """
     a = 35.
     b = 3.
     c = 28.
@@ -150,11 +218,18 @@ def _chen(x):
         return np.array([a * (x[1] - x[0]), (c-a)*x[0] -x[0]*x[2]+c*x[1], x[0] * x[1] - b * x[2]])
     else:
         raise Exception('check shape of x, should have 3 components')
-   
+
+
 def _rucklidge(x):
-    '''
-    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
-    '''
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    """
     kappa = 2.
     lam = 6.7
     
@@ -164,11 +239,18 @@ def _rucklidge(x):
                          x[0], -x[2] + x[1]**2])
     else:
         raise Exception('check shape of x, should have 3 components')
-        
+
+
 def _rabinovich(x):
-    '''
-    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
-    '''
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    """
     alpha = 1.1
     gamma = 0.87
     
@@ -179,11 +261,18 @@ def _rabinovich(x):
                          -2*x[2]*(alpha + x[1]*x[0])])
     else:
         raise Exception('check shape of x, should have 3 components')
-        
+
+
 def _thomas(x):
-    '''
-    returns (dx/dt, dy/dt, dz/dt) for given (x,y,z)
-    '''
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
+    Args:
+        x (np.ndarray): (x,y,z) coordinates
+
+    Returns:
+        (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
+
+    """
     b=0.18
     np.array(x)
     if x.shape == (3,):
@@ -193,8 +282,19 @@ def _thomas(x):
 
 
 #TODO: Rewrite using numpy vectorization to make faster
-def _lorenz_96(x, system_dimension=11, force=8):
+def _lorenz_96(x, force=8):
+    """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
+
+    Args:
+        x (np.ndarray): d-dim coordinates
+        force (float): force parameter in the Lorenz96 equations
+
+    Returns:
+        (np.ndarray): d-dim time derivative at x
+
+    """
     # compute state derivatives
+    system_dimension = x.shape[0]
     derivative = np.zeros(system_dimension)
 
     # Periodic Boundary Conditions for the 3 edge cases i=1,2,system_dimension
@@ -212,11 +312,20 @@ def _lorenz_96(x, system_dimension=11, force=8):
     # return the state derivatives
     return derivative
 
+
 def _runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
-    '''
-    the function approximates differential equations of the form dy/dt = f(t,y)
-    returns y(t + dt)
-    '''
+    """ Simulate one step for ODEs of the form dy/dt = f(t,y), returns y(t + dt)
+
+    Args:
+        f (fct): function used to calculate the time derivate at point y
+        dt (float): time step size
+        y (np.ndarray): d-dim position at time t
+
+    Returns:
+        (np.ndarray): d-dim position at time t+dt
+
+    """
+
     # print(y)
     k1 = dt * f(y)
     k2 = dt * f(y + k1 / 2)
@@ -230,20 +339,21 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
     """ Simulate a trajectory in an artificial chaotic system
 
     Args:
-        sys_flag (str): The system to be simulated. Acceptable flags are:
-            mod_lorenz
-            mod_lorenz_wrong
-            normal_lorenz
-            roessler
-            lorenz_96
-            ueda
-            chua
-            complex_butterfly
-            chen
-            rucklidge
-            rabinovich
-            thomas
-            roessler_sprott
+        sys_flag (str): The system to be simulated. Acceptable flags and their
+            corresponding systems are:
+            mod_lorenz,
+            mod_lorenz_wrong,
+            normal_lorenz,
+            roessler,
+            lorenz_96,
+            ueda,
+            chua,
+            complex_butterfly,
+            chen,
+            rucklidge,
+            rabinovich,
+            thomas,
+            roessler_sprott,
             kuramoto_sivashinsky
         dt (float): Size of time steps
         time_steps (int): Number of time steps to simulate
@@ -302,20 +412,30 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
         y = _runge_kutta(f, dt, y=y)
     return traj
 
-# not used currently:
-# def save_trajectory(time_steps, dt): #starting_point=np.array([-13.5,10.8,-17.9])
-#     np.savetxt('lorenz_attractor_'+str(time_steps)+'_a_'+str(dt)+'.dat', record_trajectory(time_steps=time_steps, dt=dt))
-
 
 # TODO: Refactor to make more legible, then add a docstring, remove/add print statements etc.
 def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps):
-    # This function simulates the Kuramoto–Sivashinsky PDE
-    # reference for the numerical integration : "fourth order time stepping for stiff pde-kassam trefethen 2005" at
-    # https://people.maths.ox.ac.uk/trefethen/publication/PDF/2005_111.pdf
-    # Python implementation at: https://github.com/E-Renshaw/kuramoto-sivashinsky
+    """ This function simulates the Kuramoto–Sivashinsky PDE
 
-    # print("Start PDE simulation")
+     Even though it doesn't use the RK4 algorithm, it is bundled with the other
+     simulation functions in simulate_trajectory() for consistency.
 
+    Reference for the numerical integration:
+    "fourth order time stepping for stiff pde-kassam trefethen 2005" at
+    https://people.maths.ox.ac.uk/trefethen/publication/PDF/2005_111.pdf
+
+    Python implementation at: https://github.com/E-Renshaw/kuramoto-sivashinsky
+
+    Args:
+        dimensions (int): nr. of dimensions of the system grid
+        system_size (int): physical size of the system
+        dt (float): time step size
+        time_steps (int): nr. of time steps to simulate
+
+    Returns:
+        (np.ndarray): simulated trajectory of shape (time_steps, dimensions)
+
+    """
     n = dimensions  # No. of grid points in real space (and hence dimensionality of the output)
     size = system_size  # grid points for the PDE simulation
 

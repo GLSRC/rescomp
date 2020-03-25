@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
-""" Calculating the lorenz63-attractor and other chaotic systems using 4th order runge kutta method
+""" Implements the Echo State Network (ESN) used in Reservoir Computing
 
-@author: aumeier, baur and herteux
 """
-# from importlib import reload
+
 import numpy as np
 import scipy.sparse
 import scipy.sparse.linalg
-from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence as _ArpackNoConvergence
+from scipy.sparse.linalg.eigen.arpack.arpack \
+    import ArpackNoConvergence as _ArpackNoConvergence
 import networkx as nx
-import time
 import pickle
-# import matplotlib.pyplot as plt
-# import datetime
 import pandas.io.pickle
 from . import utilities
 from ._version import __version__
@@ -24,10 +21,8 @@ class _ESNCore(utilities._ESNLogging):
     """ The non-reducible core of ESN RC training and prediction
 
     While technically possible to be used on it's own, this is very much not
-    recommended. Use the child class ESN instead.
+    recommended. Use the child class(es) instead.
 
-    Args:
-        **kwargs (): Everything passed to the init of utilities.ESNLogging
     """
 
     def __init__(self):
@@ -58,13 +53,16 @@ class _ESNCore(utilities._ESNLogging):
     def synchronize(self, x, save_r=False):
         """ Synchronize the reservoir state with the input time series
 
+        This is usually done automatically in the training and prediction
+        functions.
+
         Args:
-            x (np.ndarray): shape (T,d)
+            x (np.ndarray): Input data to be used for the synchronization,
+                shape (T, d)
             save_r (bool): If true, saves and returns r
 
         Returns:
-            2dim np.ndarray containing all r(t) states if save_r is True
-            None else
+            np.ndarray_or_None: All r states if save_r is True, None if False
 
         """
         self.logger.debug('Start syncing the reservoir state')
@@ -85,8 +83,22 @@ class _ESNCore(utilities._ESNLogging):
             return None
 
     def _r_to_generalized_r(self, r):
-        # This needs to work for both 2d r of shape (T, d) as well as 1d _last_r
-        # of shape (d)
+        """ Convert the internal reservoir state r into the generalized r_gen
+
+        r_gen is the (nonlinear) transformation applied to r before the output
+        is calculated.
+        The type of transformation is set via the self._w_out_fit_flag parameter
+
+        Args:
+            r (np.ndarray): the r to convert to r_gen. Both the 2dim r of shape
+                (T, d) as well as the 1dim _last_r of shape (d,) should be
+                supported
+
+        Returns:
+            np.ndarray: r_gen, the transformed r
+
+        """
+        # This needs to work for
         if self._w_out_fit_flag is 0:
             return r
         elif self._w_out_fit_flag is 1:
@@ -97,17 +109,14 @@ class _ESNCore(utilities._ESNLogging):
     def _fit_w_out(self, y_train, r):
         """ Fit the output matrix self._w_out after training
 
-        self._w_out connects the reservoir states and the input to
-        the desired output, using linear regression and Tikhonov
-        regularization.
-        Note: There is no need for a save_r parameter as r_gen needs to be
-        calculated anyway.
+        Uses linear regression and Tikhonov regularization.
 
         Args:
             y_train (np.ndarray): Desired prediction from the reservoir states
             r (np.ndarray): reservoir states
         Returns:
-            r_gen (np.ndarray): generalized nonlinear reservoir states form
+            np.ndarray: r_gen, generalized nonlinear transformed r
+
         """
 
         self.logger.debug('Fit _w_out according to method%s' %
@@ -124,6 +133,18 @@ class _ESNCore(utilities._ESNLogging):
     def _train_synced(self, x_train, w_out_fit_flag="simple"):
         """ Train a synchronized reservoir
 
+        Args:
+            x_train (np.ndarray): input to be used for the training, shape (T,d)
+            w_out_fit_flag (str): Type of nonlinear transformation applied to
+                the reservoir states r to be used during the fit (and future
+                prediction
+
+        Returns:
+            tuple: 2-element tuple containing:
+
+            - **r** (*np.ndarray*) reservoir states
+            - **r_gen** (*np.ndarray*): generalized reservoir states
+
         """
 
         self._w_out_fit_flag = \
@@ -134,7 +155,7 @@ class _ESNCore(utilities._ESNLogging):
         # The last value of r can't be used for the training, see comment below
         r = self.synchronize(x_train[:-1], save_r=True)
 
-        # NOTE: This is slightly different than the old ESN as y_train was as
+        # Note: This is slightly different than the old ESN as y_train was as
         # long as x_train, but shifted by one time step. Hence to get the same
         # results as for the old ESN one has to specify an x_train one time step
         # longer than before. Nonetheless, it's still true that r[t] is
@@ -153,11 +174,11 @@ class _ESNCore(utilities._ESNLogging):
         system state y
 
         Args:
-            x (np.ndarray): input for the d-dim. system, shape (d)
+            x (np.ndarray): input for the d-dim. system, shape (d,)
 
         Returns:
-            y (np.ndarray): the next time step as predicted from last_x, _w_out and
-            _last_r, shape (d)
+            np.ndarray: y, the next time step as predicted from last_x, _w_out
+            and _last_r, shape (d,)
         
         """
 
@@ -286,7 +307,7 @@ class ESN(_ESNCore):
             try:
                 self._create_network_connections()
                 self._vary_network()
-            except ArpackNoConvergence:
+            except _ArpackNoConvergence:
                 continue
             break
         else:
@@ -334,7 +355,7 @@ class ESN(_ESNCore):
 
                 self._scale_network()
 
-            except ArpackNoConvergence:
+            except _ArpackNoConvergence:
                 self.logger.error(
                     'Network Variaion failed! -> Try agin!')
 
@@ -344,14 +365,13 @@ class ESN(_ESNCore):
             #TODO: Better logging of exceptions
             self.logger.error("Network variation failed %d times"
                             % network_variation_attempts)
-            raise ArpackNoConvergence
+            raise _ArpackNoConvergence
 
     def _scale_network(self):
         """ Scale self.network, according to desired self.spectral_radius.
 
         Converts network in scipy.sparse object internally.
-        """
-        """
+
         Can cause problems due to non converging of the eigenvalue evaluation
         """
         self._network = scipy.sparse.csr_matrix(self._network)
@@ -359,7 +379,7 @@ class ESN(_ESNCore):
             eigenvals = scipy.sparse.linalg.eigs(
                 self._network, k=1, v0=np.ones(self._n_dim),
                 maxiter=1e3 * self._n_dim)[0]
-        except ArpackNoConvergence:
+        except _ArpackNoConvergence:
             self.logger.error('Eigenvalue calculation in scale_network failed!')
             raise
 
@@ -495,13 +515,14 @@ class ESN(_ESNCore):
             save_input (bool):If true, saves the input data internally
 
         Returns:
-            (tuple): tuple containing:
-                y_pred (np.ndarray): Predicted future states
-                    y_test (np.ndarray_or_None): Data taken from the input to
-                    compare the prediction with. If the prediction were
-                    "perfect" y_pred and y_test would be equal. Be careful
-                    though, y_test might be shorter than y_pred, or even None,
-                    if pred_steps is not None
+            tuple: 2-element tuple containing:
+
+            - **y_pred** (*np.ndarray*): Predicted future states
+            - **y_test** (*np.ndarray_or_None*): Data taken from the input to
+              compare the prediction with. If the prediction were
+              "perfect" y_pred and y_test would be equal. Be careful
+              though, y_test might be shorter than y_pred, or even None,
+              if pred_steps is not None
 
         """
 
@@ -609,7 +630,10 @@ class ESN(_ESNCore):
 
 
 class ESNWrapper(ESN):
-    """ Convenience functions for the ESN class
+    """ Convenience Wrapper for the ESN class
+
+    For all normal usage of the rescomp package, this is the class to use.
+
     """
 
     def __init__(self):

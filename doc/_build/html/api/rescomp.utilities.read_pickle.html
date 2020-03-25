@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>read_pickle &#8212; rescomp 0.0.4 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="train_and_predict_input_setup" href="rescomp.utilities.train_and_predict_input_setup.html" />
+    <link rel="prev" title="simulate_trajectory" href="rescomp.simulations.simulate_trajectory.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rescomp.utilities.train_and_predict_input_setup.html" title="train_and_predict_input_setup"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="rescomp.simulations.simulate_trajectory.html" title="simulate_trajectory"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">rescomp 0.0.4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../code_doc.html" accesskey="U">Code Documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="read-pickle">
+<h1>read_pickle<a class="headerlink" href="#read-pickle" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="rescomp.utilities.read_pickle">
+<code class="sig-prename descclassname">rescomp.utilities.</code><code class="sig-name descname">read_pickle</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">compression='infer'</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.utilities.read_pickle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load pickled (esn) object from file.</p>
+<p>Uses pandas functions internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – File path where the pickled object will be loaded.</p></li>
+<li><p><strong>compression</strong> (<em>{'infer'</em><em>, </em><em>'gzip'</em><em>, </em><em>'bz2'</em><em>, </em><em>'zip'</em><em>, </em><em>'xz'</em><em>, </em><em>None}</em>) – default ‘infer’
+For on-the-fly decompression of on-disk data. If ‘infer’, then use
+gzip, bz2, xz or zip if path ends in ‘.gz’, ‘.bz2’, ‘.xz’,
+or ‘.zip’ respectively, and no decompression otherwise.
+Set to None for no decompression.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>same type as object stored in file</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>unpickled</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="rescomp.simulations.simulate_trajectory.html"
+                        title="previous chapter">simulate_trajectory</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="rescomp.utilities.train_and_predict_input_setup.html"
+                        title="next chapter">train_and_predict_input_setup</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/rescomp.utilities.read_pickle.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rescomp.utilities.train_and_predict_input_setup.html" title="train_and_predict_input_setup"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="rescomp.simulations.simulate_trajectory.html" title="simulate_trajectory"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">rescomp 0.0.4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../code_doc.html" >Code Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+    </div>
+  </body>
+</html>

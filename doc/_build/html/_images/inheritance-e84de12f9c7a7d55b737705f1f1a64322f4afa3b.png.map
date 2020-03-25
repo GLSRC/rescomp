@@ -1,0 +1,6 @@
+<map id="inheritancecc3e47be3c" name="inheritancecc3e47be3c">
+<area shape="rect" id="node1" href="api/rescomp.esn.ESN.html#rescomp.esn.ESN" target="_top" title="input: training data and (list of) x_pred_test data, sync_steps" alt="" coords="284,5,356,31"/>
+<area shape="rect" id="node4" href="api/rescomp.esn.ESNWrapper.html#rescomp.esn.ESNWrapper" target="_top" title="Convenience functions for the ESN class" alt="" coords="404,5,504,31"/>
+<area shape="rect" id="node2" title="The non&#45;reducible core of ESN RC training and prediction" alt="" coords="151,5,236,31"/>
+<area shape="rect" id="node3" href="api/rescomp.utilities.ESNLogging.html#rescomp.utilities.ESNLogging" target="_top" title="Custom logging class, logging both to stdout as well as to file" alt="" coords="5,5,103,31"/>
+</map>

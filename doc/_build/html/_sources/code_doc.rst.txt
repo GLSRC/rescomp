@@ -1,0 +1,41 @@
+ESN
+==================
+.. automodapi:: rescomp.esn
+    :skip: Arpack
+
+ESNWrapper Class
+------------------
+.. autoclass:: rescomp.esn.ESNWrapper
+    :inherited-members:
+    :members:
+
+ESN Class
+------------------
+.. autoclass:: rescomp.esn.ESN
+    :inherited-members:
+    :members:
+
+Utilities
+==================
+.. automodapi:: rescomp.utilities
+    :members:
+
+.. automodule:: rescomp.utilities
+    :members:
+
+
+Measures
+==================
+.. automodapi:: rescomp.measures
+    :members:
+
+.. automodule:: rescomp.measures
+    :members:
+
+Simulations
+==================
+.. automodapi:: rescomp.simulations
+    :members:
+
+.. automodule:: rescomp.simulations
+    :members:

@@ -4,18 +4,28 @@
    contain the root `toctree` directive.
 
 Rescomp Documentation
-==================
+=====================
+
+Welcome to the Rescomp Documentation!
+
+For Documentation on the state/usage/idea of this package, please consult the README section.
+
+For Documentation of the code itself, visit the individual module pages.
+
+Table of Contents
+---------------------
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
+   :includehidden:
+   :glob:
 
-   README <readme.rst>
-   Code Documentation <code_doc.rst>
-   automodapi.rst
-   automodsumm.rst
+   *
 
+Rescomp Modules
+---------------------
 
-Indices and tables
-==================
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. autosummary::
+   rescomp.esn
+   rescomp.measures
+   rescomp.utilities
+   rescomp.simulations

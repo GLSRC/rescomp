@@ -43,17 +43,23 @@ extensions = [
     'sphinx.ext.napoleon',
     'm2r',
     'autodocsumm',
-    'sphinx_automodapi.automodapi',
-    'sphinx.ext.graphviz'
+    # 'sphinx_automodapi.automodapi',
+    'sphinx.ext.graphviz',
+    'sphinx.ext.autosummary',
+    # 'sphinx_autopackagesummary',
+    'sphinx.ext.inheritance_diagram'
 ]
 
-autodoc_default_options = {
-    'autosummary': True,
-}
+# autodoc_default_options = {
+#     'autosummary': True,
+# }
+#
+# autodoc_default_flags = ['members']
+# autosummary_generate = True
+#
+# autodata_content = 'both'
 
-autodata_content = 'both'
-
-numpydoc_show_class_members = False # for automodapi
+# numpydoc_show_class_members = False # for automodapi
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -87,6 +93,8 @@ html_theme = "classic"
 #     'navigation_depth': 4,
 #     'includehidden': True,
 # }
+
+html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'searchbox.html'] }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

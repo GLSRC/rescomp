@@ -42,76 +42,55 @@
             
   <div class="section" id="rescomp-documentation">
 <h1>Rescomp Documentation<a class="headerlink" href="#rescomp-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to the Rescomp Documentation!</p>
+<p>For Documentation on the state/usage/idea of this package, please consult the README section.</p>
+<p>For Documentation of the code itself, visit the individual module pages.</p>
+<div class="section" id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="readme.html">README</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="readme.html#reservoir-computing">Reservoir Computing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="readme.html#licensing">Licensing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="readme.html#installation">Installation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#optional-but-strongly-encouraged-prerequesites">Optional (but Strongly Encouraged) Prerequesites</a></li>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#installation-instructions">Installation Instructions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#uninstalling-rescomp">Uninstalling rescomp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#common-installation-problems">Common Installation Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="readme.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="readme.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="readme.html#faq">FAQ</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="readme.html#usage">Usage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#for-contributors">For Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_esn.html">ESN</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rescomp_esn.html#esnwrapper-class">ESNWrapper Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rescomp_esn.html#esn-class">ESN Class</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="readme.html#faq">FAQ</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#q-where-do-i-find-good-literature-about-reservoir-computing-do-you-have-some-paper-or-book-to-recommend">Q: Where do I find good literature about reservoir computing ? Do you have some paper or book to recommend?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#q-are-the-methods-shown-in-the-examples-really-all-there-is-to-the-package">Q: Are the methods shown in the examples really all there is to the package?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#q-my-predictions-don-t-agree-with-the-real-data-at-all-what-is-going-on">Q: My predictions don’t agree with the real data at all! What is going on?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#q-for-the-exact-same-set-of-hyperparameters-the-prediction-is-sometimes-amazingly-accurate-and-at-other-times-utterly-wrong-why">Q: For the exact same set of hyperparameters the prediction is sometimes amazingly accurate and at other times utterly wrong. Why?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#q-you-said-above-that-the-network-should-have-about-100x-as-many-nodes-as-the-input-has-dimensions-maybe-more-my-input-is-50-dimensional-and-with-5000-10000-nodes-the-training-and-prediction-is-annoyingly-slow-i-thought-rc-was-supposed-to-be-fast-what-s-going-on">Q: You said above that the network should have about 100x as many nodes as the input has dimensions, maybe more. My input is &gt;50 dimensional and with 5000-10000 nodes the training and prediction is annoyingly slow! I thought RC was supposed to be fast, what’s going on?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#q-in-your-code-i-see-you-discard-some-samples-at-the-beginning-of-training-why-is-it-necessary">Q: In your code, I see you discard some samples at the beginning of training, why is it necessary?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#q-do-i-need-to-denoise-my-data">Q: Do I need to denoise my data?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="readme.html#q-your-code-is-bad-your-documentation-is-bad-and-you-should-feel-bad">Q: Your code is bad, your documentation is bad and you should feel bad.</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="code_doc.html">ESN</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="code_doc.html#module-rescomp.esn">rescomp.esn Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="code_doc.html#classes">Classes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="code_doc.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="code_doc.html#esnwrapper-class">ESNWrapper Class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_doc.html#esn-class">ESN Class</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="code_doc.html#utilities">Utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="code_doc.html#module-rescomp.utilities">rescomp.utilities Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="code_doc.html#functions">Functions</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="code_doc.html#measures">Measures</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="code_doc.html#module-rescomp.measures">rescomp.measures Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="code_doc.html#id3">Functions</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="code_doc.html#simulations">Simulations</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="code_doc.html#module-rescomp.simulations">rescomp.simulations Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="code_doc.html#id4">Functions</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_measures.html">Measures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_utilities.html">Utilities</a></li>
 </ul>
 </div>
 </div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
+<div class="section" id="rescomp-modules">
+<h2>Rescomp Modules<a class="headerlink" href="#rescomp-modules" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="rescomp_esn.html#module-rescomp.esn" title="rescomp.esn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rescomp.esn</span></code></a></p></td>
+<td><p>Calculating the lorenz63-attractor and other chaotic systems using 4th order runge kutta method</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="rescomp_measures.html#module-rescomp.measures" title="rescomp.measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rescomp.measures</span></code></a></p></td>
+<td><p>Measures ann analysis functions for the ESN class</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="rescomp_utilities.html#module-rescomp.utilities" title="rescomp.utilities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rescomp.utilities</span></code></a></p></td>
+<td><p>Implementing various utility functions for the esn</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="rescomp_simulations.html#module-rescomp.simulations" title="rescomp.simulations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rescomp.simulations</span></code></a></p></td>
+<td><p>Calculating the lorenz63-attractor and other chaotic systems using 4th order runge kutta method</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -120,22 +99,18 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Rescomp Documentation</a></li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+<h3><a href="#">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_esn.html">ESN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_measures.html">Measures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_utilities.html">Utilities</a></li>
 </ul>
 
   <h4>Next topic</h4>
   <p class="topless"><a href="readme.html"
                         title="next chapter">README</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">

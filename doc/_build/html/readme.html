@@ -17,7 +17,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Code Documentation" href="code_doc.html" />
+    <link rel="next" title="ESN" href="rescomp_esn.html" />
     <link rel="prev" title="Rescomp Documentation" href="index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -30,7 +30,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="code_doc.html" title="Code Documentation"
+          <a href="rescomp_esn.html" title="ESN"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Rescomp Documentation"
@@ -321,58 +321,28 @@ Nonetheless we do know that a lot of work needs to be done before the code can a
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">README</a><ul>
-<li><a class="reference internal" href="#reservoir-computing">Reservoir Computing</a></li>
-<li><a class="reference internal" href="#licensing">Licensing</a></li>
-<li><a class="reference internal" href="#installation">Installation</a><ul>
-<li><a class="reference internal" href="#optional-but-strongly-encouraged-prerequesites">Optional (but Strongly Encouraged) Prerequesites</a></li>
-<li><a class="reference internal" href="#installation-instructions">Installation Instructions</a></li>
-<li><a class="reference internal" href="#uninstalling-rescomp">Uninstalling rescomp</a></li>
-<li><a class="reference internal" href="#common-installation-problems">Common Installation Problems</a></li>
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">README</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#reservoir-computing">Reservoir Computing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#licensing">Licensing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#faq">FAQ</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#usage">Usage</a><ul>
-<li><a class="reference internal" href="#for-contributors">For Contributors</a><ul>
-<li><a class="reference internal" href="#general-information">General Information</a></li>
-<li><a class="reference internal" href="#branche-usage-intentions">Branche Usage Intentions:</a></li>
-<li><a class="reference internal" href="#create-your-own-developer-branch">Create your own developer branch:</a></li>
-<li><a class="reference internal" href="#adjusting-the-terminal-to-always-show-the-current-branch">Adjusting the terminal to always show the current branch</a></li>
-<li><a class="reference internal" href="#synchronize-and-merge-your-developer-branch">Synchronize and merge your developer branch</a></li>
-<li><a class="reference internal" href="#for-internal-contributors">For Internal Contributors</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#faq">FAQ</a><ul>
-<li><a class="reference internal" href="#q-where-do-i-find-good-literature-about-reservoir-computing-do-you-have-some-paper-or-book-to-recommend">Q: Where do I find good literature about reservoir computing ? Do you have some paper or book to recommend?</a></li>
-<li><a class="reference internal" href="#q-are-the-methods-shown-in-the-examples-really-all-there-is-to-the-package">Q: Are the methods shown in the examples really all there is to the package?</a></li>
-<li><a class="reference internal" href="#q-my-predictions-don-t-agree-with-the-real-data-at-all-what-is-going-on">Q: My predictions don’t agree with the real data at all! What is going on?</a></li>
-<li><a class="reference internal" href="#q-for-the-exact-same-set-of-hyperparameters-the-prediction-is-sometimes-amazingly-accurate-and-at-other-times-utterly-wrong-why">Q: For the exact same set of hyperparameters the prediction is sometimes amazingly accurate and at other times utterly wrong. Why?</a></li>
-<li><a class="reference internal" href="#q-you-said-above-that-the-network-should-have-about-100x-as-many-nodes-as-the-input-has-dimensions-maybe-more-my-input-is-50-dimensional-and-with-5000-10000-nodes-the-training-and-prediction-is-annoyingly-slow-i-thought-rc-was-supposed-to-be-fast-what-s-going-on">Q: You said above that the network should have about 100x as many nodes as the input has dimensions, maybe more. My input is &gt;50 dimensional and with 5000-10000 nodes the training and prediction is annoyingly slow! I thought RC was supposed to be fast, what’s going on?</a></li>
-<li><a class="reference internal" href="#q-in-your-code-i-see-you-discard-some-samples-at-the-beginning-of-training-why-is-it-necessary">Q: In your code, I see you discard some samples at the beginning of training, why is it necessary?</a></li>
-<li><a class="reference internal" href="#q-do-i-need-to-denoise-my-data">Q: Do I need to denoise my data?</a></li>
-<li><a class="reference internal" href="#q-your-code-is-bad-your-documentation-is-bad-and-you-should-feel-bad">Q: Your code is bad, your documentation is bad and you should feel bad.</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_esn.html">ESN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_measures.html">Measures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_utilities.html">Utilities</a></li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">Rescomp Documentation</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="code_doc.html"
-                        title="next chapter">Code Documentation</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/readme.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+  <p class="topless"><a href="rescomp_esn.html"
+                        title="next chapter">ESN</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
@@ -397,7 +367,7 @@ Nonetheless we do know that a lot of work needs to be done before the code can a
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="code_doc.html" title="Code Documentation"
+          <a href="rescomp_esn.html" title="ESN"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Rescomp Documentation"

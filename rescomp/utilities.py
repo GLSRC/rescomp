@@ -11,6 +11,7 @@ import datetime
 import logging
 import sys
 import pandas
+import inspect
 # import scipy.sparse
 # import scipy.sparse.linalg
 # import matplotlib.pyplot as plt
@@ -318,6 +319,25 @@ def _keys_by_value(dictionary, value):
         if item[1] == value:
             list_of_keys.append(item[0])
     return list_of_keys
+
+
+def _remove_invalid_args(func, args_dict):
+    """Return dictionary of valid args and kwargs with invalid ones removed
+
+    Adjusted from:
+    https://stackoverflow.com/questions/196960/can-you-list-the-keyword-arguments-a-function-receives
+
+    Args:
+        func (fct): function to check if the arguments are valid or not
+        args_dict (dict): dictionary of arguments
+
+    Returns:
+        dict: dictionary of valid arguments
+
+    """
+    valid_args = inspect.signature(func).parameters
+    # valid_args = func.func_code.co_varnames[:func.func_code.co_argcount]
+    return dict((key, value) for key, value in args_dict.items() if key in valid_args)
 
 
 def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0, train_steps=None, pred_steps=None):

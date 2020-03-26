@@ -6,63 +6,83 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import rescomp
-# from rescomp import ESNOld
-from rescomp.simulations import _kuramoto_sivashinsky
 
-if __name__ == "__main__":
+# --- Higher dimensional example
 
-    # Setup data length variables
-    discard_steps = 1000
-    training_steps = 50000
-    prediction_steps = 500
-    total_steps = discard_steps + training_steps + prediction_steps + 1
+# While the previous examples demonstrated the basic usage of the rescomp
+# package, one very important part still needs to be discussed: The
+# hyperparameters of RC.
 
-    print("Start the KS simulation")
-    # Create 100 dimensional input by simulating the Kuramoto–Sivashinsky PDE
-    data = _kuramoto_sivashinsky(dimensions=100, system_size=22, dt=0.05,
-                                 time_steps=total_steps)
-    print("KS Simulation done")
+# To do so, here we look at a much higher dimensional system than before, the
+# Kuramoto Sivashinsky (KS) system, which we scale to be 22 dimensional.
 
-    # Used to always create the same random network and hence prediction
-    np.random.seed(0)
+# As always we create an ESN object
+esn = rescomp.ESNWrapper()
 
-    # For systems other than the Lorenz63 system used in the minimal_example,
-    # further hyperparameters have to be varied/optimized. Especially important
-    # are the regularization, the spectral radius and the average network degree
-    # If you want to see the effect of badly chosen hyperparameters, set e.g.
-    # the spectral radius to 0.9 or, for a completely failed prediction, set it
-    # to 1.6 or higher
-    esn = rescomp.esn.ESNOld(network_dimension=5000, input_dimension=data.shape[1],
-              output_dimension=data.shape[1], training_steps=training_steps,
-              prediction_steps=prediction_steps, discard_steps=discard_steps,
-              regularization_parameter=0.01, spectral_radius=0.3,
-              avg_degree=100)
+# and simulate the system:
+simulation_time_steps = 60000
+sim_data = rescomp.simulations.simulate_trajectory(
+    sys_flag='kuramoto_sivashinsky', dimensions=100, system_size=22, dt=0.05,
+    time_steps=simulation_time_steps)
 
-    print("Start Reservoir Computing")
+# As before, we want to train the system with data sampled from the chaotic
+# attractor we want to predict. As a result, we have to throw the first 1000
+# simulated data points away, as they are not on said attractor, but instead
+# correspond to transient system dynamics of the KS system.
+sim_data = sim_data[1000:]
 
-    esn.load_data(data)
-    esn.train()
-    esn.predict()
+# Now we again want to create the reservoir/network, but this time the default
+# parameters are not sufficient for RC to learn the system dynamics. For the KS
+# system the following parameters work:
 
-    print("Reservoir Computing Done")
+# The network dimension n_dim. The more complicated and higher dimensional the
+# system is, the larger the network needs to be.
+n_dim = 5000
+# The spectral radius n_rad should be smaller than 1 and must be larger than 0
+n_rad = 0.3
+# The average network degree n_avg_deg.
+n_avg_deg = 100
+# These hyperparameters (and the ones below) have been found by trial and error.
+# So far no reliable heuristics exist for what the correct hyperparameter ranges
+# for an arbitrary system might be. See the FAQ for more details.
 
-    # --- Plot the results
+# Furthermore, one can set the numpy random seed, to generate the same network
+# everytime. This too is a real hyperparameter and different random networks
+# vary hugely in their prediction performance.
+np.random.seed(0)
 
-    pred = esn.y_pred
-    test = esn.y_test
+# Finally, create the network with those parameters.
+esn.create_network(n_dim=n_dim, n_rad=n_rad, n_avg_deg=n_avg_deg)
 
-    fig1 = plt.figure(figsize=(6, 6))
-    ax1 = fig1.add_subplot(3, 1, 1)
-    ax1.imshow(test.T)
-    ax1.set_title("Simulation")
+# The train/train_and_predict methods too, have a set of hyperparameters one
+# needs to optimize. The most important of which is the regularization parameter
+# which is typically somewhere between 1e-2 and 1e-6
+reg_param = 1e-2
 
-    ax2 = fig1.add_subplot(3, 1, 2)
-    ax2.imshow(pred.T)
-    ax2.set_title("Prediction")
+# Define the number of training/prediction time steps
+train_sync_steps = 1000
+train_steps = 50000
+pred_steps = 500
 
-    ax3 = fig1.add_subplot(3, 1, 3)
-    ax3.imshow(pred.T - test.T)
-    ax3.set_title("Difference between simulation and prediction")
+# And train+predict the system
+y_pred, y_test = esn.train_and_predict(
+    sim_data, train_sync_steps=train_sync_steps, train_steps=train_steps,
+    pred_steps=pred_steps, reg_param=reg_param)
 
-    plt.show()
+# --- Plot the results
+
+fig1 = plt.figure(figsize=(6, 6))
+ax1 = fig1.add_subplot(3, 1, 1)
+ax1.imshow(y_test.T)
+ax1.set_title("Simulation")
+
+ax2 = fig1.add_subplot(3, 1, 2)
+ax2.imshow(y_pred.T)
+ax2.set_title("Prediction")
+
+ax3 = fig1.add_subplot(3, 1, 3)
+ax3.imshow(y_pred.T - y_test.T)
+ax3.set_title("Difference between simulation and prediction")
+
+plt.show()
 

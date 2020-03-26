@@ -1,151 +1,101 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Mar  9 18:54:41 2020
+""" Minimal usage example
 
 @author: herteux, baur
 """
-import pdb
-
 import rescomp
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 
+# --- Minimal Example
 
+# Most of the functionality of this package is bundled in two main classes: ESN
+# and ESNWrapper. (ESN stands for for Echo State Network)
+# For all normal usage of the rescomp package, the child class ESNWrapper is the
+# class to use.
 
+esn = rescomp.ESNWrapper()
 
+# As with most machine learning techniques, we need some training data, which we
+# generate here artificially by simulating the chaotic Lorenz63 system for 20000
+# time steps
+simulation_time_steps = 20000
 
-#Create some data by simulating the Lorenz63 system
-train_sync_steps = 300
-train_steps = 3000
-pred_steps = 400
-simulation_time_steps = train_sync_steps + train_steps + pred_steps + 5000
-
+# The starting point is chosen to be on the chaotic attractor we want to predict
 starting_point = np.array([-14.03020521, -20.88693127, 25.53545])
+
 sim_data = rescomp.simulations.simulate_trajectory(
-            sys_flag='mod_lorenz', dt=2e-2, time_steps=simulation_time_steps,
-            starting_point=starting_point)
-            
-            
-            
-            
+    sys_flag='mod_lorenz', dt=2e-2, time_steps=simulation_time_steps,
+    starting_point=starting_point)
 
-# --- ESN Usage Example 1
+# As a convention, the data specified is always input data in an np.ndarray of
+# the shape (T, d), where T is the number of time steps and d the system
+# dimension
+# I.g. RC works for any number of dimensions and data length.
 
-# Create ESN object. You should use ESNWrapper, which has the full functionality.
-
-esn=rescomp.ESNWrapper()
-
-
-# Optionally you can set a console- or file-logger to print out Information about
-# the process while running. There are different options like 'warning' or 'debug'
-# to control the verbosity
-esn.set_console_logger('warning')
-#esn.set_file_logger('debug', 'esn_log.txt')
-
-
-# Create the actual network of the ESN. Untill now, the object esn was basically
-# empty. Parameters are set in the following methods
-esn.create_network(n_rad=0.5)
-
-
+# Until now, the object esn is basically empty. One main component of reservoir
+# computing is the reservoir, i.e. the internal network, wich we can create via
+# create_network()
+esn.create_network()
 
 # A typical and natural way to use an ESN is to first synchronize on one section 
-# of a trajectory, train on the next 
-# and then start the prediction immediately. To do this use the method 
-# esn.train_and_predict()
+# of a trajectory, train on the next and then start the prediction on the
+# subsequent data
+# The method train_and_predict() does exactly that.
 
-y_pred, y_test = esn.train_and_predict(x_data=sim_data, 
-            train_sync_steps=train_sync_steps, train_steps=train_steps,
-            pred_steps=pred_steps, w_in_scale=0.2)
- 
-# This is the the predicted trajectory           
-print(y_pred.shape)  
+# The number of time steps used to synchronize the reservoir, should be at least
+# a couple hundred, but no more than a couple thousand are needed, even for
+# complex systems.
+train_sync_steps = 300
+# The number of time steps used to train the reservoir. This depends hugely on
+# the system in question. See the FAQ for more details
+train_steps = 3000
+# The number of time steps predicted.
+pred_steps = 400
 
-# If x_data.shape[0] is greater than train_sync_steps + train_steps the rest of
-# the data can be used as test set for the prediction. 
-# WARNING: f x_data.shape[0] - (train_sync_steps + train_steps) < pred_steps 
-# then y_test.shape[0]<y_pred.shape[0].    
-print(y_test.shape)           
+# Plug it all in
+y_pred, y_test = esn.train_and_predict(x_data=sim_data,
+                                       train_sync_steps=train_sync_steps,
+                                       train_steps=train_steps,
+                                       pred_steps=pred_steps)
 
+# The first output y_pred is the the predicted trajectory
+print(y_pred.shape)
 
+# If the input data is longer than the data used for synchronization and
+# training, i.e. if
+#   x_data.shape[0] > train_sync_steps + train_steps,
+# then the rest of the data can be used as test set to compare the prediction
+# against. If the prediction where perfect y_pred and y_test would be the same
+# Be careful though, if
+#   x_data.shape[0] - (train_sync_steps + train_steps) < pred_steps
+# then the test data set is shorter than the predicted one:
+#   y_test.shape[0] < y_pred.shape[0].
+print(y_test.shape)
 
+# --- Plot the prediction
 
+ax = plt.axes(projection='3d')
 
-# --- Plotting the results
+ax.plot(y_test[:, 0], y_test[:, 1], y_test[:, 2],
+        alpha=0.8, color='blue', label='test_data')
+ax.plot(y_pred[:, 0], y_pred[:, 1], y_pred[:, 2],
+        alpha=0.8, color='orange', label='prediction')
 
-ax=plt.axes(projection='3d')
-
-ax.plot(y_test[:, 0], y_test[:, 1],
-        y_test[:,2],alpha=0.8,color='Blue',label='test_data')
-ax.plot(y_pred[:, 0], y_pred[:, 1],y_pred[:,2],alpha=0.8,color='Orange',
-        label='prediction')
-        
-start=y_pred[0]
-ax.plot([start[0]],[start[1]],[start[2]], 'o', label='starting point')
+start = y_pred[0]
+ax.plot([start[0]], [start[1]], [start[2]], 'o', label='starting point')
 
 plt.legend()
-
 plt.show()
 
+# --- Plot the x coordinates as a comparison
 
-
-
-
-
-# --- ESN Usage Example 2
-
-
-# To start the prediction at any other point, use the methods esn.train() and 
-# esn.predict() separately.
-
-# The reservoir should always be synchronized with the data to make sure outputs
-# are meaningful. This is handled in esn.train() automatically using 
-# x_train[:sync_steps].
-esn.train(x_train=sim_data[train_sync_steps + train_steps:], 
-          sync_steps=train_sync_steps, w_in_scale=0.2) 
-
-# To predict from any part of the trajectory besides the end of the training
-# intervall, the reservoir has to be synchronized again. Specify some intervall
-# of synchronization steps:
-pred_sync_steps=300
-
-#pdb.set_trace()
-
-
-# Again the synchronization happens automatically in esn.predict() using 
-# x_pred[:sync_steps]. The actual prediction starts from the initial point 
-# x_pred[pred_sync_steps+1]
-y_pred, y_test = esn.predict(x_pred=sim_data[train_sync_steps + train_steps +
-                pred_steps + 700:],
-                sync_steps=pred_sync_steps, pred_steps=pred_steps)
-
-
-# This is the the predicted trajectory           
-print(y_pred.shape)  
-
-# If x_pred.shape[0] is greater than sync_steps the rest of
-# the data can be used as test set for the prediction. 
-# WARNING: f x_pred.shape[0] - sync_steps < pred_steps 
-# then y_test.shape[0]<y_pred.shape[0].    
-print(y_test.shape)           
-
-
-
-
-# --- Plotting the results
- 
-ax=plt.axes(projection='3d')
-
-ax.plot(y_test[:, 0], y_test[:, 1],
-        y_test[:,2],alpha=0.8,color='Blue',label='test_data')
-ax.plot(y_pred[:, 0], y_pred[:, 1],y_pred[:,2],alpha=0.8,color='Orange',
-        label='prediction')
-
-start=y_pred[0]
-ax.plot([start[0]],[start[1]],[start[2]], 'o', label='starting point')
+fig1 = plt.figure(figsize=(6, 6))
+ax1 = fig1.add_subplot(1, 1, 1)
+ax1.plot(y_test[:, 0], color='blue', label='test_data')
+ax1.plot(y_pred[:, 0], color='orange', label='prediction')
+ax1.set_title("X-Coordinates of Simulation and Prediction")
 
 plt.legend()
-
-plt.show()       
-
+plt.show()

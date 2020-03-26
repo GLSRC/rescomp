@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Measures &#8212; rescomp 0.0.4 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Simulations" href="rescomp_simulations.html" />
+    <link rel="prev" title="ESN" href="rescomp_esn.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rescomp_simulations.html" title="Simulations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="rescomp_esn.html" title="ESN"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.0.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-rescomp.measures">
+<span id="measures"></span><h1>Measures<a class="headerlink" href="#module-rescomp.measures" title="Permalink to this headline">¶</a></h1>
+<p>Measures ann analysis functions for the ESN class</p>
+<p>&#64;author: aumeier, baur, herteux</p>
+<p><strong>Functions</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.calc_tt" title="rescomp.measures.calc_tt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_tt</span></code></a>(reservoir[, flag, split])</p></td>
+<td><p>selects depending on if the abs(entry) of reservoir.w_out is one of the</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.measures.clustering_coeff" title="rescomp.measures.clustering_coeff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clustering_coeff</span></code></a>(reservoir)</p></td>
+<td><p>clustering coefficient for each node and returns it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.demerge_time" title="rescomp.measures.demerge_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">demerge_time</span></code></a>(reservoir)</p></td>
+<td><p>Measure for the quality of the predicted trajectory</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.measures.dimension" title="rescomp.measures.dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension</span></code></a>(reservoir[, r_min, r_max, …])</p></td>
+<td><p>Calculates correlation dimension</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.lyapunov" title="rescomp.measures.lyapunov"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lyapunov</span></code></a>(reservoir[, threshold, plot, …])</p></td>
+<td><p>Calculates the maximal Lyapunov Exponent of reservoir.y_pred (or reservoir.y_test), by estimating the time derivative of the mean logarithmic distances of former next neighbours.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.measures.plot" title="rescomp.measures.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(reservoir[, flag, save_switch, path])</p></td>
+<td><p>Shows timeresolved plots of:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.weighted_clustering_coeff_onnela" title="rescomp.measures.weighted_clustering_coeff_onnela"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weighted_clustering_coeff_onnela</span></code></a>(reservoir)</p></td>
+<td><p>Calculates the weighted clustering coefficient of abs(self.network) according to Onnela paper from 2005.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="rescomp.measures.calc_tt">
+<code class="sig-prename descclassname">rescomp.measures.</code><code class="sig-name descname">calc_tt</code><span class="sig-paren">(</span><em class="sig-param">reservoir</em>, <em class="sig-param">flag='bool'</em>, <em class="sig-param">split=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.measures.calc_tt" title="Permalink to this definition">¶</a></dt>
+<dd><p>selects depending on if the abs(entry) of reservoir.w_out is one of the
+largest, depending on split.
+If split is negative the abs(entry) smallest are selected depending
+on flag:
+- ‘bool’: reservoir.w_out.shape with True/False
+- ‘bool_1d’: is a projection to 1d
+- ‘arg’: returns args of the selection</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rescomp.measures.clustering_coeff">
+<code class="sig-prename descclassname">rescomp.measures.</code><code class="sig-name descname">clustering_coeff</code><span class="sig-paren">(</span><em class="sig-param">reservoir</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.measures.clustering_coeff" title="Permalink to this definition">¶</a></dt>
+<dd><p>clustering coefficient for each node and returns it.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rescomp.measures.demerge_time">
+<code class="sig-prename descclassname">rescomp.measures.</code><code class="sig-name descname">demerge_time</code><span class="sig-paren">(</span><em class="sig-param">reservoir</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.measures.demerge_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure for the quality of the predicted trajectory</p>
+<p>Number of time_steps it takes for the prediction to loose track of the real
+trajectory.
+Returns the number of steps for which y_test and y_pred are separated less
+than epsilon in each dimension.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rescomp.measures.dimension">
+<code class="sig-prename descclassname">rescomp.measures.</code><code class="sig-name descname">dimension</code><span class="sig-paren">(</span><em class="sig-param">reservoir</em>, <em class="sig-param">r_min=0.5</em>, <em class="sig-param">r_max=5.0</em>, <em class="sig-param">r_steps=0.15</em>, <em class="sig-param">plot=False</em>, <em class="sig-param">test_measure=False</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.measures.dimension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates correlation dimension</p>
+<p>for reservoir.y_pred (or reservoir.y_test) using
+the algorithm by Grassberger and Procaccia and returns dimension.
+traj: trajectory of an attractor, whos correlation dimension is returned
+First we calculate a sum over all points within a given radius, then
+average over all basis points and vary the radius
+(grassberger, procaccia).</p>
+<p>parameters depend on reservoir.dt and the system itself!</p>
+<dl class="simple">
+<dt>N_r: list of tuples: (radius, average number of neighbours within all</dt><dd><p>balls)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>)</strong> (<em>test_measure</em>) – </p></li>
+<li><p><strong>(</strong><strong>)</strong> – </p></li>
+<li><p><strong>(</strong><strong>)</strong> – </p></li>
+<li><p><strong>(</strong><strong>)</strong> – </p></li>
+<li><p><strong>(</strong><strong>)</strong> – </p></li>
+<li><p><strong>(</strong><strong>)</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns: dimension: slope of the log.log plot assumes:</dt><dd><p>N_r(radius) ~ radius**dimension</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rescomp.measures.lyapunov">
+<code class="sig-prename descclassname">rescomp.measures.</code><code class="sig-name descname">lyapunov</code><span class="sig-paren">(</span><em class="sig-param">reservoir</em>, <em class="sig-param">threshold=10</em>, <em class="sig-param">plot=False</em>, <em class="sig-param">print_switch=False</em>, <em class="sig-param">test_measure=False</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.measures.lyapunov" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the maximal Lyapunov Exponent of reservoir.y_pred (or reservoir.y_test),
+by estimating the time derivative of the mean logarithmic distances of
+former next neighbours. Stores it in reservoir.lyapunov (reservoir.lyapunov_test)
+Only values for tau_min/max are used for calculating the slope!</p>
+<p>Since the attractor has a size of roughly 20 [log(20) ~ 3.] this
+distance reaches a maximum after a certain time, approximately
+after 4. time units [time_units = dt*steps]
+Therefore the default values are choosen to be dt dependent as in
+###Definition of taus:</p>
+<p>tau_min/max are given in units of steps
+plot to check for correct average</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rescomp.measures.plot">
+<code class="sig-prename descclassname">rescomp.measures.</code><code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">reservoir</em>, <em class="sig-param">flag='y'</em>, <em class="sig-param">save_switch=False</em>, <em class="sig-param">path=''</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.measures.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows timeresolved plots of:
+‘r’: some of the reservoir states
+‘y’: the predicted and true future states
+‘t’: the x,y plot of the trajectory</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rescomp.measures.weighted_clustering_coeff_onnela">
+<code class="sig-prename descclassname">rescomp.measures.</code><code class="sig-name descname">weighted_clustering_coeff_onnela</code><span class="sig-paren">(</span><em class="sig-param">reservoir</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.measures.weighted_clustering_coeff_onnela" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the weighted clustering coefficient of abs(self.network)
+according to Onnela paper from 2005.
+Replacing NaN (originating from division by zero (degree = 0,1)) with 0.
+Returns weighted_cc.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_esn.html">ESN</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Measures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_utilities.html">Utilities</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="rescomp_esn.html"
+                        title="previous chapter">ESN</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="rescomp_simulations.html"
+                        title="next chapter">Simulations</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rescomp_simulations.html" title="Simulations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="rescomp_esn.html" title="ESN"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.0.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+    </div>
+  </body>
+</html>

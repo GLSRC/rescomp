@@ -112,9 +112,8 @@ If you can't install or use the package despite following the above instructions
 ### Getting Started
 To get started, look at the examples in _bin_. The intended order is:  
 1. minimal_example.py  
-2. higher_dim_example.py  
-3. measures_example.py  
-4. utilities_example.py  
+2. training_and_prediction.py
+3. higher_dim_example.py  
 
 To learn more about the physics behind RC and what to expect/not expect from this method/package, please read the **FAQ below**.  
 
@@ -122,7 +121,7 @@ To learn more about the physics behind RC and what to expect/not expect from thi
 ### Documentation
 The code itself is documented in our html documentation. You can read it by downloaded/cloning this repository and opening the file *index.html* in the folder *doc_html* in your favorite web browser.  
 
-In the future, this documentation will be hosted on a GitLab Pages website as well.
+Once the DLR has activated the GitLab Pages feature, it will be hosted on a website as well.
 
 
 ### FAQ  

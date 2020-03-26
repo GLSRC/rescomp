@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Simulations &#8212; rescomp 0.0.4 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utilities" href="rescomp_utilities.html" />
+    <link rel="prev" title="Measures" href="rescomp_measures.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rescomp_utilities.html" title="Utilities"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="rescomp_measures.html" title="Measures"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.0.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-rescomp.simulations">
+<span id="simulations"></span><h1>Simulations<a class="headerlink" href="#module-rescomp.simulations" title="Permalink to this headline">¶</a></h1>
+<p>Simulate various chaotic system to generate artificial data</p>
+<p><strong>Functions</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.simulations.simulate_trajectory" title="rescomp.simulations.simulate_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_trajectory</span></code></a>([sys_flag, dt, …])</p></td>
+<td><p>Simulate a trajectory in an artificial chaotic system</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="rescomp.simulations.simulate_trajectory">
+<code class="sig-prename descclassname">rescomp.simulations.</code><code class="sig-name descname">simulate_trajectory</code><span class="sig-paren">(</span><em class="sig-param">sys_flag='mod_lorenz'</em>, <em class="sig-param">dt=0.02</em>, <em class="sig-param">time_steps=20000</em>, <em class="sig-param">starting_point=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.simulations.simulate_trajectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate a trajectory in an artificial chaotic system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sys_flag</strong> (<em>str</em>) – <p>The system to be simulated. Possible flags are:</p>
+<ul>
+<li><p>”mod_lorenz”</p></li>
+<li><p>”mod_lorenz_wrong”</p></li>
+<li><p>”normal_lorenz”</p></li>
+<li><p>”roessler”</p></li>
+<li><p>”lorenz_96”</p></li>
+<li><p>”ueda”</p></li>
+<li><p>”chua”</p></li>
+<li><p>”complex_butterfly”</p></li>
+<li><p>”chen”</p></li>
+<li><p>”rucklidge”</p></li>
+<li><p>”rabinovich”</p></li>
+<li><p>”thomas”</p></li>
+<li><p>”roessler_sprott”</p></li>
+<li><p>”kuramoto_sivashinsky”</p></li>
+</ul>
+</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – Size of time steps</p></li>
+<li><p><strong>time_steps</strong> (<em>int</em>) – Number of time steps to simulate</p></li>
+<li><p><strong>starting_point</strong> (<em>np.ndarray</em>) – Starting point of the trajectory</p></li>
+<li><p><strong>(</strong><strong>)</strong> (<em>**kwargs</em>) – Further Arguments passed to the simulating function,
+usually not needed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>trajectory (np.ndarray) the full trajectory, ready to be used for RC</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_esn.html">ESN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_measures.html">Measures</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_utilities.html">Utilities</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="rescomp_measures.html"
+                        title="previous chapter">Measures</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="rescomp_utilities.html"
+                        title="next chapter">Utilities</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rescomp_utilities.html" title="Utilities"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="rescomp_measures.html" title="Measures"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.0.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+    </div>
+  </body>
+</html>

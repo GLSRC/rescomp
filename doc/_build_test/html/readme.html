@@ -1,0 +1,383 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>README &#8212; rescomp 0.0.4 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ESN" href="rescomp_esn.html" />
+    <link rel="prev" title="Rescomp Documentation" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rescomp_esn.html" title="ESN"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Rescomp Documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.0.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="readme">
+<h1>README<a class="headerlink" href="#readme" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="reservoir-computing">
+<h2>Reservoir Computing<a class="headerlink" href="#reservoir-computing" title="Permalink to this headline">¶</a></h2>
+<p>This repository contains the Pre-Alpha python 3 package <strong>rescomp</strong> implementing the machine learning technique Reservoir Computing (RC).</p>
+<p>Development largely takes place at the DLR group <em>Komplexe Plasmen</em> in Oberpfaffenhofen, but contributions from other DLR sites are encouraged.</p>
+<p>For questions, feedback and ideas, <a class="reference external" href="mailto:Jonas&#46;Aumeier&#37;&#52;&#48;dlr&#46;de,Sebastian&#46;Baur&#37;&#52;&#48;dlr&#46;de,Joschka&#46;Herteux&#37;&#52;&#48;dlr&#46;de,Youssef&#46;Mabrouk&#37;&#52;&#48;dlr&#46;de?cc=Christoph&#46;Raeth&#37;&#52;&#48;dlr&#46;de">write us!</a></p>
+</div>
+<div class="section" id="licensing">
+<h2>Licensing<a class="headerlink" href="#licensing" title="Permalink to this headline">¶</a></h2>
+<p>As you might have noticed, this repository does not yet have a license file. This is on purpose, as we are currently discussing which licence would be appropriate for this project.</p>
+<p>As such we ask you not to share this code with <em>anyone</em> that didn’t explicitly get access to the <a class="reference external" href="https://gitlab.dlr.de/rescom/reservoir-computing">DLR Gitlab repository</a> via official channels until an appropriate license has been added.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>The following is a guide detailing how to install the rescomp package the way it “should” be done, i.e. as safely as possible.<span class="raw-html-m2r"><br></span>
+If you already know what you are doing, you can just install this package like any other locally installed package; no special dependencies are required.</p>
+<p>These instructions are for unix systems, but should work with no or at most minor modifications on Windows too.</p>
+<div class="section" id="optional-but-strongly-encouraged-prerequesites">
+<h3>Optional (but Strongly Encouraged) Prerequesites<a class="headerlink" href="#optional-but-strongly-encouraged-prerequesites" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://git-scm.com/downloads">git</a>: Used for downloading the repository and keeping it up to date.</p></li>
+<li><p><a class="reference external" href="https://www.anaconda.com/distribution/">Anaconda 3</a>: Using a virtual python environment is <strong>highly</strong> recommended to avoid irreparably damaging your system/working python as this is a Pre-Alpha distribution and hence not well tested.<span class="raw-html-m2r"><br></span>
+Of course you are free to use the environment manager of your choice, but in the following we will assume it to be Anaconda.</p></li>
+</ul>
+</div>
+<div class="section" id="installation-instructions">
+<h3>Installation Instructions<a class="headerlink" href="#installation-instructions" title="Permalink to this headline">¶</a></h3>
+<p>Install git and Anaconda 3 (see above). Make sure to close and then reopen the terminal if this is the first time you installed Anaconda.</p>
+<p>Open a terminal and enter the folder you wish to copy the gitlab repository to.</p>
+<p>Clone the gitlab repository. Here we copy it into the folder “rescomp”</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git clone https://gitlab.dlr.de/rescom/reservoir-computing.git rescomp
+</pre></div>
+</div>
+<p>Enter the cloned gitlab folder</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>cd rescomp
+</pre></div>
+</div>
+<p>Set your (name and email for this repository (just use your full name and the DLR email address here)</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git config user.name &quot;Lastname, Firstname&quot;
+git config user.email you@example.com
+</pre></div>
+</div>
+<p>Create a new Anaconda environment _rc<em>env</em> from the environment file included in the repository.</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>conda env create --name rc_env --file environment_rescomp.yml
+</pre></div>
+</div>
+<p>Activate your new environment</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>conda activate rc_env
+</pre></div>
+</div>
+<p>Create the package distribution files</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>python setup.py sdist bdist_wheel
+</pre></div>
+</div>
+<p>To install everything like a normal, unchanging package, use (the dot is important)</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>pip install .
+</pre></div>
+</div>
+<p>If you plan to contribute, or just want to change the code yourself, it is much more conventient to install the package as an <a class="reference external" href="https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs">editable install</a> (the dot is important here too)</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>pip install -e .
+</pre></div>
+</div>
+<p>An editablte install allows you to change the code in the repository and instantly work with the new behaviour without having the reinstall the package!</p>
+</div>
+<div class="section" id="uninstalling-rescomp">
+<h3>Uninstalling rescomp<a class="headerlink" href="#uninstalling-rescomp" title="Permalink to this headline">¶</a></h3>
+<p>To uninstall the rescomp package, simply activate the respective environment and then type:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>pip uninstall rescomp
+</pre></div>
+</div>
+</div>
+<div class="section" id="common-installation-problems">
+<h3>Common Installation Problems<a class="headerlink" href="#common-installation-problems" title="Permalink to this headline">¶</a></h3>
+<p><strong>Problem:</strong> The installation seems to have worked without error, but the package is not found when I try to import it.</p>
+<p>Make sure that pip is installed and active in the environment you want to install the package to:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>which pip
+</pre></div>
+</div>
+<p>The output of the above should include the active environment name. For the environment _rc<em>env</em> from above it should be something like</p>
+<blockquote>
+<div><p>“/Users/<span class="raw-html-m2r"><username></span>/anaconda3/envs/rc_env/bin/pip”</p>
+</div></blockquote>
+<p>If it doesn’t include the environment name, you installed the rescomp package in what ever environment the above specifies.<span class="raw-html-m2r"><br></span>
+To undo this, first uninstall the package,</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>pip uninstall rescomp
+</pre></div>
+</div>
+<p>then deactivate and activate your anaconda environment</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>conda deactivate
+conda activate rc_env
+</pre></div>
+</div>
+<p>and then, should pip still not be located in the active environment by “which pip”, install pip explicitly:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>conda install pip
+</pre></div>
+</div>
+<ul>
+<li><p>Nothing works, please help me!</p>
+<p>If you can’t install or use the package despite following the above instructions, <a class="reference external" href="mailto:Jonas&#46;Aumeier&#37;&#52;&#48;dlr&#46;de,Sebastian&#46;Baur&#37;&#52;&#48;dlr&#46;de,Joschka&#46;Herteux&#37;&#52;&#48;dlr&#46;de,Youssef&#46;Mabrouk&#37;&#52;&#48;dlr&#46;de?cc=Christoph&#46;Raeth&#37;&#52;&#48;dlr&#46;de">write us</a>. For a package as new as this one, such problems are to be expected and we will try to help as soon as possible.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>Please read the <strong>FAQ below</strong>.</p>
+<p>Otherwise, just look at the examples in <em>bin</em> to get started. Not many features are implemented yet, hence there is not that much to explain.</p>
+<div class="section" id="for-contributors">
+<h3>For Contributors<a class="headerlink" href="#for-contributors" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="general-information">
+<h4>General Information<a class="headerlink" href="#general-information" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p>As the package is very much in flux, reading the commits of others is very important! Otherwise you might write code for functions that don’t exist anymore or whose syntax has completely changed.<span class="raw-html-m2r"><br></span>
+As a corrolary, this also means that writing legible, descriptive commit messages is paramount!</p></li>
+<li><p>All the old code, before we made everything installable as a package, is in the folder <em>legacy</em>. The goal should be to slowly add all the functions from the legacy code base to one, coherent python package.</p></li>
+</ul>
+</div>
+<div class="section" id="branche-usage-intentions">
+<h4>Branche Usage Intentions:<a class="headerlink" href="#branche-usage-intentions" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>master</strong>:</dt><dd><p>Only for finished, documented features whose signature or functionality won’t change much in the future<span class="raw-html-m2r"><br></span>
+Changed only by merging with the development branch. Every change is accompanied by a new package version and updated documentation.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>develop</strong>:</dt><dd><p>This is the development branch which is intendet for working features whose signature or functionality probably won’t change much in the future, but are not ready yet to be deployed to “the public”, possibly because they are incomplete or not yet documented.
+Also for features and changes to insignificant to make a new release number for.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>developer branches</strong>:</dt><dd><p>These are your personal branches you can do what you want with.<span class="raw-html-m2r"><br></span>
+They should branch off of and merge into the develop branch. It is advisable to keep your developer branch as synchronized as possible with the development branch (see below)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="create-your-own-developer-branch">
+<h4>Create your own developer branch:<a class="headerlink" href="#create-your-own-developer-branch" title="Permalink to this headline">¶</a></h4>
+<p>First, go into your local rescomp repository. Then, make sure that you are in the master branch, which you can check via:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git status
+</pre></div>
+</div>
+<p>Then, you want to make sure that your local repository is synchronized with the code on the Gitlab servers, which you can enforce by using</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git pull
+</pre></div>
+</div>
+<p>checkout (i.e. switch to) the developer branch</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git checkout develop
+</pre></div>
+</div>
+<p>create your branch locally</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git branch Your-Gitlab-Username-Here
+</pre></div>
+</div>
+<p>and then push the branch to server</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git push --set-upstream origin Your-Gitlab-Username-Here
+</pre></div>
+</div>
+<p>after which you are done.
+You now have a personal copy of the develop branch, which you can modify to you hearts content without getting in the way of other people!<span class="raw-html-m2r"><br></span>
+Now you just need to make sure that when you are working on/with the rescomp package, that you are in fact working in your own branch. This is checkable manually via</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git status
+</pre></div>
+</div>
+<p>but you can also adjust your terminal to always display the current active branch, which is much safer and more convenient.</p>
+</div>
+<div class="section" id="adjusting-the-terminal-to-always-show-the-current-branch">
+<h4>Adjusting the terminal to always show the current branch<a class="headerlink" href="#adjusting-the-terminal-to-always-show-the-current-branch" title="Permalink to this headline">¶</a></h4>
+<p>The precise way to do this depends on your operating system and shell.<span class="raw-html-m2r"><br></span>
+For bash on linux the following tutorial works quite well:
+<a class="reference external" href="https://coderwall.com/p/fasnya/add-git-branch-name-to-bash-prompt">https://coderwall.com/p/fasnya/add-git-branch-name-to-bash-prompt</a></p>
+</div>
+<div class="section" id="synchronize-and-merge-your-developer-branch">
+<h4>Synchronize and merge your developer branch<a class="headerlink" href="#synchronize-and-merge-your-developer-branch" title="Permalink to this headline">¶</a></h4>
+<p>To synchronize your developer branch with the current state of the development branch do:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git checkout develop
+git pull
+git checkout Your-Developer-Branch-Name
+git merge develop
+</pre></div>
+</div>
+<p>To merge your new, commit code from your personal developer branch into the development branch, first synchronize them as above:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git checkout develop
+git pull
+git checkout Your-Developer-Branch-Name
+git merge develop
+</pre></div>
+</div>
+<p>and then do:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git checkout develop
+git merge Your-Developer-Branch-Name
+git push
+</pre></div>
+</div>
+<p>Do <strong>not</strong> merge developer branches into master!<span class="raw-html-m2r"><br></span>
+Only the development branch should be merged into master, and please only do so if you really know what you are doing.</p>
+</div>
+<div class="section" id="for-internal-contributors">
+<h4>For Internal Contributors<a class="headerlink" href="#for-internal-contributors" title="Permalink to this headline">¶</a></h4>
+<p>When you install the package on the Rechenknecht, instead of using the environment file “environment_rescomp.yml” specified above, use the much more detailed one for the Rechenknecht “environment_rescomp_full_rk.yml”. The command to create the environment would then be</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>   conda env create --name rc_env --file environment_rescomp_full_rk.yml
+
+
+Doing so should ensure absolute reproducability between all results calculated on the Rechenknecht.
+</pre></div>
+</div>
+<p>When importing a new packet, add it to the environment_rescomp.yml file, specifying the newest version that runs on the Rechenknecht, and to the setup.py under “install_requires”, specifying the minimal version needed to run the code at all (usually the current major version)</p>
+</div>
+</div>
+</div>
+<div class="section" id="faq">
+<h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="q-where-do-i-find-good-literature-about-reservoir-computing-do-you-have-some-paper-or-book-to-recommend">
+<h3>Q: Where do I find good literature about reservoir computing ? Do you have some paper or book to recommend?<a class="headerlink" href="#q-where-do-i-find-good-literature-about-reservoir-computing-do-you-have-some-paper-or-book-to-recommend" title="Permalink to this headline">¶</a></h3>
+<p><strong>A:</strong> For a comparison between different RNN methods and RC, as well as a demonstration of RC’s predictive power and speed:<span class="raw-html-m2r"><br></span>
+<em>Chattopadhyay, A.; Hassanzadeh, P.; Palem, K.; Subramanian, D. Data-Driven Prediction of a Multi-Scale Lorenz 96 Chaotic System Using a Hierarchy of Deep Learning Methods: Reservoir Computing, ANN, and RNN-LSTM. 2019, 1–21.</em></p>
+<p>For a quick introduction:<span class="raw-html-m2r"><br></span>
+<em>Haluszczynski, A.; Räth, C. Good and Bad Predictions: Assessing and Improving the Replication of Chaotic Attractors by Means of Reservoir Computing. Chaos 2019, 29.</em><span class="raw-html-m2r"><br></span>
+It explains the basic math quite well and applies RC to the canonical Lorenz system. Furthermore, it discusses possibly the biggest distinguishing feature of RC, the static randomness of it’s network and the resulting consequences, which is very important to understand when working with RC.</p>
+<p>For some “classical” RC literature, the paper(s) by Jaeger et. al.:<span class="raw-html-m2r"><br></span>
+<em>Lukoševičius, M.; Jaeger, H. Reservoir Computing Approaches to Recurrent Neural Network Training. Comput. Sci. Rev. 2009, 3, 127–149.</em><span class="raw-html-m2r"><br></span>
+It discusses the basics and the many possible variations of RC in addition to its development history. This paper is of course not quite up to date anymore, as it’s 10 years old by now, but the qualitative results and ideas still hold true today.</p>
+</div>
+<div class="section" id="q-are-the-methods-shown-in-the-examples-really-all-there-is-to-the-package">
+<h3>Q: Are the methods shown in the examples really all there is to the package?<a class="headerlink" href="#q-are-the-methods-shown-in-the-examples-really-all-there-is-to-the-package" title="Permalink to this headline">¶</a></h3>
+<p><strong>A:</strong> While we have implemented many more features, ideas, etc., we chose not to add them to the package yet. We first want to re-write our current code base to be a foundation one can actually build a fully featured package on without having to re-write everything again in half a year due to a badly planned start.</p>
+</div>
+<div class="section" id="q-my-predictions-don-t-agree-with-the-real-data-at-all-what-is-going-on">
+<h3>Q: My predictions don’t agree with the real data at all! What is going on?<a class="headerlink" href="#q-my-predictions-don-t-agree-with-the-real-data-at-all-what-is-going-on" title="Permalink to this headline">¶</a></h3>
+<p><strong>A:</strong> The performance of the reservoir depends strongly on the hyperparameters.<span class="raw-html-m2r"><br></span>
+Nobody really knows how <em>exactly</em> the prediction quality depends on the parameters, but as a start you should use a reservoir that has about 100x as many nodes as the input has dimensions.  More for real or more “complicated” data.<span class="raw-html-m2r"><br></span>
+For all other parameters it is advisable to just play around by hand to see what parameter (ranges) might work or to use the hyperparameter optimization algorithm of your choice. As RC is fast to train, a simple grid search is often sufficient</p>
+</div>
+<div class="section" id="q-for-the-exact-same-set-of-hyperparameters-the-prediction-is-sometimes-amazingly-accurate-and-at-other-times-utterly-wrong-why">
+<h3>Q: For the exact same set of hyperparameters the prediction is sometimes amazingly accurate and at other times utterly wrong. Why?<a class="headerlink" href="#q-for-the-exact-same-set-of-hyperparameters-the-prediction-is-sometimes-amazingly-accurate-and-at-other-times-utterly-wrong-why" title="Permalink to this headline">¶</a></h3>
+<p><strong>A:</strong> As the network is not trained at all, it can happen that the randomly generated network is not suited to learn the task at hand. How “good” and “bad” network topologies differ is an active research problem.<span class="raw-html-m2r"><br></span>
+Practically, this means that the prediction quality for a set of hyperparameters can not be determined by a single randomly generated network but instead must be calculated as e.g. the average of multiple randomly generated networks.<span class="raw-html-m2r"><br></span>
+Luckily, unsuccessful predictions are almost always very clearly distinguishable if the network topology is at fault, i.e. the prediction either works well or not at all.</p>
+</div>
+<div class="section" id="q-you-said-above-that-the-network-should-have-about-100x-as-many-nodes-as-the-input-has-dimensions-maybe-more-my-input-is-50-dimensional-and-with-5000-10000-nodes-the-training-and-prediction-is-annoyingly-slow-i-thought-rc-was-supposed-to-be-fast-what-s-going-on">
+<h3>Q: You said above that the network should have about 100x as many nodes as the input has dimensions, maybe more. My input is &gt;50 dimensional and with 5000-10000 nodes the training and prediction is annoyingly slow! I thought RC was supposed to be fast, what’s going on?<a class="headerlink" href="#q-you-said-above-that-the-network-should-have-about-100x-as-many-nodes-as-the-input-has-dimensions-maybe-more-my-input-is-50-dimensional-and-with-5000-10000-nodes-the-training-and-prediction-is-annoyingly-slow-i-thought-rc-was-supposed-to-be-fast-what-s-going-on" title="Permalink to this headline">¶</a></h3>
+<p><strong>A:</strong> The computational bottleneck of RC is a bunch of matrix multplications which, roughly, scale as O(n^3), where n is the number of nodes in the network. Therefore, just scaling up the network to accommodate larger and larger inputs doesn’t work.<span class="raw-html-m2r"><br></span>
+Luckily there is a potential solution to this problem in the method of <a class="reference external" href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.120.024102">local states</a>. This is one of the features we already have code written for, but did not yet implemented in the package.<span class="raw-html-m2r"><br></span>
+If you need to use RC for higher dimensional inputs <em>now</em>, it is of course always helpful to reduce the input dimensionality as much as possible, for example via an autoencoder.</p>
+</div>
+<div class="section" id="q-in-your-code-i-see-you-discard-some-samples-at-the-beginning-of-training-why-is-it-necessary">
+<h3>Q: In your code, I see you discard some samples at the beginning of training, why is it necessary?<a class="headerlink" href="#q-in-your-code-i-see-you-discard-some-samples-at-the-beginning-of-training-why-is-it-necessary" title="Permalink to this headline">¶</a></h3>
+<p><strong>A:</strong> this is done for two reasons:</p>
+<p>1. To get rid of the transient dynamics in the reservoir, i.e. to “synchronize” the reservoir state r(t) with the trajectory, before the training starts.
+If one were to omit this step, the initial reservoir state would not correspond to the initial position on the trajectory, resulting in erroneous training results. For more details, i’d recommend reading up on the “echo state property” of RC and Echo State Networks in general.</p>
+<p>2. To discard any transient behavior in the training data itself.
+When trying to predict a chaotic attractor, the training data should only contain points on that attractor, otherwise the neural network learns the (irrelevant) dynamics of the system before the attractor is reached, which will decrease it’s predictive quality on the attractor itself.</p>
+<p>Discarding the transient behavior in the data (2.) basically just amounts to data preprocessing and is not necessary for RC per se (one could always just use input data that does already start on the attractor) but as the synchronization between reservoir and trajectory (1.) is necessary, we use the “discard_steps” variable to accomplish both.</p>
+</div>
+<div class="section" id="q-do-i-need-to-denoise-my-data">
+<h3>Q: Do I need to denoise my data?<a class="headerlink" href="#q-do-i-need-to-denoise-my-data" title="Permalink to this headline">¶</a></h3>
+<p><strong>A:</strong> Yes, if you work with real data it should be denoised, removing as much noise as possible without loosing too much information. It’s the same as for all other machine learning techniques, really.</p>
+</div>
+<div class="section" id="q-your-code-is-bad-your-documentation-is-bad-and-you-should-feel-bad">
+<h3>Q: Your code is bad, your documentation is bad and you should feel bad.<a class="headerlink" href="#q-your-code-is-bad-your-documentation-is-bad-and-you-should-feel-bad" title="Permalink to this headline">¶</a></h3>
+<p><strong>A:</strong> Well, this is quite rude. Also not a question.<span class="raw-html-m2r"><br></span>
+Nonetheless we do know that a lot of work needs to be done before the code can ascend to the status of “real python package”. Regardless, we hope that you still get some use out of the package, even if it is just toying around with RC a bit while you wait for the code base to be developed further.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">README</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#reservoir-computing">Reservoir Computing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#licensing">Licensing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#faq">FAQ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_esn.html">ESN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_measures.html">Measures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rescomp_utilities.html">Utilities</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Rescomp Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="rescomp_esn.html"
+                        title="next chapter">ESN</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rescomp_esn.html" title="ESN"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Rescomp Documentation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.0.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+    </div>
+  </body>
+</html>

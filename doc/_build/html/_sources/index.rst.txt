@@ -17,9 +17,14 @@ Table of Contents
 .. toctree::
    :maxdepth: 2
    :includehidden:
-   :glob:
 
-   *
+   README <readme.rst>
+   ESN <rescomp_esn.rst>
+   Measures <rescomp_measures.rst>
+   Utilities <rescomp_utilities.rst>
+   Simulations <rescomp_simulations.rst>
+   CHANGELOG <changelog.rst>
+
 
 Rescomp Modules
 ---------------------

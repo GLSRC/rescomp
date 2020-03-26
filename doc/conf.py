@@ -47,15 +47,15 @@ extensions = [
     'sphinx.ext.graphviz',
     'sphinx.ext.autosummary',
     # 'sphinx_autopackagesummary',
-    'sphinx.ext.inheritance_diagram'
+    'sphinx.ext.inheritance_diagram',
 ]
 
-# autodoc_default_options = {
-#     'autosummary': True,
-# }
+autodoc_default_options = {
+    'autosummary': True,
+}
 #
 # autodoc_default_flags = ['members']
-# autosummary_generate = True
+# autosummary_generate = Tru
 #
 # autodata_content = 'both'
 
@@ -75,24 +75,25 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
+
 html_theme = "classic"
+html_theme_options = {
+    # Toc options
+    'stickysidebar': True,
+}
+
+# html_theme = "sphinx_rtd_theme"
+# extensions.append("sphinx_rtd_theme")
 # html_theme_options = {
-#     # "rightsidebar": "true",
-#     "leftsidebar": "true",
-#     # "relbarbgcolor": "black"
-# }
-
-
-# html_theme = 'alabaster'
-
-# html_theme_options = {
-#     'display_version': True,
-#     # Toc options
+#     #  Toc options
 #     'collapse_navigation': True,
-#     'sticky_navigation': True,
-#     'navigation_depth': 4,
 #     'includehidden': True,
 # }
+
+# import wild_sphinx_theme
+# html_theme = 'wild'
+# html_theme_path = [wild_sphinx_theme.get_theme_dir()]
+
 
 html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'searchbox.html'] }
 

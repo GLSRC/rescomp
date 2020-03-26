@@ -42,8 +42,22 @@
             
   <div class="section" id="module-rescomp.utilities">
 <span id="utilities"></span><h1>Utilities<a class="headerlink" href="#module-rescomp.utilities" title="Permalink to this headline">¶</a></h1>
-<p>Implementing various utility functions for the esn</p>
-<p>&#64;author: herteux, edited slightly by baur</p>
+<p>Various utility functions for RC and the ESN classes generally</p>
+<p><strong>Functions</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.utilities.read_pickle" title="rescomp.utilities.read_pickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_pickle</span></code></a>(path[, compression])</p></td>
+<td><p>Load pickled (esn) object from file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.utilities.train_and_predict_input_setup" title="rescomp.utilities.train_and_predict_input_setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_and_predict_input_setup</span></code></a>(data[, …])</p></td>
+<td><p>Splits ESN input data for consecutive training and prediction</p></td>
+</tr>
+</tbody>
+</table>
 <dl class="function">
 <dt id="rescomp.utilities.read_pickle">
 <code class="sig-prename descclassname">rescomp.utilities.</code><code class="sig-name descname">read_pickle</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">compression='infer'</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.utilities.read_pickle" title="Permalink to this definition">¶</a></dt>
@@ -86,11 +100,11 @@ x_train and x_pred of 1 time step which makes it easy to make mistakes</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>input data for the training
-x_pred (np.ndarray): input data for the prediction</p>
+<dd class="field-even"><p>x_train, input data for the training
+np.ndarray: x_pred, input data for the prediction</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>x_train (np.ndarray)</p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>

@@ -48,6 +48,36 @@
 <span id="measures"></span><h1>Measures<a class="headerlink" href="#module-rescomp.measures" title="Permalink to this headline">¶</a></h1>
 <p>Measures ann analysis functions for the ESN class</p>
 <p>&#64;author: aumeier, baur, herteux</p>
+<p><strong>Functions</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.calc_tt" title="rescomp.measures.calc_tt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_tt</span></code></a>(reservoir[, flag, split])</p></td>
+<td><p>selects depending on if the abs(entry) of reservoir.w_out is one of the</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.measures.clustering_coeff" title="rescomp.measures.clustering_coeff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clustering_coeff</span></code></a>(reservoir)</p></td>
+<td><p>clustering coefficient for each node and returns it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.demerge_time" title="rescomp.measures.demerge_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">demerge_time</span></code></a>(reservoir)</p></td>
+<td><p>Measure for the quality of the predicted trajectory</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.measures.dimension" title="rescomp.measures.dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension</span></code></a>(reservoir[, r_min, r_max, …])</p></td>
+<td><p>Calculates correlation dimension</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.lyapunov" title="rescomp.measures.lyapunov"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lyapunov</span></code></a>(reservoir[, threshold, plot, …])</p></td>
+<td><p>Calculates the maximal Lyapunov Exponent of reservoir.y_pred (or reservoir.y_test), by estimating the time derivative of the mean logarithmic distances of former next neighbours.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.measures.plot" title="rescomp.measures.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(reservoir[, flag, save_switch, path])</p></td>
+<td><p>Shows timeresolved plots of:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.weighted_clustering_coeff_onnela" title="rescomp.measures.weighted_clustering_coeff_onnela"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weighted_clustering_coeff_onnela</span></code></a>(reservoir)</p></td>
+<td><p>Calculates the weighted clustering coefficient of abs(self.network) according to Onnela paper from 2005.</p></td>
+</tr>
+</tbody>
+</table>
 <dl class="function">
 <dt id="rescomp.measures.calc_tt">
 <code class="sig-prename descclassname">rescomp.measures.</code><code class="sig-name descname">calc_tt</code><span class="sig-paren">(</span><em class="sig-param">reservoir</em>, <em class="sig-param">flag='bool'</em>, <em class="sig-param">split=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.measures.calc_tt" title="Permalink to this definition">¶</a></dt>

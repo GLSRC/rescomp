@@ -46,8 +46,19 @@
             
   <div class="section" id="module-rescomp.simulations">
 <span id="simulations"></span><h1>Simulations<a class="headerlink" href="#module-rescomp.simulations" title="Permalink to this headline">¶</a></h1>
-<p>Calculating the lorenz63-attractor and other chaotic systems using 4th order runge kutta method</p>
-<p>&#64;author: aumeier, baur, mabrouk</p>
+<p>Simulate various chaotic system to generate artificial data</p>
+<p><strong>Functions</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.simulations.simulate_trajectory" title="rescomp.simulations.simulate_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_trajectory</span></code></a>([sys_flag, dt, …])</p></td>
+<td><p>Simulate a trajectory in an artificial chaotic system</p></td>
+</tr>
+</tbody>
+</table>
 <dl class="function">
 <dt id="rescomp.simulations.simulate_trajectory">
 <code class="sig-prename descclassname">rescomp.simulations.</code><code class="sig-name descname">simulate_trajectory</code><span class="sig-paren">(</span><em class="sig-param">sys_flag='mod_lorenz'</em>, <em class="sig-param">dt=0.02</em>, <em class="sig-param">time_steps=20000</em>, <em class="sig-param">starting_point=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.simulations.simulate_trajectory" title="Permalink to this definition">¶</a></dt>
@@ -55,21 +66,24 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sys_flag</strong> (<em>str</em>) – The system to be simulated. Acceptable flags are:
-mod_lorenz
-mod_lorenz_wrong
-normal_lorenz
-roessler
-lorenz_96
-ueda
-chua
-complex_butterfly
-chen
-rucklidge
-rabinovich
-thomas
-roessler_sprott
-kuramoto_sivashinsky</p></li>
+<li><p><strong>sys_flag</strong> (<em>str</em>) – <p>The system to be simulated. Possible flags are:</p>
+<ul>
+<li><p>”mod_lorenz”</p></li>
+<li><p>”mod_lorenz_wrong”</p></li>
+<li><p>”normal_lorenz”</p></li>
+<li><p>”roessler”</p></li>
+<li><p>”lorenz_96”</p></li>
+<li><p>”ueda”</p></li>
+<li><p>”chua”</p></li>
+<li><p>”complex_butterfly”</p></li>
+<li><p>”chen”</p></li>
+<li><p>”rucklidge”</p></li>
+<li><p>”rabinovich”</p></li>
+<li><p>”thomas”</p></li>
+<li><p>”roessler_sprott”</p></li>
+<li><p>”kuramoto_sivashinsky”</p></li>
+</ul>
+</p></li>
 <li><p><strong>dt</strong> (<em>float</em>) – Size of time steps</p></li>
 <li><p><strong>time_steps</strong> (<em>int</em>) – Number of time steps to simulate</p></li>
 <li><p><strong>starting_point</strong> (<em>np.ndarray</em>) – Starting point of the trajectory</p></li>

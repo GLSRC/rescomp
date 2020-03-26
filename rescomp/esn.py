@@ -190,30 +190,19 @@ class _ESNCore(utilities._ESNLogging):
         return y
 
 
-# TODO: Uni-indent the return part docstring of predict() and
-#  train_and_predict()
 class ESN(_ESNCore):
-    # save_r: bool
-    # should be called ESN
-    # logfile and loglevel.
-    # save instances/parameters to file
-    # prediction noise in predict
-    """
-    input: training data and (list of) x_pred_test data, sync_steps
-    specified/created: network, _w_in, activation_function
-    internal: trained ESNCore instance
-    output: prediction and desired prediction
+    """ Implements basic RC functionality
 
-    Goal: written such that one can easily implement both normal, full RC as
-        well as local RC with arbitrary neighborhoods by calling this class with
-        the right training and prediction data
+    This is to be written such that one can easily implement both "normal" RC as
+    well as local RC, or other generalizations, by using this class as a
+    building block to be called with the right training and prediction data
+
     """
 
     # def __init__(self, network_dimension=500, input_dimension=None,
     #              type_of_network='random', avg_degree=6., spectral_radius=0.1,
     #              regularization_parameter=1e-5, w_in_sparse=True, w_in_scale=1.,
     #              act_fct_flag='tanh', bias_scale=0., **kwargs):
-
     def __init__(self):
 
         super().__init__()
@@ -258,13 +247,17 @@ class ESN(_ESNCore):
         self._r_pred_gen = None
 
         # Dictionary defining synonyms for the different ways to choose the
-        # activation function. Internally the corresponding integers are used
+        # activation function. Internally the corresponding integers are used.
+        # If you add/change a flag here, please also change it in the
+        # train docstring
         self._act_fct_flag_synonyms = utilities._SynonymDict()
         self._act_fct_flag_synonyms.add_synonyms(0, ["tanh_simple", "simple"])
         self._act_fct_flag_synonyms.add_synonyms(1, "tanh_bias")
 
         # Dictionary defining synonyms for the different ways to create the
         # network. Internally the corresponding integers are used
+        # If you add/change a flag here, please also change it in the
+        # create_network docstring
         self._n_type_flag_synonyms = utilities._SynonymDict()
         self._n_type_flag_synonyms.add_synonyms(0, ["random", "erdos_renyi"])
         self._n_type_flag_synonyms.add_synonyms(1, ["scale_free", "barabasi_albert"])
@@ -275,9 +268,12 @@ class ESN(_ESNCore):
 
         self.logger.debug("Create ESN instance")
 
-
     def _create_w_in(self):
-        """ Create the input matrix w_in """
+        """  Create the input matrix w_in
+
+        Specification done via protected members
+
+        """
         self.logger.debug("Create w_in")
 
         if self._w_in_sparse:
@@ -294,6 +290,25 @@ class ESN(_ESNCore):
 
     def create_network(self, n_dim=500, n_rad=0.1, n_avg_deg=6.0,
                        n_type_flag="erdos_renyi", network_creation_attempts=10):
+        """ Creates the internal network used as reservoir in RC
+
+        Args:
+            n_dim (int): Nr. of nodes in the network
+            n_rad (float): Spectral radius of the network. Must be >0. Should be
+                < 1 to satisfy the echo state property
+            n_avg_deg (float): Average node degree (number of connections). Used
+                in the random network generations
+            n_type_flag (int_or_str): Type of Network to be generated. Possible
+                flags and their synonyms are:
+
+                - 0, "random", "erdos_renyi"
+                - 1, "scale_free", "barabasi_albert"
+                - 2, "small_world", "watts_strogatz"
+            network_creation_attempts (int): How often the network generation
+                should be attempted. It can fail due to a not converging
+                eigenvalue calculation
+
+        """
 
         self.logger.debug("Create network")
 
@@ -315,6 +330,11 @@ class ESN(_ESNCore):
                             %network_creation_attempts)
 
     def _create_network_connections(self):
+        """ Generate the baseline random network to be scaled
+
+        Specification done via protected members
+
+        """
 
         if self._n_type_flag == 0:
             network = nx.fast_gnp_random_graph(self._n_dim, self._n_edge_prob,
@@ -336,10 +356,13 @@ class ESN(_ESNCore):
         # self._network = np.asarray(nx.to_numpy_matrix(network))
 
     def _vary_network(self, network_variation_attempts=10):
-        """ Varies the weights of self.network, while conserving the topology.
+        """ Varies the weights of self._network, while conserving the topology.
 
         The non-zero elements of the adjacency matrix are uniformly randomized,
         and the matrix is scaled (self.scale_network()) to self.spectral_radius.
+
+        Specification done via protected members
+
         """
 
         # contains tuples of non-zero elements:
@@ -368,11 +391,12 @@ class ESN(_ESNCore):
             raise _ArpackNoConvergence
 
     def _scale_network(self):
-        """ Scale self.network, according to desired self.spectral_radius.
-
-        Converts network in scipy.sparse object internally.
+        """ Scale self._network, according to desired spectral radius.
 
         Can cause problems due to non converging of the eigenvalue evaluation
+
+        Specification done via protected members
+
         """
         self._network = scipy.sparse.csr_matrix(self._network)
         try:
@@ -386,27 +410,26 @@ class ESN(_ESNCore):
         maximum = np.absolute(eigenvals).max()
         self._network = ((self._n_rad / maximum) * self._network)
 
-    def set_network(self, network):
-        """ Set the network by passing a matrix or a file path
-
-        Calculates the corresponding properties to match the new network
-
-        Args:
-            network (nd_array_or_csr_matrix_str):
-
-        Returns:
-
-        """
-        raise Exception("Not yet implemented")
+    # def set_network(self, network):
+    #     """ Set the network by passing a matrix or a file path
+    #
+    #     Calculates the corresponding properties to match the new network
+    #
+    #     Args:
+    #         network (nd_array_or_csr_matrix_str):
+    #
+    #     """
+    #     raise Exception("Not yet implemented")
 
     def _set_activation_function(self, act_fct_flag, bias_scale=0):
-        """ Set the activation function to the one corresponding to act_fct_flag
+        """ Set the activation function corresponding to the act_fct_flag
 
         Args:
-            act_fct_flag (): flag corresponding to the activation function one
-                wants to use
+            act_fct_flag (int_or_str): flag corresponding to the activation
+                function one wants to use, see :func:`~esn.ESN.train` for a
+                list of possible flags
             bias_scale (float): Bias to be used in some activation functions
-                (currently only in :func:`~ESN._act_fct_tanh_bias`)
+                (currently only used in :func:`~esn.ESN._act_fct_tanh_bias`)
 
         """
         self.logger.debug("Set activation function to flag: %s" % act_fct_flag)
@@ -434,7 +457,7 @@ class ESN(_ESNCore):
             r (np.ndarray): n-dim network states
 
         Returns:
-            (np.ndarray) n-dim
+            np.ndarray: n-dim
 
         """
 
@@ -448,7 +471,7 @@ class ESN(_ESNCore):
             r (np.ndarray): n-dim network states
 
         Returns:
-            (np.ndarray) n-dim
+            np.ndarray n-dim
 
         """
 
@@ -456,8 +479,8 @@ class ESN(_ESNCore):
 
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
                       w_in_sparse=True, act_fct_flag='tanh_simple', bias_scale=0,
-                      save_r=False, save_input=False, **kwargs):
-        """ Train the reservoir after synchronizing it
+                      save_r=False, save_input=False):
+        """ Synchronize, then train the reservoir
 
         Args:
             x_train (np.ndarray): Input data used to synchronize and then train
@@ -465,12 +488,20 @@ class ESN(_ESNCore):
             sync_steps (int): How many steps to use for synchronization before
                 the prediction starts
             reg_param (float): weight for the Tikhonov-regularization term
-            w_in_scale (float): maximum absolut value of the (random) w_in
+            w_in_scale (float): maximum absolute value of the (random) w_in
                 elements
             w_in_sparse (bool): If true, creates w_in such that one element in
                 each row is non-zero (Lu,Hunt, Ott 2018)
+            act_fct_flag (int_or_str): Specifies the activation function to be
+                used during training (and prediction). Possible flags and their
+                synonyms are:
+
+                - 0, "tanh_simple", "simple"
+                - 1, "tanh_bias"
+            bias_scale (float): Bias to be used in some activation functions
+                (currently only used in :func:`~esn.ESN._act_fct_tanh_bias`)
             save_r (bool): If true, saves r(t) internally
-            save_input (bool):If true, saves the input data internally
+            save_input (bool): If true, saves the input data internally
 
         """
         self._reg_param = reg_param
@@ -499,8 +530,8 @@ class ESN(_ESNCore):
             self._train_synced(x_train)
 
     def predict(self, x_pred, sync_steps, pred_steps=None,
-                save_r=False, save_input=False, **kwargs):
-        """ Predict the system evolution after synchronizing the reservoir
+                save_r=False, save_input=False):
+        """ Synchronize the reservoir, then predict the system evolution
 
         Changes self._last_r and self._last_r_gen to stay synchronized to the new
         system state
@@ -512,7 +543,7 @@ class ESN(_ESNCore):
                 the prediction starts
             pred_steps (int): How many steps to predict
             save_r (bool): If true, saves r(t) internally
-            save_input (bool):If true, saves the input data internally
+            save_input (bool): If true, saves the input data internally
 
         Returns:
             tuple: 2-element tuple containing:
@@ -575,20 +606,51 @@ class ESN(_ESNCore):
 
         return self._y_pred, y_test
 
-    def get_network(self, ):
-        raise Exception("Not yet implemented")
+    def get_network(self):
+        """ Returns the network used as reservoir
+
+        Returns:
+            csr_matrix: network saved as scipy.sparse matrix
+
+        """
+        return self._network
+
+    def get_network_parameters(self):
+        """ Returns all network parameters
+
+        Returns:
+            dict: Dictionary of network parameters
+        """
+
+        param_dict = {"n_dim": self._n_dim,
+                      "n_rad": self._n_rad,
+                      "n_avg_deg": self._n_avg_deg,
+                      "n_edge_prob": self._n_edge_prob,
+                      "n_type_flag": self._n_type_flag}
+
+        return param_dict
 
     def get_w_in(self, ):
-        raise Exception("Not yet implemented")
+        """ Returns the input matrix w_in
 
-    def get_activation_function(self, ):
-        raise Exception("Not yet implemented")
+        Returns:
+            np.ndarray: w_in
 
-    def get_training(self, ):
-        raise Exception("Not yet implemented")
+        """
 
-    def get_prediction(self, ):
-        raise Exception("Not yet implemented")
+        return self._w_in
+
+    # def get_w_in_parameters(self, ):
+    #     raise Exception("Not yet implemented")
+    #
+    # def get_activation_function(self, ):
+    #     raise Exception("Not yet implemented")
+    #
+    # def get_training(self, ):
+    #     raise Exception("Not yet implemented")
+    #
+    # def get_prediction(self, ):
+    #     raise Exception("Not yet implemented")
 
     def get_internal_version(self):
         """ Returns the rescomp package version used to create the class instance
@@ -609,15 +671,13 @@ class ESN(_ESNCore):
         Args:
             path (str): File path where the pickled object will be stored.
             compression ({'infer', 'gzip', 'bz2', 'zip', 'xz', None}):
-                default 'infer'
-                A string representing the compression to use in the output file. By
-                default, infers from the file extension in specified path.
-            protocol (int): Int which indicates which protocol should be used by the pickler,
-            default HIGHEST_PROTOCOL (see [1]_ paragraph 12.1.2). The possible
-            values are 0, 1, 2, 3, 4. A negative value for the protocol
-            parameter is equivalent to setting its value to HIGHEST_PROTOCOL.
+                A string representing the compression to use in the output file.
+                By default, infers from the file extension in specified path.
+            protocol (int): Int which indicates which protocol should be used by
+                the pickler. The possible values are 0, 1, 2, 3, 4. A negative
+                value for the protocol parameter is equivalent to setting its
+                value to HIGHEST_PROTOCOL.
 
-            .. [1] https://docs.python.org/3/library/pickle.html
         """
 
         self.logger.debug("Save to file %s, turn off internal logger to do so"%path)
@@ -651,41 +711,48 @@ class ESNWrapper(ESN):
                 before the 'real' training begins
             train_steps (int): Steps to use for training and fitting w_in
             pred_steps (int): How many steps to predict the evolution for
-            **kwargs (): further arguments passed to train() and predict()
+            **kwargs: further arguments passed to :func:`~esn.ESN.train` and
+                :func:`~esn.ESN.predict`
 
         Returns:
-            y_pred (np.ndarray): Predicted future states
-                y_test (np.ndarray_or_None): Data taken from the input to compare
-                the prediction with. If the prediction were "perfect" y_pred and
-                y_test would be equal. Be careful though, y_test might be
-                shorter than y_pred, or even None, if pred_steps is not None
+            tuple: 2-element tuple containing:
+
+            - **y_pred** (*np.ndarray*): Predicted future states
+            - **y_test** (*np.ndarray_or_None*): Data taken from the input to
+              compare the prediction with. If the prediction were
+              "perfect" y_pred and y_test would be equal. Be careful
+              though, y_test might be shorter than y_pred, or even None,
+              if pred_steps is not None
 
         """
         x_train, x_pred = utilities.train_and_predict_input_setup(
             x_data, disc_steps=disc_steps, train_sync_steps=train_sync_steps,
             train_steps=train_steps, pred_steps=pred_steps)
 
-        self.train(x_train, train_sync_steps, **kwargs)
+        train_kwargs = utilities._remove_invalid_args(self.train, kwargs)
+        predict_kwargs = utilities._remove_invalid_args(self.predict, kwargs)
+
+        self.train(x_train, train_sync_steps, **train_kwargs)
 
         y_pred, y_test = self.predict(x_pred, sync_steps=0,
-                        pred_steps=pred_steps, **kwargs)
+                        pred_steps=pred_steps, **predict_kwargs)
 
         return y_pred, y_test
 
 
-    def predict_multiple(self, ):
-        """ Predict system evolution from multiple different starting conditions
-        """
-        raise Exception("Not yet implemented")
-
-    def calc_binary_network(self):
-        """ Returns a binary version of self._network
-        """
-        raise Exception("Not yet implemented")
-
-    def remove_nodes(self, split):
-        """ See the out-commented remove_nodes fct in measures
-        """
-        raise Exception("Not yet implemented")
+    # def predict_multiple(self, ):
+    #     """ Predict system evolution from multiple different starting conditions
+    #     """
+    #     raise Exception("Not yet implemented")
+    #
+    # def calc_binary_network(self):
+    #     """ Returns a binary version of self._network
+    #     """
+    #     raise Exception("Not yet implemented")
+    #
+    # def remove_nodes(self, split):
+    #     """ See the out-commented remove_nodes fct in measures
+    #     """
+    #     raise Exception("Not yet implemented")
 
 

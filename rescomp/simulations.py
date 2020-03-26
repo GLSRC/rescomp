@@ -339,22 +339,22 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
     """ Simulate a trajectory in an artificial chaotic system
 
     Args:
-        sys_flag (str): The system to be simulated. Acceptable flags and their
-            corresponding systems are:
-            mod_lorenz,
-            mod_lorenz_wrong,
-            normal_lorenz,
-            roessler,
-            lorenz_96,
-            ueda,
-            chua,
-            complex_butterfly,
-            chen,
-            rucklidge,
-            rabinovich,
-            thomas,
-            roessler_sprott,
-            kuramoto_sivashinsky
+        sys_flag (str): The system to be simulated. Possible flags are:
+
+            - "mod_lorenz"
+            - "mod_lorenz_wrong"
+            - "normal_lorenz"
+            - "roessler"
+            - "lorenz_96"
+            - "ueda"
+            - "chua"
+            - "complex_butterfly"
+            - "chen"
+            - "rucklidge"
+            - "rabinovich"
+            - "thomas"
+            - "roessler_sprott"
+            - "kuramoto_sivashinsky"
         dt (float): Size of time steps
         time_steps (int): Number of time steps to simulate
         starting_point (np.ndarray): Starting point of the trajectory

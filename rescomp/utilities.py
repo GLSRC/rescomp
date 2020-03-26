@@ -1,22 +1,14 @@
 # -*- coding: utf-8 -*-
-""" Implementing various utility functions for the esn
+""" Various utility functions for RC and the ESN classes generally
 
-@author: herteux, edited slightly by baur
 """
 
 import numpy as np
 import pickle
-import time
-import datetime
 import logging
 import sys
 import pandas
 import inspect
-# import scipy.sparse
-# import scipy.sparse.linalg
-# import matplotlib.pyplot as plt
-# import networkx as nx
-from . import simulations
 from ._version import __version__
 
 
@@ -207,7 +199,7 @@ class _SynonymDict:
         A flag is always also a synonym for itself
 
         Args:
-            synonym ():
+            synonym (): Thing to find the synonym for
 
         Returns:
             flag (int_or_None): int if found, None if not
@@ -255,7 +247,6 @@ def read_pickle(path, compression="infer"):
 
     Uses pandas functions internally.
 
-
     Args:
         path (str): File path where the pickled object will be loaded.
         compression ({'infer', 'gzip', 'bz2', 'zip', 'xz', None}) :
@@ -290,7 +281,7 @@ def _unique_key_by_value(dictionary, value):
         value ():
 
     Returns:
-        key (): unique key corresponding to value
+        (): unique key corresponding to value
 
     """
     list_of_keys = _keys_by_value(dictionary, value)
@@ -311,7 +302,7 @@ def _keys_by_value(dictionary, value):
         value ():
 
     Returns:
-        list_of_keys (list): list of keys corresponding to value
+        list: list_of_keys, list of keys corresponding to value
     """
     list_of_keys = []
     list_of_items = dictionary.items()
@@ -354,8 +345,8 @@ def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0, train_
         pred_steps (int): how many steps to predict the evolution for
 
     Returns:
-        x_train (np.ndarray): input data for the training
-        x_pred (np.ndarray): input data for the prediction
+        np.ndarray: x_train, input data for the training
+        np.ndarray: x_pred, input data for the prediction
 
     """
     if train_steps is None: train_steps = data.shape[0] - disc_steps

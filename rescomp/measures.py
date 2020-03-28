@@ -14,52 +14,53 @@ import scipy.spatial
 from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence
 from .esn import ESN  # Currently imported for type hints only
 
-def nrmse_over_time(meas_time_series, pred_time_series):
+
+def nrmse_over_time(pred_time_series, meas_time_series):
     """ Calculates the NRME between to time series for each time step
 
     Args:
-        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
         pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
+        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
 
     Returns:
         np.ndarray: NRMSE for each time step, shape (T,)
 
     """
+    pred = pred_time_series
+    meas = meas_time_series
+
     nrmse_list = []
 
-    meas = meas_time_series
-    pred = pred_time_series
-
     for i in range(0, meas.shape[0]):
-        local_nrmse = nrmse(meas[i: i+1], pred[i: i+1])
+        local_nrmse = nrmse(pred[i: i+1], meas[i: i+1])
         nrmse_list.append(local_nrmse)
 
     return np.array(nrmse_list)
 
 
-def nrmse(meas_time_series, pred_time_series):
+def nrmse(pred_time_series, meas_time_series):
     """ Calculates the NRME between two time series
 
     Internally just calls rmse with normalized=True
 
     Args:
-        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
         pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
+        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
 
     Returns:
         float: NRMSE
     """
-    return rmse(meas_time_series, pred_time_series, normalized=True)
+    return rmse(pred_time_series, meas_time_series, normalized=True)
 
 
-def rmse(meas_time_series, pred_time_series, normalized=False):
+def rmse(pred_time_series, meas_time_series, normalized=False):
     """ Calculates the root mean squared error between two time series
 
     The time series must be of equal length and dimension
 
     Args:
-        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
         pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
+        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
         normalized (bool): If False, normalizes the result w.r.t. to the length
             T of the time series.
             If True normalizes the result w.r.t. the length T and the std. of
@@ -69,8 +70,8 @@ def rmse(meas_time_series, pred_time_series, normalized=False):
         float: RMSE or NRMSE
 
     """
-    meas = meas_time_series
     pred = pred_time_series
+    meas = meas_time_series
 
     # if normalized: norm = (y_real_cut ** 2).sum()
     # else: norm = y_real_cut.shape[0]
@@ -88,79 +89,45 @@ def rmse(meas_time_series, pred_time_series, normalized=False):
                 / np.sqrt(meas.shape[0])
 
     return error
-#
-# def rmse(reservoir, interval_start=0, interval_end=-1, normalized=False):
-#     """
-#     Calculates the RMSE between predicted and measured trajectory
-#
-#     Args:
-#         reservoir (ESN): ESN with ESN.y_test and ESN.y_pred set
-#         interval_start (int): start of the data interval
-#         interval_end (int): end of the data interval
-#         normalized (bool): If true, calculate NRMSE instead of RMSE
-#
-#     Returns:
-#         float:
-#     """
-#
-#     y_real_cut = reservoir.y_test[interval_start:interval_end]
-#     y_pred_cut = reservoir.y_pred[interval_start:interval_end]
-#
-#     # if normalized: norm = (y_real_cut ** 2).sum()
-#     # else: norm = y_real_cut.shape[0]
-#     # error = np.sqrt(((y_pred_cut - y_real_cut) ** 2).sum() / norm)
-#
-#     if normalized: norm = np.linalg.norm(y_real_cut) ** 2
-#     else: norm = y_real_cut.shape[0]
-#     error = np.sqrt(((y_pred_cut - y_real_cut) ** 2).sum() / norm)
-#
-#     return error
-#
-# # Pre 2020-01-19. Remove once the new one is finished
-# def rmse_old(reservoir, flag, interval_end=-1):
-#     """
-#     Measures an average over the spatial distance of predicted and actual
-#     trajectory
-#     """
-#     if flag == 'train':
-#         error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r[:interval_end].T) - \
-#                           reservoir.y_train[:interval_end].T) ** 2).sum() \
-#                         / (reservoir.y_train[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
-#     elif flag == 'pred':
-#         error = np.sqrt(((np.matmul(reservoir.W_out, reservoir.r_pred[:interval_end].T) - \
-#                           reservoir.y_test[:interval_end].T) ** 2).sum() \
-#                         / (reservoir.y_test[:interval_end] ** 2).sum())/reservoir.r[:interval_end].shape[0]
-#     else:
-#         raise Exception('use "train" or "pred" as flag')
-#     return error
 
-def demerge_time(reservoir):
-    """ Measure for the quality of the predicted trajectory
 
-    Number of time_steps it takes for the prediction to loose track of the real
-    trajectory.
-    Returns the number of steps for which y_test and y_pred are separated less
-    than epsilon in each dimension.
+def demerge_time(pred_time_series, meas_time_series, epsilon):
+    """ Synonym for the divergence_time fct. """
+
+    return divergence_time(pred_time_series, meas_time_series, epsilon)
+
+
+def divergence_time(pred_time_series, meas_time_series, epsilon):
+    """ Calculates how long it takes for measurement and prediction to diverge
+
+    Measure for the quality of the predicted trajectory
+
+    The divergence time refers to the number of time_steps it takes for the
+    predicted trajectory to diverge from the measured trajectory by more than a
+    given distance in one or more dimensions.
+    The distance measure is the supremum norm, NOT the euclidean one.
+
+    Args:
+        pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
+        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
+        epsilon (float): Distance threshold, above which the two time series
+            count as diverged
+
+    Returns:
+        int: divergence_time, the number of time steps for which
+            meas_time_series and pred_time_series are separated by less than
+            than epsilon in each dimension.
 
     """
-    delta = np.abs(reservoir.y_test - reservoir.y_pred)
-    demerge_time = np.argmax(delta > reservoir.epsilon, axis=0).min()
-    """
-    true_false_array = np.array([np.abs(reservoir.y_test - reservoir.y_pred) < reservoir.epsilon])[0]
-   
-    #print(reservoir.true_false_array)
-    for T in np.arange(true_false_array.shape[0]):
-        for i in np.arange(true_false_array.shape[1]):
+    pred = pred_time_series
+    meas = meas_time_series
 
-            if true_false_array[T,i] == False:
-                reservoir.demerge_time = T
-                return T
-                break
-        else:
-            continue
-        break
-    """
-    return demerge_time
+    delta = np.abs(meas - pred)
+
+    dim_wise_div_time = np.argmax(delta > epsilon, axis=0)
+    div_time = np.min(dim_wise_div_time[np.nonzero(dim_wise_div_time)])
+
+    return div_time
 
 
 # def return_map(self, axis=2):

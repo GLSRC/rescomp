@@ -7,7 +7,7 @@ import numpy as np
 import rescomp
 from rescomp import measures
 
-class test_measures(unittest.TestCase):
+class testMeasures(unittest.TestCase):
     def setUp(self):
         np.random.seed(0)
 

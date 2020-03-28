@@ -15,178 +15,9 @@ import pickle
 from rescomp import simulations
 import networkx as nx
 
-
-def load_data_old(reservoir, data_input=None, mode='data_from_array', starting_point=None,
-                  add_noise=False, std_noise=0., print_switch=False):
-    """
-    Method to load data from a file or function (depending on mode)
-    for training and testing the network.
-    If the file does not exist, it is created according to the parameters.
-    reservoir.W_in is initialized.
-
-    :parameters:
-    :mode:
-    - 'start_from_attractor' uses lorenz.record_trajectory for
-        generating a timeseries, by randomly picking starting points from a
-        given trajectory.
-    - 'fix_start' passes        for t in np.arange(reservoir.discard_steps):
-        reservoir.r[0] = np.tanh(
-            reservoir.input_weight *
-            np.matmul(reservoir.W_in, reservoir.x_discard[t]) + \
-            np.matmul(reservoir.network, reservoir.r[0]) ) starting_point to lorenz.record_trajectory
-    - 'data_from_array' loads a timeseries from array without further
-    checking for reasonability - use with care! For a d-dimensional time series
-    with T time_steps use shape (T,d).
-
-    :add_noise: boolean: if normal distributed noise should be added to the
-        imported timeseries
-    :std_noise: standard deviation of the applied noise
-
-    """
-    # pdb.set_trace()
-    # print(reservoir)
-
-    t0 = time.time()
-
-    # minimum size for vals, lorenz.save_trajectory has to evaluate:
-    timesteps = 1 + reservoir.discard_steps + reservoir.training_steps \
-                + reservoir.prediction_steps
-
-    if print_switch:
-        print('mode: ', mode)
-
-    if mode == 'data_from_array':
-
-        #            check for dimension and time_steps
-        #            reservoir.discard_steps + reservoir.training_steps + \
-        #            reservoir.prediction_steps (+1) == vals.shape
-
-        vals = data_input
-
-        # vals -= vals.meactivation_funcan(axis=0)
-        # vals *= 1 / vals.std(axis=0)
-        # print(vals.shape)
-
-    elif mode == 'start_from_attractor':
-        length = 50000
-        original_start = np.array([-2.00384153, -5.34877257, -1.20401106])
-        random_index = np.random.choice(np.arange(10000, length, 1))
-        if print_switch:
-            print('random index for starting_point: ', random_index)
-
-        starting_point = simulations.simulate_trajectory(
-            sys_flag=reservoir.sys_flag,
-            dt=reservoir.dt,
-            time_steps=length,
-            starting_point=original_start,
-            print_switch=print_switch)[random_index]
-
-        vals = simulations.simulate_trajectory(sys_flag=reservoir.sys_flag,
-                                               dt=reservoir.dt,
-                                               time_steps=timesteps,
-                                               starting_point=starting_point,
-                                               print_switch=print_switch)
-
-    elif mode == 'fix_start':
-        if starting_point is None:
-            raise Exception('set starting_point to use fix_start')
-        else:
-            vals = simulations.simulate_trajectory(sys_flag=reservoir.sys_flag,
-                                                   dt=reservoir.dt,
-                                                   time_steps=timesteps,
-                                                   starting_point=starting_point,
-                                                   print_switch=print_switch)
-    else:
-        raise Exception(mode, ' mode not recognized')
-        # print(mode, ' mode not recognized')
-    # print('data loading successfull')
-    if add_noise:
-        vals += np.random.normal(scale=std_noise, size=vals.shape)
-        print('added noise with std_dev: ' + str(std_noise))
-
-    #normalization of time series to zero mean and unit std for each
-    #dimension individually:
-    if reservoir.normalize_data:
-        vals -= vals.mean(axis=0)
-        vals *= 1/vals.std(axis=0)
-
-    # define local variables for test/train split:
-    n_test = reservoir.prediction_steps
-    n_train = reservoir.training_steps + reservoir.discard_steps
-    n_discard = reservoir.discard_steps
-
-    # sketch of test/train split:
-    # [--n_discard --|--n_train--|--n_test--]
-    # and y_train is shifted by 1
-    reservoir.x_train = vals[n_discard:n_train, :]  # input values driving reservoir
-    reservoir.x_discard = vals[:n_discard, :]
-    reservoir.y_train = vals[n_discard + 1:n_train + 1, :]  # +1
-    reservoir.y_test = vals[n_train + 1:n_train + n_test + 1, :]  # +1
-
-    # check, if y_test has prediction_steps:
-    # should be extended to a real test_func!
-    if reservoir.y_test.shape[0] != reservoir.prediction_steps:
-        print('length(y_test) [' + str(reservoir.y_test.shape[0])
-              + '] != prediction_steps [' + str(reservoir.prediction_steps) + ']')
-
-    t1 = time.time()
-    if print_switch:
-        print('input (x) and target (y) loaded in ', t1 - t0, 's')
-
-
-def save_realization_old(reservoir, filename='parameter/test_pickle_'):
-    """
-    Saves the network parameters (extracted with reservoir.__dict__ to a file,
-    for later reuse.
-
-    pickle protocol version 2
-    """
-    reservoir.timestamp = datetime.datetime.now()
-    f = open(filename, 'wb')
-    try:
-        pickle.dump(reservoir.__dict__, f, protocol=2)
-    except:
-        print('file could not be pickled: ', filename)
-    f.close()
-
-    return 'file saved'
-
-
-def load_realization_old(reservoir, filename='parameter/test_pickle_', print_switch=False):
-    """
-    loads __dict__ from a pickled file and overwrites reservoir.__dict__
-    Original data lost!
-    """
-    g = open(filename, 'rb')
-    try:
-        dict_load = pickle.load(g)
-
-        keys_init = reservoir.__dict__.keys()
-        keys_load = dict_load.keys()
-
-        key_load_list = []
-        key_init_list = []
-        for key in keys_load:
-            reservoir.__dict__[key] = dict_load[key]  # this is where the dict is loaded
-            # print(str(key)+' was loaded to __dict__')
-            if not key in keys_init:
-                key_load_list.append(key)
-        if print_switch:
-            print('not in initial reservoir: ' + str(key_load_list))
-        for key in keys_init:
-            if not key in keys_load:
-                key_init_list.append(key)
-        if print_switch:
-            print('not in loaded reservoir: ' + str(key_init_list))
-
-        return 'file loaded, __dict__ available in reservoir.dict'
-    except:
-        print('file could not be unpickled: ', filename)
-    g.close()
-
-
 class ESNOld:
-    """
+    """ This is the old pre-restructure (pre 2020) ESN class
+
     reservoir is a class for reservoir computing, using different network
     structures to predict (chaotic) time series
 
@@ -335,7 +166,7 @@ class ESNOld:
         # make a numpy array out of the network's adjacency matrix,
         # will be converted to scipy sparse in train(), predict()
 
-        self.network = np.asarray(nx.to_numpy_matrix(network))
+        self.network = np.asarray(nx.to_numpy_array(network))
 
         self.calc_binary_network()
 
@@ -433,28 +264,116 @@ class ESNOld:
         Method to load data from a file or function (depending on mode)
         for training and testing the network.
         If the file does not exist, it is created according to the parameters.
-        self._w_in is initialized.
+        reservoir.W_in is initialized.
 
         :parameters:
         :mode:
         - 'start_from_attractor' uses lorenz.record_trajectory for
             generating a timeseries, by randomly picking starting points from a
             given trajectory.
-        - 'fix_start' passes
-            for t in np.arange(self.discard_steps):
-                self.r[0] = np.tanh(self._w_in @ self.x_discard[t] +
-                            self.network @ self.r[0] )
-            starting_point to lorenz.record_trajectory
-        - 'data_from_file' loads a timeseries from file without further
-        checking for reasonability - use with care!
+        - 'fix_start' passes        for t in np.arange(reservoir.discard_steps):
+            reservoir.r[0] = np.tanh(
+                reservoir.input_weight *
+                np.matmul(reservoir.W_in, reservoir.x_discard[t]) + \
+                np.matmul(reservoir.network, reservoir.r[0]) ) starting_point to lorenz.record_trajectory
+        - 'data_from_array' loads a timeseries from array without further
+        checking for reasonability - use with care! For a d-dimensional time series
+        with T time_steps use shape (T,d).
 
         :add_noise: boolean: if normal distributed noise should be added to the
             imported timeseries
         :std_noise: standard deviation of the applied noise
-        """
 
-        load_data_old(self, data_input=data_input, mode=mode, starting_point=starting_point,
-                      add_noise=add_noise, std_noise=std_noise, print_switch=print_switch)
+        """
+        # pdb.set_trace()
+        # print(reservoir)
+
+        t0 = time.time()
+
+        # minimum size for vals, lorenz.save_trajectory has to evaluate:
+        timesteps = 1 + self.discard_steps + self.training_steps \
+                    + self.prediction_steps
+
+        if print_switch:
+            print('mode: ', mode)
+
+        if mode == 'data_from_array':
+
+            #            check for dimension and time_steps
+            #            self.discard_steps + self.training_steps + \
+            #            self.prediction_steps (+1) == vals.shape
+
+            vals = data_input
+
+            # vals -= vals.meactivation_funcan(axis=0)
+            # vals *= 1 / vals.std(axis=0)
+            # print(vals.shape)
+
+        elif mode == 'start_from_attractor':
+            length = 50000
+            original_start = np.array([-2.00384153, -5.34877257, -1.20401106])
+            random_index = np.random.choice(np.arange(10000, length, 1))
+            if print_switch:
+                print('random index for starting_point: ', random_index)
+
+            starting_point = simulations.simulate_trajectory(
+                sys_flag=self.sys_flag,
+                dt=self.dt,
+                time_steps=length,
+                starting_point=original_start,
+                print_switch=print_switch)[random_index]
+
+            vals = simulations.simulate_trajectory(sys_flag=self.sys_flag,
+                                                   dt=self.dt,
+                                                   time_steps=timesteps,
+                                                   starting_point=starting_point,
+                                                   print_switch=print_switch)
+
+        elif mode == 'fix_start':
+            if starting_point is None:
+                raise Exception('set starting_point to use fix_start')
+            else:
+                vals = simulations.simulate_trajectory(sys_flag=self.sys_flag,
+                                                       dt=self.dt,
+                                                       time_steps=timesteps,
+                                                       starting_point=starting_point,
+                                                       print_switch=print_switch)
+        else:
+            raise Exception(mode, ' mode not recognized')
+            # print(mode, ' mode not recognized')
+        # print('data loading successfull')
+        if add_noise:
+            vals += np.random.normal(scale=std_noise, size=vals.shape)
+            print('added noise with std_dev: ' + str(std_noise))
+
+        #normalization of time series to zero mean and unit std for each
+        #dimension individually:
+        if self.normalize_data:
+            vals -= vals.mean(axis=0)
+            vals *= 1/vals.std(axis=0)
+
+        # define local variables for test/train split:
+        n_test = self.prediction_steps
+        n_train = self.training_steps + self.discard_steps
+        n_discard = self.discard_steps
+
+        # sketch of test/train split:
+        # [--n_discard --|--n_train--|--n_test--]
+        # and y_train is shifted by 1
+        self.x_train = vals[n_discard:n_train, :]  # input values driving reservoir
+        self.x_discard = vals[:n_discard, :]
+        self.y_train = vals[n_discard + 1:n_train + 1, :]  # +1
+        self.y_test = vals[n_train + 1:n_train + n_test + 1, :]  # +1
+
+        # check, if y_test has prediction_steps:
+        # should be extended to a real test_func!
+        if self.y_test.shape[0] != self.prediction_steps:
+            print('length(y_test) [' + str(self.y_test.shape[0])
+                  + '] != prediction_steps [' + str(self.prediction_steps) + ']')
+
+        t1 = time.time()
+        if print_switch:
+            print('input (x) and target (y) loaded in ', t1 - t0, 's')
 
     def train(self, print_switch=False):
         """
@@ -532,8 +451,6 @@ class ESNOld:
         else:
             self.noise = np.zeros((self.prediction_steps, self.y_dim))
 
-        # TODO: This line would be super wrong if y_train and r were not zeros
-        # TODO: everywhere!
         self.r_pred[0] = self.activation_function(self.y_train[-1], self.r[-1])
 
         # transition from training to prediction
@@ -564,26 +481,11 @@ class ESNOld:
         if print_switch:
             print('predicting done in ', t1 - t0, 's')
 
-    def save_realization(self, filename='parameter/test_pickle_'):
-        """
-        Saves the network parameters (extracted with self.__dict__ to a file,
-        for later reuse.
 
-        pickle protocol version 2
-        """
-        save_realization_old(self, filename=filename)
-
-    def load_realization(self, filename='parameter/test_pickle_', print_switch=False):
-        """
-        loads __dict__ from a pickled file and overwrites self.__dict__
-        Original data lost!
-        """
-        load_realization_old(self, filename=filename, print_switch=print_switch)
-
-
-class test_ESN(unittest.TestCase):
+class testESN(unittest.TestCase):
     def setUp(self):
-        np.random.seed(0)
+        self.seed = 0
+        np.random.seed(self.seed)
         self.esn = rescomp.ESN()
         self.esn.set_console_logger("off")
 
@@ -592,52 +494,75 @@ class test_ESN(unittest.TestCase):
         np.random.seed(None)
 
     # TODO: Tests should be much less broad than this, but I am lazy.
-    #   e.g: For a test, there is no reason to use simulated data, random
-    #   data would have less dependencies.
-    #   Also, this test only works on my (Sebastians) Laptop, the exact floats
-    #   are different on every other system and hence the test has to be
-    #   rewritten anyway to e.g. use the old ESN class as comparison point.
-    #   Because the prediction difference on different systems is surprisingly
-    #   large though, one should keep this test (or one like it) lying around
-    #   somewhere though, as it demonstrates the absolute limit for the
-    #   prediction of chaotic systems, purely due to the minimal differences in
-    #   CPU architecture
-    def test_sim_train_pred_mod_lorenz(self):
-        train_sync_steps = 3
-        train_steps = 3
-        pred_steps = 2
+    def test_new_vs_old_esn(self):
+        # train_sync_steps = 3
+        # train_steps = 3
+        # pred_steps = 2
+
+        train_sync_steps = np.random.randint(10, 100)
+        train_steps = np.random.randint(10, 100)
+        pred_steps = np.random.randint(10, 100)
+        dim = np.random.randint(10, 100)
+
         simulation_time_steps = train_sync_steps + train_steps + pred_steps
 
-        starting_point = np.array([-2, -5, -1])
-        sim_data = rescomp.simulations.simulate_trajectory(
-            sys_flag='mod_lorenz', dt=2e-2, time_steps=simulation_time_steps,
-            starting_point=starting_point)
+        sim_data = np.random.random((simulation_time_steps, dim))
 
         x_train, x_pred = rescomp.utilities.train_and_predict_input_setup(
             sim_data, train_sync_steps=train_sync_steps,
             train_steps=train_steps, pred_steps=pred_steps)
 
-        # x_train = sim_data[:n_train_tot]
-        # x_pred = sim_data[n_train_tot - 1: n_train_tot + n_predict]
-
+        np.random.seed(self.seed)
         self.esn.create_network()
 
-        self.esn.train(x_train, sync_steps=train_sync_steps)
+        self.esn.train(x_train, sync_steps=train_sync_steps, reg_param=1e-4, save_r=True)
+        y_pred, y_test = self.esn.predict(x_pred, sync_steps=0, save_r=True)
 
-        y_pred, y_test = self.esn.predict(x_pred, sync_steps=0)
+        np.random.seed(self.seed)
+        esn_old = ESNOld(input_dimension=sim_data.shape[1],
+          output_dimension=sim_data.shape[1], training_steps=train_steps - 1,
+          prediction_steps=pred_steps, discard_steps=train_sync_steps)
 
-        y_pred_desired = np.array(
-            [[-8.009798237563704, -17.172409021843052, 3.689528434131512],
-             [-8.199848199155639, -17.558818321636746, 3.879321151928091]])
-        y_test_desired = np.array(
-            [[-8.940650755161531, -18.88532291381985, 5.155862501900478],
-             [-11.09758116927574, -22.68566274692776, 8.756832582764844]])
+        esn_old.load_data(sim_data)
+        esn_old.train()
+        esn_old.predict()
 
-        np.testing.assert_equal(y_pred, y_pred_desired)
+        network = self.esn.get_network()
+        network = network.todense()
+        network_desired = esn_old.network
+
+        w_in = self.esn.get_w_in()
+        w_in_desired = esn_old.w_in
+
+        y_pred_desired = esn_old.y_pred
+        y_test_desired = esn_old.y_test
+
+        r_train = self.esn._r_train
+        r_train_desired = esn_old.r
+
+        r_pred = self.esn._r_pred
+        r_pred_desired = esn_old.r_pred
+
+        w_out = self.esn.get_w_out()
+        w_out_desired = esn_old.w_out
+
+        # y_pred_desired = np.array(
+        #     [[-8.009798237563704, -17.172409021843052, 3.689528434131512],
+        #      [-8.199848199155639, -17.558818321636746, 3.879321151928091]])
+        # y_test_desired = np.array(
+        #     [[-8.940650755161531, -18.88532291381985, 5.155862501900478],
+        #      [-11.09758116927574, -22.68566274692776, 8.756832582764844]])
+
+        np.testing.assert_equal(w_in, w_in_desired)
+        np.testing.assert_equal(network, network_desired)
+        np.testing.assert_equal(r_train, r_train_desired)
+        np.testing.assert_equal(r_pred, r_pred_desired)
+        np.testing.assert_equal(w_out, w_out_desired)
         np.testing.assert_equal(y_test, y_test_desired)
+        np.testing.assert_equal(y_pred, y_pred_desired)
 
 
-class test_ESNWrapper(unittest.TestCase):
+class testESNWrapper(unittest.TestCase):
     def setUp(self):
         np.random.seed(0)
         self.esn = rescomp.ESNWrapper()
@@ -678,9 +603,7 @@ class test_ESNWrapper(unittest.TestCase):
             data, disc_steps=disc_steps, train_sync_steps=train_sync_steps,
             train_steps=train_steps, pred_steps=pred_steps)
 
-        # np.testing.assert_equal(data, data2)
-
-        # np.testing.assert_equal(y_test, y_test_desired)
+        np.testing.assert_equal(y_test, y_test_desired)
         np.testing.assert_equal(y_pred, y_pred_desired)
 
 

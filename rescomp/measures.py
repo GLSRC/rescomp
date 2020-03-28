@@ -1,18 +1,9 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-""" Measures ann analysis functions for the ESN class
+""" Measures and other analysis functions useful for RC
 
-@author: aumeier, baur, herteux
 """
 
 import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
-import scipy.signal
-import scipy.sparse.linalg
-import scipy.spatial
-from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence
-from .esn import ESN  # Currently imported for type hints only
 
 
 def nrmse_over_time(pred_time_series, meas_time_series):

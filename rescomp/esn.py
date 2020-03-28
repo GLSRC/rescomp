@@ -640,6 +640,16 @@ class ESN(_ESNCore):
 
         return self._w_in
 
+    def get_w_out(self, ):
+        """ Returns the outpy=ut matrix w_out
+
+        Returns:
+            np.ndarray: w_out
+
+        """
+
+        return self._w_out
+
     # def get_w_in_parameters(self, ):
     #     raise Exception("Not yet implemented")
     #

@@ -208,84 +208,84 @@ def divergence_time(pred_time_series, meas_time_series, epsilon):
 #     return dimension
 
 
-def lyapunov(reservoir, threshold=int(10),
-             plot=False, print_switch=False, test_measure=False):
-    """
-    Calculates the maximal Lyapunov Exponent of reservoir.y_pred (or reservoir.y_test),
-    by estimating the time derivative of the mean logarithmic distances of
-    former next neighbours. Stores it in reservoir.lyapunov (reservoir.lyapunov_test)
-    Only values for tau_min/max are used for calculating the slope!
-    
-    Since the attractor has a size of roughly 20 [log(20) ~ 3.] this
-    distance reaches a maximum after a certain time, approximately
-    after 4. time units [time_units = dt*steps]
-    Therefore the default values are choosen to be dt dependent as in 
-    ###Definition of taus:
-
-    tau_min/max are given in units of steps
-    plot to check for correct average
-    """
-    """
-    REMINDER:
-    remove the loop over taus, since the slope is calculated with single
-    values only
-    """
-    ###Definition of taus:        
-    tau_min = int(0.5 / reservoir.dt)
-    tau_max = int(3.8 / reservoir.dt)
-    taus = np.arange(tau_min, tau_max,
-                     10)  # taus = np.array([tau_min, tau_max])
-
-    if test_measure:
-        traj = reservoir.y_test  # for measure assessing
-    else:
-        traj = reservoir.y_pred  # for evaluating prediction
-
-    tree = scipy.spatial.cKDTree(traj)
-    nn_index = tree.query(traj, k=2)[1]
-
-    # drop all elements in nn_index lists where the neighbour is:
-    # 1. less than threshold time_steps away
-    # 2. where we cannot calculate the neighbours future in tau_max time_steps:
-
-    # contains indices of points and the indices of their nn:
-    reservoir.nn_index = nn_index[
-        np.abs(nn_index[:, 0] - nn_index[:, 1]) > threshold]
-
-    nn_index = nn_index[nn_index[:, 1] + tau_max < traj.shape[0]]
-    nn_index = nn_index[nn_index[:, 0] + tau_max < traj.shape[0]]
-
-    # Calculate the largest Lyapunov exponent:
-    # for storing the results:
-    Sum = []
-    # loop over differnt tau, to get a functional dependence:
-    for tau in taus:
-        # print(tau)
-
-        S = []  # the summed values for all basis points
-
-        # loop over every point in the trajectory, where we can calclutate
-        # the future in tau_max time_steps:
-        for point, nn in nn_index:
-            S.append(np.log(np.linalg.norm(traj[point + tau] - traj[
-                nn + tau])))  # add one points average s to S
-
-            # since there is no else, we only avg over the points that have
-            # points in their epsilon environment
-        Sum.append((tau * reservoir.dt, np.array(S).mean()))
-    Sum = np.array(Sum)
-
-    slope = (Sum[-1, 1] - Sum[0, 1]) / (Sum[-1, 0] - Sum[0, 0])
-    if plot:
-        plt.title('slope: ' + str(slope))
-        plt.plot(Sum[:, 0], Sum[:, 1])
-        plt.plot(Sum[:, 0], Sum[:, 0] * slope)
-        plt.xlabel('time dt*tau[steps]')
-        plt.ylabel('log_dist_former_neighbours')
-        # plt.plot(Sum[:,0], Sum[:,0]*slope + Sum[0,0])
-        plt.show()
-
-    return slope
+# def lyapunov(reservoir, threshold=int(10),
+#              plot=False, print_switch=False, test_measure=False):
+#     """
+#     Calculates the maximal Lyapunov Exponent of reservoir.y_pred (or reservoir.y_test),
+#     by estimating the time derivative of the mean logarithmic distances of
+#     former next neighbours. Stores it in reservoir.lyapunov (reservoir.lyapunov_test)
+#     Only values for tau_min/max are used for calculating the slope!
+#
+#     Since the attractor has a size of roughly 20 [log(20) ~ 3.] this
+#     distance reaches a maximum after a certain time, approximately
+#     after 4. time units [time_units = dt*steps]
+#     Therefore the default values are choosen to be dt dependent as in
+#     ###Definition of taus:
+#
+#     tau_min/max are given in units of steps
+#     plot to check for correct average
+#     """
+#     """
+#     REMINDER:
+#     remove the loop over taus, since the slope is calculated with single
+#     values only
+#     """
+#     ###Definition of taus:
+#     tau_min = int(0.5 / reservoir.dt)
+#     tau_max = int(3.8 / reservoir.dt)
+#     taus = np.arange(tau_min, tau_max,
+#                      10)  # taus = np.array([tau_min, tau_max])
+#
+#     if test_measure:
+#         traj = reservoir.y_test  # for measure assessing
+#     else:
+#         traj = reservoir.y_pred  # for evaluating prediction
+#
+#     tree = scipy.spatial.cKDTree(traj)
+#     nn_index = tree.query(traj, k=2)[1]
+#
+#     # drop all elements in nn_index lists where the neighbour is:
+#     # 1. less than threshold time_steps away
+#     # 2. where we cannot calculate the neighbours future in tau_max time_steps:
+#
+#     # contains indices of points and the indices of their nn:
+#     reservoir.nn_index = nn_index[
+#         np.abs(nn_index[:, 0] - nn_index[:, 1]) > threshold]
+#
+#     nn_index = nn_index[nn_index[:, 1] + tau_max < traj.shape[0]]
+#     nn_index = nn_index[nn_index[:, 0] + tau_max < traj.shape[0]]
+#
+#     # Calculate the largest Lyapunov exponent:
+#     # for storing the results:
+#     Sum = []
+#     # loop over differnt tau, to get a functional dependence:
+#     for tau in taus:
+#         # print(tau)
+#
+#         S = []  # the summed values for all basis points
+#
+#         # loop over every point in the trajectory, where we can calclutate
+#         # the future in tau_max time_steps:
+#         for point, nn in nn_index:
+#             S.append(np.log(np.linalg.norm(traj[point + tau] - traj[
+#                 nn + tau])))  # add one points average s to S
+#
+#             # since there is no else, we only avg over the points that have
+#             # points in their epsilon environment
+#         Sum.append((tau * reservoir.dt, np.array(S).mean()))
+#     Sum = np.array(Sum)
+#
+#     slope = (Sum[-1, 1] - Sum[0, 1]) / (Sum[-1, 0] - Sum[0, 0])
+#     if plot:
+#         plt.title('slope: ' + str(slope))
+#         plt.plot(Sum[:, 0], Sum[:, 1])
+#         plt.plot(Sum[:, 0], Sum[:, 0] * slope)
+#         plt.xlabel('time dt*tau[steps]')
+#         plt.ylabel('log_dist_former_neighbours')
+#         # plt.plot(Sum[:,0], Sum[:,0]*slope + Sum[0,0])
+#         plt.show()
+#
+#     return slope
 
 
 # def W_out_distr(self):
@@ -311,161 +311,77 @@ def lyapunov(reservoir, threshold=int(10),
 #     self.out_strength = np.abs(self.network).sum(axis=1)
 #     self.avg_out_strength = self.out_strength.mean()
 
-def clustering_coeff(reservoir):
-    """
-    clustering coefficient for each node and returns it.
-    """
-    reservoir.calc_binary_network()
-    network = reservoir.binary_network
-    k = network.sum(axis=0)
-    C = np.diag(network @ network @ network) / k * (k - 1)
-    reservoir.clustering_coeff = C
+# def clustering_coeff(reservoir):
+#     """
+#     clustering coefficient for each node and returns it.
+#     """
+#     reservoir.calc_binary_network()
+#     network = reservoir.binary_network
+#     k = network.sum(axis=0)
+#     C = np.diag(network @ network @ network) / k * (k - 1)
+#     reservoir.clustering_coeff = C
 
 
-def plot(reservoir, flag='y', save_switch=False, path=''):
-    """
-    Shows timeresolved plots of:
-    'r': some of the reservoir states
-    'y': the predicted and true future states
-    't': the x,y plot of the trajectory
-    """
-    ### plotting parameter in dict
-    train_dict = {'color': 'green', 'alpha': 0.2, 'label': 'train'}
-    pred_dict = {'color': 'red', 'alpha': 0.4, 'label': 'pred'}
-
-    if flag == 't':
-        f = plt.figure(figsize=(15, 15))
-        ax1 = f.add_subplot(111)
-
-        ax1.set_title('x,y plot of prediction')
-        ax1.plot(reservoir.y_pred[:, 0], reservoir.y_pred[:, 1], **pred_dict)
-        ax1.plot(reservoir.y_test[:, 0], reservoir.y_test[:, 1], **train_dict)
-        ax1.legend()
-
-    elif flag == 'r':
-        split = 0.1
-        f = plt.figure(figsize=(15, 15))
-        ax1 = f.add_subplot(121)
-        ax1.set_ylim((-1.05, 1.05))
-        ax1.set_title('network during training')
-        ax1.plot(np.arange(reservoir.r.shape[0]),
-                 reservoir.r[:,
-                 calc_tt(reservoir, flag='bool_1d', split=split)])
-
-        ax2 = f.add_subplot(122)
-        ax2.set_ylim((-1.05, 1.05))
-        ax2.set_title('network during prediction')
-        ax2.plot(np.arange(reservoir.r_pred.shape[0]),
-                 reservoir.r_pred[:,
-                 calc_tt(reservoir, flag='bool_1d', split=split)])
-
-    elif flag == 'y':
-        # f = plt.figure(figsize = (15,15))
-        f, axes = plt.subplots(reservoir.ydim, 2, figsize=(15, 15))
-
-        ### x-range
-        time_range_pred = np.arange(
-            reservoir.training_steps,
-            reservoir.training_steps + reservoir.prediction_steps)
-        time_range_train = np.arange(reservoir.training_steps)
-
-        # y-values
-        if reservoir.sys_flag == "roessler":
-            ylimits = ((-5, 8), (-8, 5), (0, 15))
-        elif reservoir.sys_flag == 'mod_lorenz':
-            ylimits = ((-25, 20), (-30, 30), (0, 50))
-        else:
-            traj = np.concatenate((reservoir.y_test, reservoir.y_train), axis=0)
-            ylimits = [[traj[:, dim].min(), traj[:, dim].max()] for dim in
-                       np.arange(reservoir.ydim)]
-        for i, ylim in enumerate(ylimits):
-            ax1 = axes[i][0]
-            ax1.set_ylim(ylim)
-            ax1.set_title('y[' + str(i) + ']_value_train')
-            ax1.plot(time_range_train, reservoir.y_train[:, i], **train_dict)
-
-            # ax2 = plt.subplot(reservoir.y_dim,2,2*i+2)
-            ax2 = axes[i][1]
-            ax2.set_title('y[' + str(i) + ']_value_pred')
-            ax2.set_ylim(ylim)
-            ax2.plot(time_range_pred[:], reservoir.y_pred[:, i], **pred_dict)
-            ax2.plot(time_range_pred[:], reservoir.y_test[:, i], **train_dict)
-            ax2.legend()
-
-    else:
-        raise Exception("Plot flag couldn't be resolved")
-
-    if save_switch:
-        print(path)
-        if path:
-            f.savefig(filename=str(path), format='pdf')
-        else:
-            raise Exception('path argument needed in reservoir.plt()')
-    else:
-        print('normal show')
-        f.show()
+# def calc_tt(reservoir, flag='bool', split=0.1):
+#     """
+#     selects depending on if the abs(entry) of reservoir.w_out is one of the
+#     largest, depending on split.
+#     If split is negative the abs(entry) smallest are selected depending
+#     on flag:
+#     - 'bool': reservoir.w_out.shape with True/False
+#     - 'bool_1d': is a projection to 1d
+#     - 'arg': returns args of the selection
+#
+#     """
+#     if reservoir.r_squared:
+#         print('no tt_calc for r_squared implemented yet')
+#     else:
+#         absolute = int(reservoir.ndim * split)
+#         n = reservoir.ydim * reservoir.ndim  # dof in w_out
+#         top_ten_bool = np.zeros(n, dtype=bool)  # False array
+#         arg = np.argsort(
+#             np.reshape(np.abs(reservoir.W_out), -1))  # order of abs(w_out)
+#         if absolute > 0:
+#             top_ten_bool[arg[-absolute:]] = True  # set largest entries True
+#             top_ten_arg = np.argsort(np.max(np.abs(reservoir.W_out), axis=0))[
+#                           -absolute:]
+#         elif absolute < 0:
+#             top_ten_bool[arg[:-absolute]] = True  # set largest entries True
+#             top_ten_arg = np.argsort(np.max(np.abs(reservoir.W_out), axis=0))[
+#                           :-absolute]
+#         else:
+#             top_ten_arg = np.empty(0)
+#
+#         top_ten_bool = np.reshape(top_ten_bool,
+#                                   reservoir.W_out.shape)  # reshape to original shape
+#         top_ten_bool_1d = np.array(top_ten_bool.sum(axis=0),
+#                                    dtype=bool)  # project to 1d
+#
+#         if flag == 'bool':
+#             return top_ten_bool
+#         elif flag == 'bool_1d':
+#             return top_ten_bool_1d
+#         elif flag == 'arg':
+#             return top_ten_arg
 
 
-def calc_tt(reservoir, flag='bool', split=0.1):
-    """
-    selects depending on if the abs(entry) of reservoir.w_out is one of the
-    largest, depending on split.
-    If split is negative the abs(entry) smallest are selected depending
-    on flag:
-    - 'bool': reservoir.w_out.shape with True/False
-    - 'bool_1d': is a projection to 1d
-    - 'arg': returns args of the selection
-
-    """
-    if reservoir.r_squared:
-        print('no tt_calc for r_squared implemented yet')
-    else:
-        absolute = int(reservoir.ndim * split)
-        n = reservoir.ydim * reservoir.ndim  # dof in w_out
-        top_ten_bool = np.zeros(n, dtype=bool)  # False array
-        arg = np.argsort(
-            np.reshape(np.abs(reservoir.W_out), -1))  # order of abs(w_out)
-        if absolute > 0:
-            top_ten_bool[arg[-absolute:]] = True  # set largest entries True
-            top_ten_arg = np.argsort(np.max(np.abs(reservoir.W_out), axis=0))[
-                          -absolute:]
-        elif absolute < 0:
-            top_ten_bool[arg[:-absolute]] = True  # set largest entries True
-            top_ten_arg = np.argsort(np.max(np.abs(reservoir.W_out), axis=0))[
-                          :-absolute]
-        else:
-            top_ten_arg = np.empty(0)
-
-        top_ten_bool = np.reshape(top_ten_bool,
-                                  reservoir.W_out.shape)  # reshape to original shape
-        top_ten_bool_1d = np.array(top_ten_bool.sum(axis=0),
-                                   dtype=bool)  # project to 1d
-
-        if flag == 'bool':
-            return top_ten_bool
-        elif flag == 'bool_1d':
-            return top_ten_bool_1d
-        elif flag == 'arg':
-            return top_ten_arg
-
-
-def weighted_clustering_coeff_onnela(reservoir):
-    """
-    Calculates the weighted clustering coefficient of abs(self.network)
-    according to Onnela paper from 2005.
-    Replacing NaN (originating from division by zero (degree = 0,1)) with 0.
-    Returns weighted_cc.
-    """
-    k = reservoir.binary_network.sum(axis=0)
-    # print(k)
-    network = abs(reservoir.network) / abs(reservoir.network).max()
-
-    network_cbrt = np.cbrt(network)
-    weighted_cc = np.diag(network_cbrt @ network_cbrt @ network_cbrt) / \
-                  (k * (k - 1))
-    # assign 0. to infinit values:
-    weighted_cc[np.isnan(weighted_cc)] = 0.
-    return weighted_cc
+# def weighted_clustering_coeff_onnela(reservoir):
+#     """
+#     Calculates the weighted clustering coefficient of abs(self.network)
+#     according to Onnela paper from 2005.
+#     Replacing NaN (originating from division by zero (degree = 0,1)) with 0.
+#     Returns weighted_cc.
+#     """
+#     k = reservoir.binary_network.sum(axis=0)
+#     # print(k)
+#     network = abs(reservoir.network) / abs(reservoir.network).max()
+#
+#     network_cbrt = np.cbrt(network)
+#     weighted_cc = np.diag(network_cbrt @ network_cbrt @ network_cbrt) / \
+#                   (k * (k - 1))
+#     # assign 0. to infinit values:
+#     weighted_cc[np.isnan(weighted_cc)] = 0.
+#     return weighted_cc
 
 
 #    def calc_covar_rank(reservoir, flag='train'):

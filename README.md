@@ -1,6 +1,6 @@
 ## Reservoir Computing
 
-This repository contains the Alpha python 3 package **rescomp** implementing the machine learning technique Reservoir Computing (RC).
+This repository contains the python 3 package **rescomp** implementing the machine learning technique Reservoir Computing (RC).
  
 Development largely takes place at the DLR group _Komplexe Plasmen_ in Oberpfaffenhofen, but contributions from other DLR sites are encouraged.
 
@@ -9,7 +9,7 @@ For questions, feedback and ideas, [write us!][maintainer mail adresses]
 
 ### Licensing
 
-As you might have noticed, this repository does not yet have a license file. This is on purpose, as we are currently discussing which licence would be appropriate for this project.  
+As you might have noticed, this repository does not yet have a license assigned. This is on purpose, as we are currently discussing which licence would be appropriate for this project.  
 
 As such we ask you not to share this code with _anyone_ that didn't explicitly get access to the [DLR Gitlab repository][rescomp gitlab link] via official channels until an appropriate license has been added.
  

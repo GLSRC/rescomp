@@ -81,25 +81,28 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.get_w_in" title="rescomp.esn.ESNWrapper.get_w_in"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_w_in</span></code></a>()</p></td>
 <td><p>Returns the input matrix w_in</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.predict" title="rescomp.esn.ESNWrapper.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(x_pred, sync_steps[, pred_steps, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.get_w_out" title="rescomp.esn.ESNWrapper.get_w_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_w_out</span></code></a>()</p></td>
+<td><p>Returns the outpy=ut matrix w_out</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.predict" title="rescomp.esn.ESNWrapper.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(x_pred, sync_steps[, pred_steps, …])</p></td>
 <td><p>Synchronize the reservoir, then predict the system evolution</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.set_console_logger" title="rescomp.esn.ESNWrapper.set_console_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_console_logger</span></code></a>(log_level)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.set_console_logger" title="rescomp.esn.ESNWrapper.set_console_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_console_logger</span></code></a>(log_level)</p></td>
 <td><p>Set loglevel for the console output</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.set_file_logger" title="rescomp.esn.ESNWrapper.set_file_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_file_logger</span></code></a>(log_level, log_file_path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.set_file_logger" title="rescomp.esn.ESNWrapper.set_file_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_file_logger</span></code></a>(log_level, log_file_path)</p></td>
 <td><p>Set’s the logging file path</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.synchronize" title="rescomp.esn.ESNWrapper.synchronize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">synchronize</span></code></a>(x[, save_r])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.synchronize" title="rescomp.esn.ESNWrapper.synchronize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">synchronize</span></code></a>(x[, save_r])</p></td>
 <td><p>Synchronize the reservoir state with the input time series</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.to_pickle" title="rescomp.esn.ESNWrapper.to_pickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pickle</span></code></a>(path[, compression, protocol])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.to_pickle" title="rescomp.esn.ESNWrapper.to_pickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pickle</span></code></a>(path[, compression, protocol])</p></td>
 <td><p>Pickle (serialize) object to file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.train" title="rescomp.esn.ESNWrapper.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(x_train, sync_steps[, reg_param, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.train" title="rescomp.esn.ESNWrapper.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(x_train, sync_steps[, reg_param, …])</p></td>
 <td><p>Synchronize, then train the reservoir</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.train_and_predict" title="rescomp.esn.ESNWrapper.train_and_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_and_predict</span></code></a>(x_data, train_sync_steps, …)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNWrapper.train_and_predict" title="rescomp.esn.ESNWrapper.train_and_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_and_predict</span></code></a>(x_data, train_sync_steps, …)</p></td>
 <td><p>Train, then predict the evolution directly following the train data</p></td>
 </tr>
 </tbody>
@@ -181,6 +184,20 @@ eigenvalue calculation</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>w_in</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rescomp.esn.ESNWrapper.get_w_out">
+<code class="sig-name descname">get_w_out</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.esn.ESNWrapper.get_w_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the outpy=ut matrix w_out</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>w_out</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>np.ndarray</p>
@@ -398,22 +415,25 @@ building block to be called with the right training and prediction data</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESN.get_w_in" title="rescomp.esn.ESN.get_w_in"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_w_in</span></code></a>()</p></td>
 <td><p>Returns the input matrix w_in</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESN.predict" title="rescomp.esn.ESN.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(x_pred, sync_steps[, pred_steps, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESN.get_w_out" title="rescomp.esn.ESN.get_w_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_w_out</span></code></a>()</p></td>
+<td><p>Returns the outpy=ut matrix w_out</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESN.predict" title="rescomp.esn.ESN.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(x_pred, sync_steps[, pred_steps, …])</p></td>
 <td><p>Synchronize the reservoir, then predict the system evolution</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESN.set_console_logger" title="rescomp.esn.ESN.set_console_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_console_logger</span></code></a>(log_level)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESN.set_console_logger" title="rescomp.esn.ESN.set_console_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_console_logger</span></code></a>(log_level)</p></td>
 <td><p>Set loglevel for the console output</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESN.set_file_logger" title="rescomp.esn.ESN.set_file_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_file_logger</span></code></a>(log_level, log_file_path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESN.set_file_logger" title="rescomp.esn.ESN.set_file_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_file_logger</span></code></a>(log_level, log_file_path)</p></td>
 <td><p>Set’s the logging file path</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESN.synchronize" title="rescomp.esn.ESN.synchronize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">synchronize</span></code></a>(x[, save_r])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESN.synchronize" title="rescomp.esn.ESN.synchronize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">synchronize</span></code></a>(x[, save_r])</p></td>
 <td><p>Synchronize the reservoir state with the input time series</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESN.to_pickle" title="rescomp.esn.ESN.to_pickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pickle</span></code></a>(path[, compression, protocol])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESN.to_pickle" title="rescomp.esn.ESN.to_pickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pickle</span></code></a>(path[, compression, protocol])</p></td>
 <td><p>Pickle (serialize) object to file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESN.train" title="rescomp.esn.ESN.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(x_train, sync_steps[, reg_param, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESN.train" title="rescomp.esn.ESN.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(x_train, sync_steps[, reg_param, …])</p></td>
 <td><p>Synchronize, then train the reservoir</p></td>
 </tr>
 </tbody>
@@ -495,6 +515,20 @@ eigenvalue calculation</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>w_in</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rescomp.esn.ESN.get_w_out">
+<code class="sig-name descname">get_w_out</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.esn.ESN.get_w_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the outpy=ut matrix w_out</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>w_out</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>np.ndarray</p>

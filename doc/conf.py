@@ -26,7 +26,6 @@ copyright = '2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabro
 author = 'Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk'
 
 # The full version, including alpha/beta/rc tags
-# release = '0.0.4'
 release = __version__
 
 

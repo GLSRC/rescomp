@@ -495,10 +495,6 @@ class testESN(unittest.TestCase):
 
     # TODO: Tests should be much less broad than this, but I am lazy.
     def test_new_vs_old_esn(self):
-        # train_sync_steps = 3
-        # train_steps = 3
-        # pred_steps = 2
-
         train_sync_steps = np.random.randint(10, 100)
         train_steps = np.random.randint(10, 100)
         pred_steps = np.random.randint(10, 100)
@@ -545,13 +541,6 @@ class testESN(unittest.TestCase):
 
         w_out = self.esn.get_w_out()
         w_out_desired = esn_old.w_out
-
-        # y_pred_desired = np.array(
-        #     [[-8.009798237563704, -17.172409021843052, 3.689528434131512],
-        #      [-8.199848199155639, -17.558818321636746, 3.879321151928091]])
-        # y_test_desired = np.array(
-        #     [[-8.940650755161531, -18.88532291381985, 5.155862501900478],
-        #      [-11.09758116927574, -22.68566274692776, 8.756832582764844]])
 
         np.testing.assert_equal(w_in, w_in_desired)
         np.testing.assert_equal(network, network_desired)

@@ -145,66 +145,67 @@ def divergence_time(pred_time_series, meas_time_series, epsilon):
 #     plt.legend(loc=2, fontsize=10)
 #     plt.show()
 
-def dimension(reservoir, r_min=0.5, r_max=5., r_steps=0.15,
-              plot=False, test_measure=False):
-    """ Calculates correlation dimension
 
-    for reservoir.y_pred (or reservoir.y_test) using
-    the algorithm by Grassberger and Procaccia and returns dimension.
-    traj: trajectory of an attractor, whos correlation dimension is returned
-    First we calculate a sum over all points within a given radius, then
-    average over all basis points and vary the radius
-    (grassberger, procaccia).
-
-    parameters depend on reservoir.dt and the system itself!
-
-    N_r: list of tuples: (radius, average number of neighbours within all
-        balls)
-
-    Args:
-        reservoir ():
-        r_min ():
-        r_max ():
-        r_steps ():
-        plot ():
-        test_measure ():
-
-    Returns: dimension: slope of the log.log plot assumes:
-        N_r(radius) ~ radius**dimension
-
-    """
-    if test_measure:
-        traj = reservoir.y_test  # for measure assessing
-    else:
-        traj = reservoir.y_pred  # for evaluating prediction
-
-    # TODO: This rescale factor only works for the 3D Lorenz-63 System and has
-    # TODO: to be changed for all other Systems! just plot the log-log plot and
-    # TODO: then change the rest of the code accordingly
-    lorenz_rescale_factor = 8.5
-
-    # adapt parameters to input size:
-    r_min *= traj.std(axis=0).mean() / lorenz_rescale_factor
-    r_max *= traj.std(axis=0).mean() / lorenz_rescale_factor
-    r_steps *= traj.std(axis=0).mean() / lorenz_rescale_factor
-
-    nr_points = float(traj.shape[0])
-    radii = np.arange(r_min, r_max, r_steps)
-
-    tree = scipy.spatial.cKDTree(traj)
-    N_r = np.array(tree.count_neighbors(tree, radii), dtype=float) / nr_points
-    N_r = np.vstack((radii, N_r))
-
-    # linear fit based on loglog scale, to get slope/dimension:
-    slope, intercept = np.polyfit(np.log(N_r[0]), np.log(N_r[1]), deg=1)[0:2]
-    dimension = slope
-
-    ###plotting
-    if plot:
-        plt.loglog(N_r[0], N_r[1], 'x', basex=10., basey=10.)
-        plt.title('loglog plot of the N_r(radius), slope/dim = ' + str(slope))
-        plt.show()
-    return dimension
+# def dimension(reservoir, r_min=0.5, r_max=5., r_steps=0.15,
+#               plot=False, test_measure=False):
+#     """ Calculates correlation dimension
+#
+#     for reservoir.y_pred (or reservoir.y_test) using
+#     the algorithm by Grassberger and Procaccia and returns dimension.
+#     traj: trajectory of an attractor, whos correlation dimension is returned
+#     First we calculate a sum over all points within a given radius, then
+#     average over all basis points and vary the radius
+#     (grassberger, procaccia).
+#
+#     parameters depend on reservoir.dt and the system itself!
+#
+#     N_r: list of tuples: (radius, average number of neighbours within all
+#         balls)
+#
+#     Args:
+#         reservoir ():
+#         r_min ():
+#         r_max ():
+#         r_steps ():
+#         plot ():
+#         test_measure ():
+#
+#     Returns: dimension: slope of the log.log plot assumes:
+#         N_r(radius) ~ radius**dimension
+#
+#     """
+#     if test_measure:
+#         traj = reservoir.y_test  # for measure assessing
+#     else:
+#         traj = reservoir.y_pred  # for evaluating prediction
+#
+#     # TODO: This rescale factor only works for the 3D Lorenz-63 System and has
+#     # TODO: to be changed for all other Systems! just plot the log-log plot and
+#     # TODO: then change the rest of the code accordingly
+#     lorenz_rescale_factor = 8.5
+#
+#     # adapt parameters to input size:
+#     r_min *= traj.std(axis=0).mean() / lorenz_rescale_factor
+#     r_max *= traj.std(axis=0).mean() / lorenz_rescale_factor
+#     r_steps *= traj.std(axis=0).mean() / lorenz_rescale_factor
+#
+#     nr_points = float(traj.shape[0])
+#     radii = np.arange(r_min, r_max, r_steps)
+#
+#     tree = scipy.spatial.cKDTree(traj)
+#     N_r = np.array(tree.count_neighbors(tree, radii), dtype=float) / nr_points
+#     N_r = np.vstack((radii, N_r))
+#
+#     # linear fit based on loglog scale, to get slope/dimension:
+#     slope, intercept = np.polyfit(np.log(N_r[0]), np.log(N_r[1]), deg=1)[0:2]
+#     dimension = slope
+#
+#     ###plotting
+#     if plot:
+#         plt.loglog(N_r[0], N_r[1], 'x', basex=10., basey=10.)
+#         plt.title('loglog plot of the N_r(radius), slope/dim = ' + str(slope))
+#         plt.show()
+#     return dimension
 
 
 def lyapunov(reservoir, threshold=int(10),

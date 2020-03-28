@@ -5,46 +5,72 @@
 @author: aumeier, baur, herteux
 """
 
-# from importlib import reload
 import numpy as np
 import matplotlib
-# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-# import time
 import scipy.signal
 import scipy.sparse.linalg
 import scipy.spatial
 from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence
 from .esn import ESN  # Currently imported for type hints only
 
-# from . import esn
-# try: import esn_rescomp
-# except ModuleNotFoundError: from . import esn_rescomp
+def nrmse_over_time(meas_time_series, pred_time_series):
+    """ Calculates the NRME between to time series for each time step
 
+    Args:
+        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
+        pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
 
-def nrmse_over_time(test_data, pred_data, *args, **kwargs):
+    Returns:
+        np.ndarray: NRMSE for each time step, shape (T,)
+
+    """
     nrmse_list = []
-    for interval_start in range(0, test_data.shape[0]):
-        interval_end = interval_start + 1
-        # interval_end = interval_start
-        # local_nrmse = rescomp.measures.nrmse(esn, interval_start=interval_start, interval_end=interval_end)
-        local_nrmse = nrmse(test_data, pred_data, interval_start=interval_start,
-                            interval_end=interval_end)
+
+    meas = meas_time_series
+    pred = pred_time_series
+
+    for i in range(0, meas.shape[0]):
+        local_nrmse = nrmse(meas[i: i+1], pred[i: i+1])
         nrmse_list.append(local_nrmse)
 
     return np.array(nrmse_list)
 
 
-def nrmse(*args, normalized=True, **kwargs):
-    return rmse(*args, normalized=normalized, **kwargs)
+def nrmse(meas_time_series, pred_time_series):
+    """ Calculates the NRME between two time series
+
+    Internally just calls rmse with normalized=True
+
+    Args:
+        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
+        pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
+
+    Returns:
+        float: NRMSE
+    """
+    return rmse(meas_time_series, pred_time_series, normalized=True)
 
 
-# TODO: This should be more general, preferably implemented as a function for
-# TODO: any two time series that then is applied to our reservoir class
-# TODO: Also, one should be able to choose between train and pred data
-def rmse(test_data, pred_data, interval_start=0, interval_end=-1, normalized=False):
-    y_real_cut = test_data[interval_start:interval_end]
-    y_pred_cut = pred_data[interval_start:interval_end]
+def rmse(meas_time_series, pred_time_series, normalized=False):
+    """ Calculates the root mean squared error between two time series
+
+    The time series must be of equal length and dimension
+
+    Args:
+        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
+        pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
+        normalized (bool): If False, normalizes the result w.r.t. to the length
+            T of the time series.
+            If True normalizes the result w.r.t. the length T and the std. of
+            the meas_time_series.
+
+    Returns:
+        float: RMSE or NRMSE
+
+    """
+    meas = meas_time_series
+    pred = pred_time_series
 
     # if normalized: norm = (y_real_cut ** 2).sum()
     # else: norm = y_real_cut.shape[0]
@@ -53,11 +79,13 @@ def rmse(test_data, pred_data, interval_start=0, interval_end=-1, normalized=Fal
     # if normalized: norm = np.linalg.norm(y_real_cut) ** 2
     # else: norm = y_real_cut.shape[0]
     # error = np.sqrt(np.linalg.norm(y_pred_cut - y_real_cut) ** 2 / norm)
-    #
+
     if normalized:
-        error = np.linalg.norm(y_pred_cut - y_real_cut) / np.linalg.norm(y_real_cut)
+        error = np.linalg.norm(pred - meas) \
+                / np.linalg.norm(meas)
     else:
-        error = np.linalg.norm(y_pred_cut - y_real_cut) / np.sqrt(y_real_cut.shape[0])
+        error = np.linalg.norm(pred - meas) \
+                / np.sqrt(meas.shape[0])
 
     return error
 #

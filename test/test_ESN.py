@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-""" Test if the unittest module works as it should
+""" Test if the resomp.esn module works as it should
 
-@author: baur
 """
 
 import unittest

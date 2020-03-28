@@ -55,9 +55,12 @@ np.random.seed(0)
 esn.create_network(n_dim=n_dim, n_rad=n_rad, n_avg_deg=n_avg_deg)
 
 # The train/train_and_predict methods too, have a set of hyperparameters one
-# needs to optimize. The most important of which is the regularization parameter
-# which is typically somewhere between 1e-2 and 1e-6
+# needs to optimize. The most important of which are the regularization
+# parameter which is typically somewhere between 1e-2 and 1e-6
 reg_param = 1e-2
+# and the scale of the random elements in the input matrix w_in which is usually
+# between 0.1 and 1.0
+w_in_scale = 1.0
 
 # Define the number of training/prediction time steps
 train_sync_steps = 1000
@@ -67,7 +70,7 @@ pred_steps = 500
 # And train+predict the system
 y_pred, y_test = esn.train_and_predict(
     sim_data, train_sync_steps=train_sync_steps, train_steps=train_steps,
-    pred_steps=pred_steps, reg_param=reg_param)
+    pred_steps=pred_steps, reg_param=reg_param, w_in_scale=w_in_scale)
 
 # --- Plot the results
 
@@ -85,4 +88,3 @@ ax3.imshow(y_pred.T - y_test.T)
 ax3.set_title("Difference between simulation and prediction")
 
 plt.show()
-

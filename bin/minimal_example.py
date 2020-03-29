@@ -74,8 +74,6 @@ print(y_pred.shape)
 #   y_test.shape[0] < y_pred.shape[0].
 print(y_test.shape)
 
-rescomp.measures.divergence_time(y_test, y_pred)
-
 # --- Plot the prediction
 
 ax = plt.axes(projection='3d')

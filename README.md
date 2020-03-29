@@ -70,6 +70,12 @@ Alternatively, to install everything like a normal, unchanging package, use (the
 
     pip install .
 
+After the installation, try
+    
+    python bin/minimal_example.py
+
+and you should see the famous Lorenz attractor.
+
 
 ### Uninstalling rescomp
 

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>README &#8212; rescomp 0.0.6 documentation</title>
+    <title>README &#8212; rescomp 0.1.0 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="index.html" title="Rescomp Documentation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.0.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.1.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -54,7 +54,7 @@
 <div class="section" id="licensing">
 <h3>Licensing<a class="headerlink" href="#licensing" title="Permalink to this headline">¶</a></h3>
 <p>As you might have noticed, this repository does not yet have a license assigned. This is on purpose, as we are currently discussing which licence would be appropriate for this project.</p>
-<p>As such we ask you not to share this code with <em>anyone</em> that didn’t explicitly get access to the <a class="reference external" href="https://gitlab.dlr.de/rescom/reservoir-computing">DLR Gitlab repository</a> via official channels until an appropriate license has been added.</p>
+<p>As such we ask you not to share this code with <em>anyone</em> that didn’t explicitly get access to the <a class="reference external" href="https://gitlab.dlr.de/rescom/reservoir-computing">DLR GitLab repository</a> via official channels until an appropriate license has been added.</p>
 </div>
 </div>
 <div class="section" id="installation">
@@ -73,12 +73,12 @@ Of course you are free to use the environment manager of your choice, but in the
 <div class="section" id="installation-instructions">
 <h3>Installation Instructions<a class="headerlink" href="#installation-instructions" title="Permalink to this headline">¶</a></h3>
 <p>Install git and Anaconda 3 (see above). Make sure to close and then reopen the terminal if this is the first time you installed Anaconda.</p>
-<p>Open a terminal and enter the folder you wish to copy the gitlab repository to.</p>
-<p>Clone the gitlab repository. Here we copy it into the folder “rescomp”</p>
+<p>Open a terminal and enter the folder you wish to copy the GitLab repository to.</p>
+<p>Clone the GitLab repository. Here we copy it into the folder “rescomp”</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git clone https://gitlab.dlr.de/rescom/reservoir-computing.git rescomp
 </pre></div>
 </div>
-<p>Enter the cloned gitlab folder</p>
+<p>Enter the cloned GitLab folder</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>cd rescomp
 </pre></div>
 </div>
@@ -228,7 +228,7 @@ As a corrolary, this also means that writing legible, descriptive commit message
 </ul>
 </div>
 <div class="section" id="branche-usage-intentions">
-<h3>Branche Usage Intentions:<a class="headerlink" href="#branche-usage-intentions" title="Permalink to this headline">¶</a></h3>
+<h3>Branche Usage Intentions<a class="headerlink" href="#branche-usage-intentions" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><dl class="simple">
 <dt><strong>master</strong>:</dt><dd><p>Only for finished, documented features whose signature or functionality won’t change much in the future<span class="raw-html-m2r"><br></span>
@@ -251,12 +251,12 @@ They should branch off of and merge into the develop branch. It is advisable to 
 </ul>
 </div>
 <div class="section" id="create-your-own-developer-branch">
-<h3>Create your own developer branch:<a class="headerlink" href="#create-your-own-developer-branch" title="Permalink to this headline">¶</a></h3>
+<h3>Create your own developer branch<a class="headerlink" href="#create-your-own-developer-branch" title="Permalink to this headline">¶</a></h3>
 <p>First, go into your local rescomp repository. Then, make sure that you are in the master branch, which you can check via:</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git status
 </pre></div>
 </div>
-<p>Then, you want to make sure that your local repository is synchronized with the code on the Gitlab servers, which you can enforce by using</p>
+<p>Then, you want to make sure that your local repository is synchronized with the code on the GitLab servers, which you can enforce by using</p>
 <div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git pull
 </pre></div>
 </div>
@@ -265,11 +265,11 @@ They should branch off of and merge into the develop branch. It is advisable to 
 </pre></div>
 </div>
 <p>create your branch locally</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git branch Your-Gitlab-Username-Here
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git branch Your-GitLab-Username-Here
 </pre></div>
 </div>
 <p>and then push the branch to server</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git push --set-upstream origin Your-Gitlab-Username-Here
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git push --set-upstream origin Your-GitLab-Username-Here
 </pre></div>
 </div>
 <p>after which you are done.
@@ -319,6 +319,15 @@ To run them, just enter the repository folder and use the command</p>
 </pre></div>
 </div>
 <p>Currently, the tests are rather sparse, so all contributions to the testing suite are highly encouraged</p>
+</div>
+<div class="section" id="cloning-the-repository-via-access-token-authentication">
+<h3>Cloning the Repository via Access Token Authentication:<a class="headerlink" href="#cloning-the-repository-via-access-token-authentication" title="Permalink to this headline">¶</a></h3>
+<p>Under your profile’s GitLab ‘User Setting &gt; Access Token’ you can create an access token to allow individual machines access without your GitLab password.
+This removes the need to type your password every time you push/pull or, worse, the workaround to save your password somewhere on the machine itself.</p>
+<p>After your access token is created, you can clone the repository by using the command:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git clone https://oauth2:YOUR-ACCESS-TOKEN@gitlab.de/rescom/reservoir-computing.git rescomp
+</pre></div>
+</div>
 </div>
 <div class="section" id="code-style">
 <h3>Code Style:<a class="headerlink" href="#code-style" title="Permalink to this headline">¶</a></h3>
@@ -403,7 +412,7 @@ For examples of Google style docstrings just look at the already existing docstr
         <li class="right" >
           <a href="index.html" title="Rescomp Documentation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.0.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.1.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -11,7 +11,7 @@ For questions, feedback and ideas, [write us!][maintainer mail adresses]
 
 As you might have noticed, this repository does not yet have a license assigned. This is on purpose, as we are currently discussing which licence would be appropriate for this project.  
 
-As such we ask you not to share this code with _anyone_ that didn't explicitly get access to the [DLR Gitlab repository][rescomp gitlab link] via official channels until an appropriate license has been added.
+As such we ask you not to share this code with _anyone_ that didn't explicitly get access to the [DLR GitLab repository][rescomp gitlab link] via official channels until an appropriate license has been added.
  
  
 ## Installation
@@ -33,13 +33,13 @@ These instructions are for unix systems, but should work with no or at most mino
 
 Install git and Anaconda 3 (see above). Make sure to close and then reopen the terminal if this is the first time you installed Anaconda.
 
-Open a terminal and enter the folder you wish to copy the gitlab repository to.  
+Open a terminal and enter the folder you wish to copy the GitLab repository to.  
 
-Clone the gitlab repository. Here we copy it into the folder "rescomp"  
+Clone the GitLab repository. Here we copy it into the folder "rescomp"  
 
     git clone https://gitlab.dlr.de/rescom/reservoir-computing.git rescomp
 
-Enter the cloned gitlab folder
+Enter the cloned GitLab folder
 
     cd rescomp
 
@@ -187,7 +187,7 @@ As a corrolary, this also means that writing legible, descriptive commit message
 * All the old code, before we made everything installable as a package, is in the folder _legacy_. The goal should be to slowly add all the functions from the legacy code base to one, coherent python package.  
 
 
-### Branche Usage Intentions:  
+### Branche Usage Intentions 
 * **master**: 
     Only for finished, documented features whose signature or functionality won't change much in the future  
     Changed only by merging with the development branch. Every change is accompanied by a new package version and updated documentation.  
@@ -201,12 +201,12 @@ As a corrolary, this also means that writing legible, descriptive commit message
     They should branch off of and merge into the develop branch. It is advisable to keep your developer branch as synchronized as possible with the development branch (see below)
 
 
-### Create your own developer branch:
+### Create your own developer branch
 First, go into your local rescomp repository. Then, make sure that you are in the master branch, which you can check via:
 
     git status
 
-Then, you want to make sure that your local repository is synchronized with the code on the Gitlab servers, which you can enforce by using
+Then, you want to make sure that your local repository is synchronized with the code on the GitLab servers, which you can enforce by using
 
     git pull
 
@@ -216,11 +216,11 @@ checkout (i.e. switch to) the developer branch
     
 create your branch locally
 
-    git branch Your-Gitlab-Username-Here
+    git branch Your-GitLab-Username-Here
     
 and then push the branch to server
 
-    git push --set-upstream origin Your-Gitlab-Username-Here
+    git push --set-upstream origin Your-GitLab-Username-Here
 
 after which you are done.
 You now have a personal copy of the develop branch, which you can modify to you hearts content without getting in the way of other people!  
@@ -271,6 +271,16 @@ To run them, just enter the repository folder and use the command
     python -m unittest -v
 
 Currently, the tests are rather sparse, so all contributions to the testing suite are highly encouraged
+
+
+### Cloning the Repository via Access Token Authentication:
+
+Under your profile's GitLab 'User Setting > Access Token' you can create an access token to allow individual machines access without your GitLab password. 
+This removes the need to type your password every time you push/pull or, worse, the workaround to save your password somewhere on the machine itself.  
+
+After your access token is created, you can clone the repository by using the command:
+
+    git clone https://oauth2:YOUR-ACCESS-TOKEN@gitlab.de/rescom/reservoir-computing.git rescomp
 
 
 ### Code Style:  

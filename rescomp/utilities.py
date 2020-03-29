@@ -2,11 +2,11 @@
 """ Various utility functions for RC and the ESN classes generally """
 
 import numpy as np
-import pickle
 import logging
 import sys
 import pandas
 import inspect
+import pkg_resources
 from ._version import __version__
 
 
@@ -260,7 +260,7 @@ def read_pickle(path, compression="infer"):
     """
     esn = pandas.read_pickle(path, compression)
 
-    loaded_version = esn.get_internal_version()
+    loaded_version = esn.get_instance_version()
 
     if __version__ != loaded_version:
         esn.logger.warning(
@@ -329,7 +329,8 @@ def _remove_invalid_args(func, args_dict):
     return dict((key, value) for key, value in args_dict.items() if key in valid_args)
 
 
-def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0, train_steps=None, pred_steps=None):
+def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0,
+                                  train_steps=None, pred_steps=None):
     """ Splits ESN input data for consecutive training and prediction
 
     This function is useful because there is an unintuitive overlap between
@@ -343,8 +344,10 @@ def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0, train_
         pred_steps (int): how many steps to predict the evolution for
 
     Returns:
-        np.ndarray: x_train, input data for the training
-        np.ndarray: x_pred, input data for the prediction
+        tuple: 2-element tuple containing:
+
+        - **x_train** (*np.ndarray*): input data for the training
+        - **x_pred** (*np.ndarray*): input data for the prediction
 
     """
     if train_steps is None: train_steps = data.shape[0] - disc_steps
@@ -355,4 +358,87 @@ def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0, train_
                   disc_steps + train_sync_steps + train_steps + pred_steps]
 
     return x_train, x_pred
+
+
+def _find_nth_substring(haystack, substring, n):
+    """ Finds the position of the n-th occurrence of a substring
+
+    Args:
+        haystack (str): Main string to find the occurrences in
+        substring (str): Substring to search for in the haystack string
+        n (int): The occurrence number of the substring to be located. n > 0
+
+    Returns:
+        int_or_None: Position index of the n-th substring occurrence in the
+        haystack string if found. None if not found.
+
+    """
+    parts = haystack.split(substring, n)
+
+    if n <= 0 or len(parts) <= n:
+        return None
+    else:
+        return len(haystack) - len(parts[-1]) - len(substring)
+
+
+def _get_internal_version():
+    """ Returns the internal rescomp version as specified in rescomp._version
+
+    Returns:
+        str: int_version, internal rescomp package version
+
+    """
+    int_version = __version__
+    return int_version
+
+
+def _get_environment_version():
+    """ Returns the rescomp version as specified in the python environment
+
+    Returns:
+        str: env_version, environment rescomp package version
+
+    """
+    env_version = pkg_resources.require("rescomp")[0].version
+    return env_version
+
+
+def _compare_version_file_vs_env(segment_threshold="minor"):
+    """ Compare version file with the version number in the python environment
+
+    Compares the internally defined version number of the rescomp package
+    as specified in rescomp._version with the version number specified in the
+    activate python environment up to the defined component threshold
+
+    Args:
+        component_threshold (str): Defines up to which segment of the version
+            string the versions are compared. Possible flags are:
+
+                - "major": major version numbers are compared
+                - "minor": major and minor version numbers are compared
+                - "micro": major, minor and micro version numbers are compared
+
+    Returns:
+        bool: True if internal and environemnt versions are the same up to and
+            including the specified threshold. False if not.
+
+    """
+    int_version = _get_internal_version()
+    env_version = _get_environment_version()
+
+    if segment_threshold == "major":
+        int_version = int_version[:_find_nth_substring(int_version, '.', 1)]
+        env_version = env_version[:_find_nth_substring(env_version, '.', 1)]
+    elif segment_threshold == "minor":
+        int_version = int_version[:_find_nth_substring(int_version, '.', 2)]
+        env_version = env_version[:_find_nth_substring(env_version, '.', 2)]
+    elif segment_threshold == "micro":
+        pass
+    else:
+        raise Exception("segment_threshold %s not recognized"%segment_threshold)
+
+    return int_version == env_version
+
+
+
 

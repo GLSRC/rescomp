@@ -660,7 +660,7 @@ class ESN(_ESNCore):
     # def get_prediction(self, ):
     #     raise Exception("Not yet implemented")
 
-    def get_internal_version(self):
+    def get_instance_version(self):
         """ Returns the rescomp package version used to create the class instance
 
         Returns:

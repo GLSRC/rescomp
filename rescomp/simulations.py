@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Simulate various chaotic system to generate artificial data
-"""
+""" Simulate various chaotic system to generate artificial data """
 
 import numpy as np
 

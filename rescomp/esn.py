@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Implements the Echo State Network (ESN) used in Reservoir Computing
-
-"""
+""" Implements the Echo State Network (ESN) used in Reservoir Computing """
 
 import numpy as np
 import scipy.sparse

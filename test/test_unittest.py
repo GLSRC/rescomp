@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Test if the unittest module works as it should
-
-@author: baur
-"""
+""" Test if the unittest module works as it should """
 
 import unittest
 

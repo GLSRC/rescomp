@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Measures and other analysis functions useful for RC
-
-"""
+""" Measures and other analysis functions useful for RC """
 
 import numpy as np
 

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-""" Training and prediction explained in more detail
+""" Training and prediction explained in more detail """
 
-@author: herteux, baur
-"""
 import pdb
 
 import rescomp

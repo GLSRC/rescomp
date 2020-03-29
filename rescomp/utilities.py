@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Various utility functions for RC and the ESN classes generally
-
-"""
+""" Various utility functions for RC and the ESN classes generally """
 
 import numpy as np
 import pickle

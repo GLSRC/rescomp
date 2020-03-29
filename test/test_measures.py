@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-""" Test if the resmop.measures module works as it should
-"""
+""" Tests if the rescomp.measures module works as it should """
 
 import unittest
 import numpy as np
-import rescomp
 from rescomp import measures
 
 class testMeasures(unittest.TestCase):

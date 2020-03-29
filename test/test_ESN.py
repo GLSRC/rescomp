@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Test if the resomp.esn module works as it should
-
-"""
+""" Tests if the rescomp.esn module works as it should """
 
 import unittest
 import rescomp

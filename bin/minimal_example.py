@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-""" Minimal usage example
+""" Minimal usage example """
 
-@author: herteux, baur
-"""
 import rescomp
 import numpy as np
 import matplotlib.pyplot as plt

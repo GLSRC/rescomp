@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-""" Reservoir Computing example for the higher dimensional KS system
+""" Reservoir Computing example for the higher dimensional KS system """
 
-@author: baur
-"""
 import numpy as np
 import matplotlib.pyplot as plt
 import rescomp

@@ -273,7 +273,12 @@ To run them, just enter the repository folder and use the command
 Currently, the tests are rather sparse, so all contributions to the testing suite are highly encouraged
 
 
-### Docstrings:  
+### Code Style:  
+In general, this repository follows the PEP8 Style Conventions [pep8 style guide].  
+Mostly this means all names should be lowercase with underscores, besides class names which should follow the CapWords convention. Also all names should be descriptive and represent what they are actually doing, wherever possible.
+
+
+#### Docstrings:  
 Please use the Google style docstring format to write your docstring. Only by using consistent docstring styles, can the html documentation be created automatically!  
 For examples of Google style docstrings just look at the already existing docstring or visit:
 * [google style example](https://www.sphinx-doc.org/en/1.6/ext/example_google.html)
@@ -291,3 +296,4 @@ Doing so should ensure absolute reproducability between all results calculated o
 [maintainer mail adresses]: mailto:Jonas.Aumeier@dlr.de,Sebastian.Baur@dlr.de,Joschka.Herteux@dlr.de,Youssef.Mabrouk@dlr.de?cc=Christoph.Raeth@dlr.de
 [rescomp gitlab link]: https://gitlab.dlr.de/rescom/reservoir-computing
 [local states paper]: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.120.024102
+[pep8 style guide]: https://www.python.org/dev/peps/pep-0008/

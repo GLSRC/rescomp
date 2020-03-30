@@ -114,6 +114,18 @@ and then, should pip still not be located in the active environment by "which pi
 If you can't install or use the package despite following the above instructions, [write us][maintainer mail adresses]. For a package as new as this one, such problems are to be expected and we will try to help as soon as possible.
 
 
+## Updating
+
+To keep the rescomp package up to date with the most current version in the repository, enter your local repository folder (the same folder we cloned during the installation) and run
+
+    git pull
+    
+This updates your local copy of the package to be up to date with the one on the GitLab website.  
+If you installed the package as an editable install during installation, you are done now. If you installed it as a regular package, you can finish the update by running
+
+    pip install --upgrade .
+
+
 ## Usage
 ### Getting Started
 To get started, look at the examples in _bin_. The intended order is:  
@@ -260,8 +272,8 @@ and then do:
     git merge Your-Developer-Branch-Name
     git push
 
-Do **not** merge developer branches into master!  
-Only the development branch should be merged into master, and please only do so if you really know what you are doing.
+Do **not** merge your personal _developer_ branches directly into master!  
+Only the _development_ branch should be merged into the master branch directly.
 
 
 ### Testing:  

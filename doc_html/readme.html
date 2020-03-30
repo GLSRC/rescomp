@@ -154,6 +154,18 @@ conda activate rc_env
 </div>
 </div>
 </div>
+<div class="section" id="updating">
+<h2>Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h2>
+<p>To keep the rescomp package up to date with the most current version in the repository, enter your local repository folder (the same folder we cloned during the installation) and run</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>git pull
+</pre></div>
+</div>
+<p>This updates your local copy of the package to be up to date with the one on the GitLab website.<span class="raw-html-m2r"><br></span>
+If you installed the package as an editable install during installation, you are done now. If you installed it as a regular package, you can finish the update by running</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>pip install --upgrade .
+</pre></div>
+</div>
+</div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="getting-started">
@@ -308,8 +320,8 @@ git merge Your-Developer-Branch-Name
 git push
 </pre></div>
 </div>
-<p>Do <strong>not</strong> merge developer branches into master!<span class="raw-html-m2r"><br></span>
-Only the development branch should be merged into master, and please only do so if you really know what you are doing.</p>
+<p>Do <strong>not</strong> merge your personal <em>developer</em> branches directly into master!<span class="raw-html-m2r"><br></span>
+Only the <em>development</em> branch should be merged into the master branch directly.</p>
 </div>
 <div class="section" id="testing">
 <h3>Testing:<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h3>
@@ -365,6 +377,7 @@ For examples of Google style docstrings just look at the already existing docstr
 <li class="toctree-l1 current"><a class="current reference internal" href="#">README</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#reservoir-computing">Reservoir Computing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating">Updating</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#faq">FAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#for-contributors">For Contributors</a></li>

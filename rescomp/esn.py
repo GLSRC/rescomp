@@ -477,7 +477,7 @@ class ESN(_ESNCore):
 
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
                       w_in_sparse=True, act_fct_flag='tanh_simple', bias_scale=0,
-                      save_r=False, save_input=False):
+                      save_r=False, save_input=False, w_out_fit_flag="simple"):
         """ Synchronize, then train the reservoir
 
         Args:
@@ -500,6 +500,9 @@ class ESN(_ESNCore):
                 (currently only used in :func:`~esn.ESN._act_fct_tanh_bias`)
             save_r (bool): If true, saves r(t) internally
             save_input (bool): If true, saves the input data internally
+            w_out_fit_flag (str): Type of nonlinear transformation applied to
+                the reservoir states r to be used during the fit (and future
+                prediction)
 
         """
         self._reg_param = reg_param
@@ -523,9 +526,10 @@ class ESN(_ESNCore):
             self._x_train = x_train
 
         if save_r:
-            self._r_train, self._r_train_gen = self._train_synced(x_train)
+            self._r_train, self._r_train_gen = self._train_synced(x_train, 
+                                            w_out_fit_flag=w_out_fit_flag)
         else:
-            self._train_synced(x_train)
+            self._train_synced(x_train, w_out_fit_flag=w_out_fit_flag)
 
     def predict(self, x_pred, sync_steps, pred_steps=None,
                 save_r=False, save_input=False):

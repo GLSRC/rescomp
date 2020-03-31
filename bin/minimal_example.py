@@ -59,7 +59,7 @@ y_pred, y_test = esn.train_and_predict(x_data=sim_data,
                                        pred_steps=pred_steps)
 
 # The first output y_pred is the the predicted trajectory
-print(y_pred.shape)
+# print(y_pred.shape)
 
 # If the input data is longer than the data used for synchronization and
 # training, i.e. if
@@ -70,7 +70,7 @@ print(y_pred.shape)
 #   x_data.shape[0] - (train_sync_steps + train_steps) < pred_steps
 # then the test data set is shorter than the predicted one:
 #   y_test.shape[0] < y_pred.shape[0].
-print(y_test.shape)
+# print(y_test.shape)
 
 # --- Plot the prediction
 

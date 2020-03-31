@@ -5,19 +5,19 @@ import numpy as np
 from . import utilities
 
 
-def _roessler(x):
+def _roessler(x, a=0.5, b=2, c=4):
     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
 
     Args:
-        x (np.ndarray): (x,y,z) coordinates
+        a (float): 'a' parameter in the Roessler equations
+        b (float): 'b' parameter in the Roessler equations
+        c (float): 'c' parameter in the Roessler equations
 
     Returns:
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
 
     """
-    a = 0.5
-    b = 2.
-    c = 4.
+
     np.array(x)
     if x.shape == (3,):
         return np.array([-x[1] - x[2], x[0] + a * x[1], b + x[2] * (x[0] - c)])
@@ -25,22 +25,22 @@ def _roessler(x):
         raise Exception('check shape of x, should have 3 components')
 
 
-def _roessler_sprott(x):
+def _roessler_sprott(x, a=0.2, b=0.2, c=5.7):
     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
 
-    This version is identical to roessler(), but uses the parameters from Sprott.
-    Implemented as its own function for now to make sure not to interfere.
+    This version is identical to roessler(), but uses the parameters from
+    Sprott as default.
 
     Args:
         x (np.ndarray): (x,y,z) coordinates
+        a (float): 'a' parameter in the Roessler equations
+        b (float): 'b' parameter in the Roessler equations
+        c (float): 'c' parameter in the Roessler equations
 
     Returns:
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
 
     """
-    a = 0.2
-    b = 0.2
-    c = 5.7
     np.array(x)
     if x.shape == (3,):
         return np.array([-x[1] - x[2], x[0] + a * x[1], b + x[2] * (x[0] - c)])
@@ -53,9 +53,9 @@ def _normal_lorenz(x, sigma=10, rho=28, b=8/3):
 
     Args:
         x (np.ndarray): (x,y,z) coordinates
-        sigma (float): sigma parameter in the Lorenz 63 equations
-        rho (float): rho parameter in the Lorenz 63 equations
-        b (float): b parameter in the Lorenz 63 equations
+        sigma (float): 'sigma' parameter in the Lorenz 63 equations
+        rho (float): 'rho' parameter in the Lorenz 63 equations
+        b (float): 'b' parameter in the Lorenz 63 equations
 
     Returns:
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
@@ -77,9 +77,9 @@ def _mod_lorenz(x, sigma=10, rho=28, b=8/3):
 
     Args:
         x (np.ndarray): (x,y,z) coordinates
-        sigma (float): sigma parameter in the Lorenz 63 equations
-        rho (float): rho parameter in the Lorenz 63 equations
-        b (float): b parameter in the Lorenz 63 equations
+        sigma (float): 'sigma' parameter in the Lorenz 63 equations
+        rho (float): 'rho' parameter in the Lorenz 63 equations
+        b (float): 'b' parameter in the Lorenz 63 equations
 
     Returns:
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
@@ -104,9 +104,9 @@ def _mod_lorenz_wrong(x, sigma=10, rho=28, b=8/3):
 
     Args:
         x (np.ndarray): (x,y,z) coordinates
-        sigma (float): sigma parameter in the Lorenz 63 equations
-        rho (float): rho parameter in the Lorenz 63 equations
-        b (float): b parameter in the Lorenz 63 equations
+        sigma (float): 'sigma' parameter in the Lorenz 63 equations
+        rho (float): 'rho' parameter in the Lorenz 63 equations
+        b (float): 'b' parameter in the Lorenz 63 equations
 
     Returns:
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
@@ -135,7 +135,7 @@ def _chua(x):
     beta=100./7.
     a=8./7.
     b=5./7.
-    
+
     np.array(x)
     if x.shape == (3,):
         return np.array([alpha*(x[1]-x[0]+b*x[0]+0.5*(a-b)*(np.abs(x[0]+1)
@@ -365,22 +365,23 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
             synonyms and corresponding possible kwargs are:
 
             - 0, "mod_lorenz". Possible kwargs:
-                - sigma (float): sigma parameter in the Lorenz 63 equations
-                - rho (float): rho parameter in the Lorenz 63 equations
-                - b (float): b parameter in the Lorenz 63 equations
+                - sigma (float): 'sigma' parameter in the Lorenz 63 equations
+                - rho (float): 'rho' parameter in the Lorenz 63 equations
+                - b (float): 'b' parameter in the Lorenz 63 equations
             - 1, "mod_lorenz_wrong". Possible kwargs:
-                - sigma (float): sigma parameter in the Lorenz 63 equations
-                - rho (float): rho parameter in the Lorenz 63 equations
-                - b (float): b parameter in the Lorenz 63 equations
+                - sigma (float): 'sigma' parameter in the Lorenz 63 equations
+                - rho (float): 'rho' parameter in the Lorenz 63 equations
+                - b (float): 'b' parameter in the Lorenz 63 equations
             - 2, "lorenz_63", "normal_lorenz", "lorenz". Possible kwargs:
-                - sigma (float): sigma parameter in the Lorenz 63 equations
-                - rho (float): rho parameter in the Lorenz 63 equations
-                - b (float): b parameter in the Lorenz 63 equations
+                - sigma (float): 'sigma' parameter in the Lorenz 63 equations
+                - rho (float): 'rho' parameter in the Lorenz 63 equations
+                - b (float): 'b' parameter in the Lorenz 63 equations
             - 3, "roessler". Possible kwargs:
-                - None
-            - 4, "lorenz_96"
-                - kwargs: force (float): force parameter in the Lorenz96
-                  equations
+                - a (float): 'a' parameter in the Roessler equations
+                - b (float): 'b' parameter in the Roessler equations
+                - c (float): 'c' parameter in the Roessler equations
+            - 4, "lorenz_96". Possible kwargs:
+                - force (float): force parameter in the Lorenz96 equations
             - 5, "ueda". Possible kwargs:
                 - None
             - 6, "chua". Possible kwargs:
@@ -396,7 +397,9 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
             - 11, "thomas". Possible kwargs:
                 - None
             - 12, "roessler_sprott". Possible kwargs:
-                - None
+                - a (float): 'a' parameter in the Roessler equations
+                - b (float): 'b' parameter in the Roessler equations
+                - c (float): 'c' parameter in the Roessler equations
             - 13, "kuramoto_sivashinsky". Possible kwargs:
                 - dimensions (int): nr. of dimensions of the system grid
                 - system_size (int): physical size of the system
@@ -422,7 +425,7 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
     elif sys_flag_syn == 2:
         f = lambda x: _normal_lorenz(x, **kwargs)
     elif sys_flag_syn == 3:
-        f = lambda x: _roessler(x)
+        f = lambda x: _roessler(x, **kwargs)
     elif sys_flag_syn == 4:
         # Starting point is ignored here atm
         f = lambda x: _lorenz_96(x, **kwargs)
@@ -441,7 +444,7 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
     elif sys_flag_syn == 11:
         f = lambda x: _thomas(x)
     elif sys_flag_syn == 12:
-        f = lambda x: _roessler_sprott(x)
+        f = lambda x: _roessler_sprott(x, **kwargs)
     elif sys_flag_syn == 13:
         # Starting point is ignored here atm
         return _kuramoto_sivashinsky(dt=dt, time_steps=time_steps - 1, **kwargs)

@@ -2,6 +2,8 @@
 """ Measures and other analysis functions useful for RC """
 
 import numpy as np
+import scipy
+import matplotlib.pyplot as plt
 
 
 def nrmse_over_time(pred_time_series, meas_time_series):
@@ -117,6 +119,50 @@ def divergence_time(pred_time_series, meas_time_series, epsilon):
     div_time = np.min(dim_wise_div_time[np.nonzero(dim_wise_div_time)])
 
     return div_time
+
+
+def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
+              plot=False):
+    """ Calculates correlation dimension using
+    the algorithm by Grassberger and Procaccia.
+     
+    First we calculate a sum over all points within a given radius, then
+    average over all basis points and vary the radius
+    (grassberger, procaccia).
+
+    parameters depend on timesteps and the system itself!
+
+    Args:
+        time_series ():
+        r_min ():
+        r_max ():
+        r_steps ():
+        plot ():
+
+    Returns: dimension: slope of the log.log plot assumes:
+        N_r(radius) ~ radius**dimension
+    """
+    # TODO: write method to automatically find good parameters of r_min and
+    #       r_max for a given system. This method will probably be slow and 
+    #       should not be called everytime dimension is called. 
+    
+    nr_points = float(time_series.shape[0])
+    radii = np.logspace(np.log10(r_min), np.log10(r_max), nr_steps)
+
+    tree = scipy.spatial.cKDTree(time_series)
+    N_r = np.array(tree.count_neighbors(tree, radii), dtype=float) / nr_points
+    N_r = np.vstack((radii, N_r))
+
+    # linear fit based on loglog scale, to get slope/dimension:
+    slope, intercept = np.polyfit(np.log(N_r[0]), np.log(N_r[1]), deg=1)[0:2]
+    dimension = slope
+
+    ###plotting
+    if plot:
+        plt.loglog(N_r[0], N_r[1], 'x', basex=10., basey=10.)
+        plt.title('loglog plot of the N_r(radius), slope/dim = ' + str(slope))
+        plt.show()
+    return dimension
 
 
 # def return_map(self, axis=2):

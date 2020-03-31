@@ -16,7 +16,7 @@ esn = rescomp.ESNWrapper()
 # simulate some data
 simulation_time_steps = 20000
 starting_point = np.array([-14.03020521, -20.88693127, 25.53545])
-sim_data = rescomp.simulations.simulate_trajectory(
+sim_data = rescomp.simulate_trajectory(
     sys_flag='mod_lorenz', dt=2e-2, time_steps=simulation_time_steps,
     starting_point=starting_point)
 

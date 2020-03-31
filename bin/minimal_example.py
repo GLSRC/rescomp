@@ -23,7 +23,7 @@ simulation_time_steps = 20000
 # The starting point is chosen to be on the chaotic attractor we want to predict
 starting_point = np.array([-14.03020521, -20.88693127, 25.53545])
 
-sim_data = rescomp.simulations.simulate_trajectory(
+sim_data = rescomp.simulate_trajectory(
     sys_flag='mod_lorenz', dt=2e-2, time_steps=simulation_time_steps,
     starting_point=starting_point)
 
@@ -74,7 +74,8 @@ print(y_test.shape)
 
 # --- Plot the prediction
 
-ax = plt.axes(projection='3d')
+fig = plt.figure(figsize=(6, 6))
+ax = fig.add_subplot(111, projection='3d')
 
 ax.plot(y_test[:, 0], y_test[:, 1], y_test[:, 2],
         alpha=0.8, color='blue', label='test_data')

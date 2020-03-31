@@ -2,6 +2,7 @@
 """ Simulate various chaotic system to generate artificial data """
 
 import numpy as np
+from . import utilities
 
 
 def _roessler(x):
@@ -47,33 +48,38 @@ def _roessler_sprott(x):
         raise Exception('check shape of x, should have 3 components')
 
 
-def _normal_lorenz(x):
+def _normal_lorenz(x, sigma=10, rho=28, b=8/3):
     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
 
     Args:
         x (np.ndarray): (x,y,z) coordinates
+        sigma (float): sigma parameter in the Lorenz 63 equations
+        rho (float): rho parameter in the Lorenz 63 equations
+        b (float): b parameter in the Lorenz 63 equations
 
     Returns:
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
 
     """
-    sigma = 10.
-    rho = 28.
-    b = 8 / 3
     np.array(x)
     if x.shape == (3,):
-        return np.array([sigma * (x[1] - x[0]), x[0] * (rho - x[2]) - x[1], x[0] * x[1] - b * x[2]])
+        return np.array([sigma * (x[1] - x[0]),
+                         x[0] * (rho - x[2]) - x[1],
+                         x[0] * x[1] - b * x[2]])
     else:
         raise Exception('check shape of x, should have 3 components')
 
 
-def _mod_lorenz(x):
+def _mod_lorenz(x, sigma=10, rho=28, b=8/3):
     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
 
     with dz/dt += x(t) to break symmetry
 
     Args:
         x (np.ndarray): (x,y,z) coordinates
+        sigma (float): sigma parameter in the Lorenz 63 equations
+        rho (float): rho parameter in the Lorenz 63 equations
+        b (float): b parameter in the Lorenz 63 equations
 
     Returns:
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
@@ -83,35 +89,34 @@ def _mod_lorenz(x):
         array([10., 23., -5.])
 
     """
-    sigma = 10.
-    rho = 28.
-    b = 8 / 3
-    # np.array(x)
-    # print('cheese')
     if x.shape == (3,):
-        return np.array([sigma * (x[1] - x[0]), x[0] * (rho - x[2]) - x[1], x[0] * x[1] - b * x[2] + x[0]])
+        return np.array([sigma * (x[1] - x[0]),
+                         x[0] * (rho - x[2]) - x[1],
+                         x[0] * x[1] - b * x[2] + x[0]])
     else:
         raise Exception('check shape of x, should have 3 components')
 
 
-def _mod_lorenz_wrong(x):
+def _mod_lorenz_wrong(x, sigma=10, rho=28, b=8/3):
     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
 
     with dz/dt += x(t) to break symmetry
 
     Args:
         x (np.ndarray): (x,y,z) coordinates
+        sigma (float): sigma parameter in the Lorenz 63 equations
+        rho (float): rho parameter in the Lorenz 63 equations
+        b (float): b parameter in the Lorenz 63 equations
 
     Returns:
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
 
     """
-    sigma = 10.
-    rho = 28.
-    b = 8 / 3
     np.array(x)
     if x.shape == (3,):
-        return np.array([sigma * (x[1] - x[0]), x[0] * (rho - x[2]) - x[1], x[0] * x[1] - b * x[2]] + x[0])
+        return np.array([sigma * (x[1] - x[0]),
+                         x[0] * (rho - x[2]) - x[1],
+                         x[0] * x[1] - b * x[2]] + x[0])
     else:
         raise Exception('check shape of x, should have 3 components')
 
@@ -332,33 +337,74 @@ def _runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
     k4 = dt * f(y + k3)
     return y + 1. / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
 
+# If you add/change a flag here, please also change it in the
+# simulate_trajectory docstring
+_sys_flag_synonyms = utilities._SynonymDict()
+_sys_flag_synonyms.add_synonyms(0, "mod_lorenz")
+_sys_flag_synonyms.add_synonyms(1, "mod_lorenz_wrong")
+_sys_flag_synonyms.add_synonyms(2, ["lorenz_63", "normal_lorenz", "lorenz"])
+_sys_flag_synonyms.add_synonyms(3, "roessler")
+_sys_flag_synonyms.add_synonyms(4, "lorenz_96")
+_sys_flag_synonyms.add_synonyms(5, "ueda")
+_sys_flag_synonyms.add_synonyms(6, "chua")
+_sys_flag_synonyms.add_synonyms(7, "complex_butterfly")
+_sys_flag_synonyms.add_synonyms(8, "chen")
+_sys_flag_synonyms.add_synonyms(9, "rucklidge")
+_sys_flag_synonyms.add_synonyms(10, "rabinovich")
+_sys_flag_synonyms.add_synonyms(11, "thomas")
+_sys_flag_synonyms.add_synonyms(12, "roessler_sprott")
+_sys_flag_synonyms.add_synonyms(13, "kuramoto_sivashinsky")
+
 
 def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
                         starting_point=None, **kwargs):
     """ Simulate a trajectory in an artificial chaotic system
 
     Args:
-        sys_flag (str): The system to be simulated. Possible flags are:
+        sys_flag (str): The system to be simulated. Possible flags, their
+            synonyms and corresponding possible kwargs are:
 
-            - "mod_lorenz"
-            - "mod_lorenz_wrong"
-            - "normal_lorenz"
-            - "roessler"
-            - "lorenz_96"
-            - "ueda"
-            - "chua"
-            - "complex_butterfly"
-            - "chen"
-            - "rucklidge"
-            - "rabinovich"
-            - "thomas"
-            - "roessler_sprott"
-            - "kuramoto_sivashinsky"
+            - 0, "mod_lorenz". Possible kwargs:
+                - sigma (float): sigma parameter in the Lorenz 63 equations
+                - rho (float): rho parameter in the Lorenz 63 equations
+                - b (float): b parameter in the Lorenz 63 equations
+            - 1, "mod_lorenz_wrong". Possible kwargs:
+                - sigma (float): sigma parameter in the Lorenz 63 equations
+                - rho (float): rho parameter in the Lorenz 63 equations
+                - b (float): b parameter in the Lorenz 63 equations
+            - 2, "lorenz_63", "normal_lorenz", "lorenz". Possible kwargs:
+                - sigma (float): sigma parameter in the Lorenz 63 equations
+                - rho (float): rho parameter in the Lorenz 63 equations
+                - b (float): b parameter in the Lorenz 63 equations
+            - 3, "roessler". Possible kwargs:
+                - None
+            - 4, "lorenz_96"
+                - kwargs: force (float): force parameter in the Lorenz96
+                  equations
+            - 5, "ueda". Possible kwargs:
+                - None
+            - 6, "chua". Possible kwargs:
+                - None
+            - 7, "complex_butterfly". Possible kwargs:
+                - None
+            - 8, "chen". Possible kwargs:
+                - None
+            - 9, "rucklidge". Possible kwargs:
+                - None
+            - 10, "rabinovich". Possible kwargs:
+                - None
+            - 11, "thomas". Possible kwargs:
+                - None
+            - 12, "roessler_sprott". Possible kwargs:
+                - None
+            - 13, "kuramoto_sivashinsky". Possible kwargs:
+                - dimensions (int): nr. of dimensions of the system grid
+                - system_size (int): physical size of the system
         dt (float): Size of time steps
         time_steps (int): Number of time steps to simulate
         starting_point (np.ndarray): Starting point of the trajectory
         **kwargs (): Further Arguments passed to the simulating function,
-            usually not needed
+            usually not needed. See above for a list of possible arguments
 
     Returns:
         trajectory (np.ndarray) the full trajectory, ready to be used for RC
@@ -366,35 +412,37 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
     """
     if starting_point is None: starting_point = np.array([1, 2, 3])
 
-    if sys_flag == 'mod_lorenz':
-        f = _mod_lorenz
-    elif sys_flag == 'mod_lorenz_wrong':
+    sys_flag_syn = _sys_flag_synonyms.get_flag(sys_flag)
+
+    if sys_flag_syn == 0:
+        f = lambda x: _mod_lorenz(x, **kwargs)
+    elif sys_flag_syn == 1:
         print('YOU ARE USING AN UNUSUAL KIND OF LORENZ EQUATION! USE WITH CARE')
-        f = _mod_lorenz_wrong
-    elif sys_flag == 'normal_lorenz':
-        f = _normal_lorenz
-    elif sys_flag == 'roessler':
-        f = _roessler
-    elif sys_flag == 'lorenz_96':
+        f = lambda x: _mod_lorenz_wrong(x, **kwargs)
+    elif sys_flag_syn == 2:
+        f = lambda x: _normal_lorenz(x, **kwargs)
+    elif sys_flag_syn == 3:
+        f = lambda x: _roessler(x)
+    elif sys_flag_syn == 4:
         # Starting point is ignored here atm
         f = lambda x: _lorenz_96(x, **kwargs)
-    elif sys_flag == 'ueda':
+    elif sys_flag_syn == 5:
         f = lambda x: _ueda(x)
-    elif sys_flag == 'chua':
+    elif sys_flag_syn == 6:
         f = lambda x: _chua(x)
-    elif sys_flag == 'complex_butterfly':
+    elif sys_flag_syn == 7:
         f = lambda x: _complex_butterfly(x)
-    elif sys_flag == 'chen':
+    elif sys_flag_syn == 8:
         f = lambda x: _chen(x)
-    elif sys_flag == 'rucklidge':
+    elif sys_flag_syn == 9:
         f = lambda x: _rucklidge(x)
-    elif sys_flag == 'rabinovich':
+    elif sys_flag_syn == 10:
         f = lambda x: _rabinovich(x)
-    elif sys_flag == 'thomas':
+    elif sys_flag_syn == 11:
         f = lambda x: _thomas(x)
-    elif sys_flag == 'roessler_sprott':
+    elif sys_flag_syn == 12:
         f = lambda x: _roessler_sprott(x)
-    elif sys_flag == 'kuramoto_sivashinsky':
+    elif sys_flag_syn == 13:
         # Starting point is ignored here atm
         return _kuramoto_sivashinsky(dt=dt, time_steps=time_steps - 1, **kwargs)
     else:

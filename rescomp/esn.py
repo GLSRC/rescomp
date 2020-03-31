@@ -39,6 +39,7 @@ class _ESNCore(utilities._ESNLogging):
         self._w_out_fit_flag_synonyms.add_synonyms(0, ["linear_r", "simple"])
         self._w_out_fit_flag_synonyms.add_synonyms(1, "linear_and_square_r")
         self._w_out_fit_flag_synonyms.add_synonyms(2, ["output_bias","bias"])
+        self._w_out_fit_flag_synonyms.add_synonyms(3, ["bias_and_square_r"])
         
         self._w_out_fit_flag = None
 
@@ -107,6 +108,12 @@ class _ESNCore(utilities._ESNLogging):
                 return np.hstack((r,1))
             elif len(r.shape) is 2:
                 return np.hstack((r, np.ones(r.shape[0])[:,None]))
+        elif self._w_out_fit_flag is 3:
+            if len(r.shape) is 1:
+                return np.hstack((np.hstack((r, r ** 2)),1))
+            elif len(r.shape) is 2:
+                return np.hstack((np.hstack((r, r ** 2)), 
+                                  np.ones(r.shape[0])[:,None]))
         else:
             raise Exception("self._w_out_fit_flag incorrectly specified")
 

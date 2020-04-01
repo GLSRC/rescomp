@@ -101,22 +101,22 @@ def divergence_time(pred_time_series, meas_time_series, epsilon):
     Args:
         pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
         meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
-        epsilon (float): Distance threshold, above which the two time series
-            count as diverged
+        epsilon (float or np.ndarray): Distance threshold, above which the two
+            time series count as diverged. Either float or 1D-array with length d.
 
     Returns:
         int: divergence_time, the number of time steps for which
             meas_time_series and pred_time_series are separated by less than
-            than epsilon in each dimension.
+            epsilon in each dimension.
 
     """
     pred = pred_time_series
     meas = meas_time_series
 
     delta = np.abs(meas - pred)
-
-    dim_wise_div_time = np.argmax(delta > epsilon, axis=0)
-    div_time = np.min(dim_wise_div_time[np.nonzero(dim_wise_div_time)])
+    
+    div_bool = (delta > epsilon).any(axis=1)
+    div_time = np.argmax(np.append(div_bool,True))+1
 
     return div_time
 
@@ -133,11 +133,12 @@ def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
     parameters depend on timesteps and the system itself!
 
     Args:
-        time_series ():
-        r_min ():
-        r_max ():
-        r_steps ():
-        plot ():
+        time_series (np.ndarray): time series to calculate dimension of, shape (T, d)
+        r_min (float): minimum radius
+        r_max (float): maximum radius
+        nr_steps (int): number of steps in radius, if r_min and r_max are chosen
+            properly, then 2 is enough.
+        plot (boolean): flag for plotting loglog plot
 
     Returns: dimension: slope of the log.log plot assumes:
         N_r(radius) ~ radius**dimension

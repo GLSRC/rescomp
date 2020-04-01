@@ -19,7 +19,7 @@ esn = rescomp.ESNWrapper()
 
 # and simulate the system:
 simulation_time_steps = 60000
-sim_data = rescomp.simulations.simulate_trajectory(
+sim_data = rescomp.simulate_trajectory(
     sys_flag='kuramoto_sivashinsky', dimensions=100, system_size=22, dt=0.05,
     time_steps=simulation_time_steps)
 

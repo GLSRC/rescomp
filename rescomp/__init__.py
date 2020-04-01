@@ -4,6 +4,7 @@
 from . import simulations, utilities, measures, esn
 from .esn import ESN, ESNWrapper
 from .utilities import read_pickle
+from .simulations import simulate_trajectory
 from ._version import __version__
 
 if not utilities._compare_version_file_vs_env(segment_threshold="minor"):

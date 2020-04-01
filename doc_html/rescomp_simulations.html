@@ -66,29 +66,125 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sys_flag</strong> (<em>str</em>) – <p>The system to be simulated. Possible flags are:</p>
+<li><p><strong>sys_flag</strong> (<em>str</em>) – <p>The system to be simulated. Possible flags, their
+synonyms and corresponding possible kwargs are:</p>
 <ul>
-<li><p>”mod_lorenz”</p></li>
-<li><p>”mod_lorenz_wrong”</p></li>
-<li><p>”normal_lorenz”</p></li>
-<li><p>”roessler”</p></li>
-<li><p>”lorenz_96”</p></li>
-<li><p>”ueda”</p></li>
-<li><p>”chua”</p></li>
-<li><p>”complex_butterfly”</p></li>
-<li><p>”chen”</p></li>
-<li><p>”rucklidge”</p></li>
-<li><p>”rabinovich”</p></li>
-<li><p>”thomas”</p></li>
-<li><p>”roessler_sprott”</p></li>
-<li><p>”kuramoto_sivashinsky”</p></li>
+<li><dl class="simple">
+<dt>0, “mod_lorenz”. Possible kwargs:</dt><dd><ul>
+<li><p>sigma (float): ‘sigma’ parameter in the Lorenz 63 equations</p></li>
+<li><p>rho (float): ‘rho’ parameter in the Lorenz 63 equations</p></li>
+<li><p>b (float): ‘b’ parameter in the Lorenz 63 equations</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>1, “mod_lorenz_wrong”. Possible kwargs:</dt><dd><ul>
+<li><p>sigma (float): ‘sigma’ parameter in the Lorenz 63 equations</p></li>
+<li><p>rho (float): ‘rho’ parameter in the Lorenz 63 equations</p></li>
+<li><p>b (float): ‘b’ parameter in the Lorenz 63 equations</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>2, “lorenz_63”, “normal_lorenz”, “lorenz”. Possible kwargs:</dt><dd><ul>
+<li><p>sigma (float): ‘sigma’ parameter in the Lorenz 63 equations</p></li>
+<li><p>rho (float): ‘rho’ parameter in the Lorenz 63 equations</p></li>
+<li><p>b (float): ‘b’ parameter in the Lorenz 63 equations</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>3, “roessler”. Possible kwargs:</dt><dd><ul>
+<li><p>a (float): ‘a’ parameter in the Roessler equations</p></li>
+<li><p>b (float): ‘b’ parameter in the Roessler equations</p></li>
+<li><p>c (float): ‘c’ parameter in the Roessler equations</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>4, “lorenz_96”. Possible kwargs:</dt><dd><ul>
+<li><p>force (float): force parameter in the Lorenz96 equations</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>5, “ueda”. Possible kwargs:</dt><dd><ul>
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>6, “chua”. Possible kwargs:</dt><dd><ul>
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>7, “complex_butterfly”. Possible kwargs:</dt><dd><ul>
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>8, “chen”. Possible kwargs:</dt><dd><ul>
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>9, “rucklidge”. Possible kwargs:</dt><dd><ul>
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>10, “rabinovich”. Possible kwargs:</dt><dd><ul>
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>11, “thomas”. Possible kwargs:</dt><dd><ul>
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>12, “roessler_sprott”. Possible kwargs:</dt><dd><ul>
+<li><p>a (float): ‘a’ parameter in the Roessler equations</p></li>
+<li><p>b (float): ‘b’ parameter in the Roessler equations</p></li>
+<li><p>c (float): ‘c’ parameter in the Roessler equations</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>13, “kuramoto_sivashinsky”. Possible kwargs:</dt><dd><ul>
+<li><p>dimensions (int): nr. of dimensions of the system grid</p></li>
+<li><p>system_size (int): physical size of the system</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 </ul>
 </p></li>
 <li><p><strong>dt</strong> (<em>float</em>) – Size of time steps</p></li>
 <li><p><strong>time_steps</strong> (<em>int</em>) – Number of time steps to simulate</p></li>
 <li><p><strong>starting_point</strong> (<em>np.ndarray</em>) – Starting point of the trajectory</p></li>
 <li><p><strong>(</strong><strong>)</strong> (<em>**kwargs</em>) – Further Arguments passed to the simulating function,
-usually not needed</p></li>
+usually not needed. See above for a list of possible arguments</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

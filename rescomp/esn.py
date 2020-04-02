@@ -312,9 +312,9 @@ class ESN(_ESNCore):
             n_type_flag (int_or_str): Type of Network to be generated. Possible
                 flags and their synonyms are:
 
-                - 0, "random", "erdos_renyi"
-                - 1, "scale_free", "barabasi_albert"
-                - 2, "small_world", "watts_strogatz"
+                - "random", "erdos_renyi"
+                - "scale_free", "barabasi_albert"
+                - "small_world", "watts_strogatz"
             network_creation_attempts (int): How often the network generation
                 should be attempted. It can fail due to a not converging
                 eigenvalue calculation
@@ -507,8 +507,8 @@ class ESN(_ESNCore):
                 used during training (and prediction). Possible flags and their
                 synonyms are:
 
-                - 0, "tanh_simple", "simple"
-                - 1, "tanh_bias"
+                - "tanh_simple", "simple"
+                - "tanh_bias"
             bias_scale (float): Bias to be used in some activation functions
                 (currently only used in :func:`~esn.ESN._act_fct_tanh_bias`)
             save_r (bool): If true, saves r(t) internally

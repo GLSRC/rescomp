@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Simulations &#8212; rescomp 0.1.0 documentation</title>
+    <title>Simulations &#8212; rescomp 0.1.1 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="rescomp_utilities.html" title="Utilities"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.1.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -69,111 +69,119 @@
 <li><p><strong>sys_flag</strong> (<em>str</em>) – <p>The system to be simulated. Possible flags, their
 synonyms and corresponding possible kwargs are:</p>
 <ul>
-<li><dl class="simple">
-<dt>0, “mod_lorenz”. Possible kwargs:</dt><dd><ul>
+<li><p>”lorenz_63”, “normal_lorenz”, “lorenz”: The normal, unmodified
+Lorenz-63 system. Possible kwargs:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>sigma (float): ‘sigma’ parameter in the Lorenz 63 equations</p></li>
 <li><p>rho (float): ‘rho’ parameter in the Lorenz 63 equations</p></li>
 <li><p>b (float): ‘b’ parameter in the Lorenz 63 equations</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </li>
-<li><dl class="simple">
-<dt>1, “mod_lorenz_wrong”. Possible kwargs:</dt><dd><ul>
-<li><p>sigma (float): ‘sigma’ parameter in the Lorenz 63 equations</p></li>
-<li><p>rho (float): ‘rho’ parameter in the Lorenz 63 equations</p></li>
-<li><p>b (float): ‘b’ parameter in the Lorenz 63 equations</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>2, “lorenz_63”, “normal_lorenz”, “lorenz”. Possible kwargs:</dt><dd><ul>
-<li><p>sigma (float): ‘sigma’ parameter in the Lorenz 63 equations</p></li>
-<li><p>rho (float): ‘rho’ parameter in the Lorenz 63 equations</p></li>
-<li><p>b (float): ‘b’ parameter in the Lorenz 63 equations</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>3, “roessler”. Possible kwargs:</dt><dd><ul>
+<li><p>”roessler”: The normal, unmodified Roessler system. Possible
+kwargs:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>a (float): ‘a’ parameter in the Roessler equations</p></li>
 <li><p>b (float): ‘b’ parameter in the Roessler equations</p></li>
 <li><p>c (float): ‘c’ parameter in the Roessler equations</p></li>
 </ul>
+</div></blockquote>
+</li>
+<li><dl class="simple">
+<dt>”mod_lorenz”: Modified Lorenz system. Possible kwargs:</dt><dd><ul class="simple">
+<li><p>sigma (float): ‘sigma’ parameter in the Lorenz 63 equations</p></li>
+<li><p>rho (float): ‘rho’ parameter in the Lorenz 63 equations</p></li>
+<li><p>b (float): ‘b’ parameter in the Lorenz 63 equations</p></li>
+</ul>
 </dd>
 </dl>
 </li>
+<li><p>”mod_lorenz_wrong”: Incorrectly modified Lorenz system, kept for
+backward compatibility. Possible kwargs:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>sigma (float): ‘sigma’ parameter in the Lorenz 63 equations</p></li>
+<li><p>rho (float): ‘rho’ parameter in the Lorenz 63 equations</p></li>
+<li><p>b (float): ‘b’ parameter in the Lorenz 63 equations</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><dl class="simple">
-<dt>4, “lorenz_96”. Possible kwargs:</dt><dd><ul>
+<dt>”lorenz_96”: The d-dimensional Lorenz-96 System. Possible kwargs:</dt><dd><ul class="simple">
 <li><p>force (float): force parameter in the Lorenz96 equations</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><dl class="simple">
-<dt>5, “ueda”. Possible kwargs:</dt><dd><ul>
-<li><p>None</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>6, “chua”. Possible kwargs:</dt><dd><ul>
-<li><p>None</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>7, “complex_butterfly”. Possible kwargs:</dt><dd><ul>
-<li><p>None</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>8, “chen”. Possible kwargs:</dt><dd><ul>
-<li><p>None</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>9, “rucklidge”. Possible kwargs:</dt><dd><ul>
-<li><p>None</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>10, “rabinovich”. Possible kwargs:</dt><dd><ul>
-<li><p>None</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>11, “thomas”. Possible kwargs:</dt><dd><ul>
-<li><p>None</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>12, “roessler_sprott”. Possible kwargs:</dt><dd><ul>
+<li><p>”roessler_sprott”. Identical to “roessler”, uses the parameters
+from Sprott as default. Possible kwargs:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>a (float): ‘a’ parameter in the Roessler equations</p></li>
 <li><p>b (float): ‘b’ parameter in the Roessler equations</p></li>
 <li><p>c (float): ‘c’ parameter in the Roessler equations</p></li>
 </ul>
+</div></blockquote>
+</li>
+<li><p>”kuramoto_sivashinsky”. The d-dimensional Lorenz-96 System. Note
+that, due to the way the KS system is simulated, the
+“starting_point” parameter, does not have any effect! The system’s
+dimension is instead set by the following possible kwargs:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dimensions (int): nr. of dimensions, d, of the system grid.
+The output will have shape (T, d).</p></li>
+<li><p>system_size (int): ‘physical’ size of the system</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><dl class="simple">
+<dt>”ueda”. Possible kwargs:</dt><dd><ul class="simple">
+<li><p>None</p></li>
+</ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>13, “kuramoto_sivashinsky”. Possible kwargs:</dt><dd><ul>
-<li><p>dimensions (int): nr. of dimensions of the system grid</p></li>
-<li><p>system_size (int): physical size of the system</p></li>
+<dt>”chua”. Possible kwargs:</dt><dd><ul class="simple">
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>”complex_butterfly”. Possible kwargs:</dt><dd><ul class="simple">
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>”chen”. Possible kwargs:</dt><dd><ul class="simple">
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>”rucklidge”. Possible kwargs:</dt><dd><ul class="simple">
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>”rabinovich”. Possible kwargs:</dt><dd><ul class="simple">
+<li><p>None</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>”thomas”. Possible kwargs:</dt><dd><ul class="simple">
+<li><p>None</p></li>
 </ul>
 </dd>
 </dl>
@@ -182,7 +190,8 @@ synonyms and corresponding possible kwargs are:</p>
 </p></li>
 <li><p><strong>dt</strong> (<em>float</em>) – Size of time steps</p></li>
 <li><p><strong>time_steps</strong> (<em>int</em>) – Number of time steps to simulate</p></li>
-<li><p><strong>starting_point</strong> (<em>np.ndarray</em>) – Starting point of the trajectory</p></li>
+<li><p><strong>starting_point</strong> (<em>np.ndarray</em>) – Starting point of the trajectory. Typically
+3-dimensional unless otherwise specified.</p></li>
 <li><p><strong>(</strong><strong>)</strong> (<em>**kwargs</em>) – Further Arguments passed to the simulating function,
 usually not needed. See above for a list of possible arguments</p></li>
 </ul>
@@ -246,7 +255,7 @@ usually not needed. See above for a list of possible arguments</p></li>
         <li class="right" >
           <a href="rescomp_utilities.html" title="Utilities"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

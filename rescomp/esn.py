@@ -560,6 +560,12 @@ class ESN(_ESNCore):
                 elements
             w_in_sparse (bool): If true, creates w_in such that one element in
                 each row is non-zero (Lu,Hunt, Ott 2018)
+            w_in_orderd (bool): If true and w_in_sparse is true, creates w_in 
+                such that elements are ordered by dimension and number of 
+                elements for each dimension is equal (as far as possible)
+            w_in_constant (bool):If true and w_in_sparse is true, creates w_in 
+                such that nonzero elements are equal to w_in_scale with a 
+                random sign   
             act_fct_flag (int_or_str): Specifies the activation function to be
                 used during training (and prediction). Possible flags and their
                 synonyms are:

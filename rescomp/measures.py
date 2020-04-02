@@ -2,6 +2,8 @@
 """ Measures and other analysis functions useful for RC """
 
 import numpy as np
+import scipy
+import matplotlib.pyplot as plt
 
 
 def nrmse_over_time(pred_time_series, meas_time_series):
@@ -99,24 +101,69 @@ def divergence_time(pred_time_series, meas_time_series, epsilon):
     Args:
         pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
         meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
-        epsilon (float): Distance threshold, above which the two time series
-            count as diverged
+        epsilon (float or np.ndarray): Distance threshold, above which the two
+            time series count as diverged. Either float or 1D-array with length d.
 
     Returns:
         int: divergence_time, the number of time steps for which
             meas_time_series and pred_time_series are separated by less than
-            than epsilon in each dimension.
+            epsilon in each dimension.
 
     """
     pred = pred_time_series
     meas = meas_time_series
 
     delta = np.abs(meas - pred)
-
-    dim_wise_div_time = np.argmax(delta > epsilon, axis=0)
-    div_time = np.min(dim_wise_div_time[np.nonzero(dim_wise_div_time)])
+    
+    div_bool = (delta > epsilon).any(axis=1)
+    div_time = np.argmax(np.append(div_bool,True))+1
 
     return div_time
+
+
+def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
+              plot=False):
+    """ Calculates correlation dimension using
+    the algorithm by Grassberger and Procaccia.
+     
+    First we calculate a sum over all points within a given radius, then
+    average over all basis points and vary the radius
+    (grassberger, procaccia).
+
+    parameters depend on timesteps and the system itself!
+
+    Args:
+        time_series (np.ndarray): time series to calculate dimension of, shape (T, d)
+        r_min (float): minimum radius
+        r_max (float): maximum radius
+        nr_steps (int): number of steps in radius, if r_min and r_max are chosen
+            properly, then 2 is enough.
+        plot (boolean): flag for plotting loglog plot
+
+    Returns: dimension: slope of the log.log plot assumes:
+        N_r(radius) ~ radius**dimension
+    """
+    # TODO: write method to automatically find good parameters of r_min and
+    #       r_max for a given system. This method will probably be slow and 
+    #       should not be called everytime dimension is called. 
+    
+    nr_points = float(time_series.shape[0])
+    radii = np.logspace(np.log10(r_min), np.log10(r_max), nr_steps)
+
+    tree = scipy.spatial.cKDTree(time_series)
+    N_r = np.array(tree.count_neighbors(tree, radii), dtype=float) / nr_points
+    N_r = np.vstack((radii, N_r))
+
+    # linear fit based on loglog scale, to get slope/dimension:
+    slope, intercept = np.polyfit(np.log(N_r[0]), np.log(N_r[1]), deg=1)[0:2]
+    dimension = slope
+
+    ###plotting
+    if plot:
+        plt.loglog(N_r[0], N_r[1], 'x', basex=10., basey=10.)
+        plt.title('loglog plot of the N_r(radius), slope/dim = ' + str(slope))
+        plt.show()
+    return dimension
 
 
 # def return_map(self, axis=2):

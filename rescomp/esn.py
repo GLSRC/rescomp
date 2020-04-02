@@ -228,6 +228,8 @@ class ESN(_ESNCore):
 
         # _create_w_in() which is called from train() assigns values to:
         self._w_in_sparse = None
+        self._w_in_ordered = None
+        self._w_in_constant = None
         self._w_in_scale = None
         self._w_in = self._w_in
 
@@ -264,6 +266,7 @@ class ESN(_ESNCore):
         self._act_fct_flag_synonyms = utilities._SynonymDict()
         self._act_fct_flag_synonyms.add_synonyms(0, ["tanh_simple", "simple"])
         self._act_fct_flag_synonyms.add_synonyms(1, "tanh_bias")
+        self._act_fct_flag_synonyms.add_synonyms(2, "tanh_half_squared")
 
         # Dictionary defining synonyms for the different ways to create the
         # network. Internally the corresponding integers are used
@@ -286,14 +289,67 @@ class ESN(_ESNCore):
 
         """
         self.logger.debug("Create w_in")
-
-        if self._w_in_sparse:
+        if self._w_in_constant and not self._w_in_ordered:
+            self._w_in = np.zeros((self._n_dim, self._x_dim))
+            for i in range(self._n_dim):
+                random_x_coord = np.random.choice(np.arange(self._x_dim))
+                self._w_in[i, random_x_coord] = self._w_in_scale
+                # maps input values to reservoir
+                
+            self._w_in*=(2*np.random.randint(0,2,size=(self._n_dim,self._x_dim))-1)
+            
+        elif self._w_in_constant and self._w_in_ordered:
+            self._w_in = np.zeros((self._n_dim, self._x_dim))
+            dim_wise=np.array([int(self._n_dim/self._x_dim)]*self._x_dim)
+            dim_wise[:self._n_dim%self._x_dim]+=1
+            
+            s=0
+            
+            dim_wise_2 = dim_wise[:]
+            
+            for i in range(len(dim_wise_2)):
+                s+=dim_wise_2[i]
+                dim_wise[i]=s
+            
+            dim_wise=np.append(dim_wise,0)
+            
+            for d in range(self._x_dim):
+                for i in range(dim_wise[d-1],dim_wise[d]):
+                    
+                    self._w_in[i, d] = self._w_in_scale
+                # maps input values to reservoir
+                
+            self._w_in*=(2*np.random.randint(0,2,size=(self._n_dim,self._x_dim))-1)
+            
+        elif self._w_in_sparse and not self._w_in_ordered:
             self._w_in = np.zeros((self._n_dim, self._x_dim))
             for i in range(self._n_dim):
                 random_x_coord = np.random.choice(np.arange(self._x_dim))
                 self._w_in[i, random_x_coord] = np.random.uniform(
                     low=-self._w_in_scale,
                     high=self._w_in_scale)  # maps input values to reservoir
+                
+        elif self._w_in_sparse and self._w_in_ordered:
+            self._w_in = np.zeros((self._n_dim, self._x_dim))
+            dim_wise=np.array([int(self._n_dim/self._x_dim)]*self._x_dim)
+            dim_wise[:self._n_dim%self._x_dim]+=1
+            
+            s=0
+            
+            dim_wise_2 = dim_wise[:]
+            
+            for i in range(len(dim_wise_2)):
+                s+=dim_wise_2[i]
+                dim_wise[i]=s
+            
+            dim_wise=np.append(dim_wise,0)
+            
+            for d in range(self._x_dim):
+                for i in range(dim_wise[d-1],dim_wise[d]):
+                    
+                    self._w_in[i, d] = np.random.uniform(
+                        low=-self._w_in_scale,
+                        high=self._w_in_scale)  # maps input values to reservoir
         else:
             self._w_in = np.random.uniform(low=-self._w_in_scale,
                                           high=self._w_in_scale,
@@ -489,7 +545,8 @@ class ESN(_ESNCore):
         return np.tanh(self._w_in @ x + self._network @ r + self._bias)
 
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
-                      w_in_sparse=True, act_fct_flag='tanh_simple', bias_scale=0,
+                      w_in_sparse=True, w_in_ordered=True, w_in_constant=False,
+                      act_fct_flag='tanh_simple', bias_scale=0,
                       save_r=False, save_input=False, w_out_fit_flag="simple"):
         """ Synchronize, then train the reservoir
 
@@ -521,6 +578,8 @@ class ESN(_ESNCore):
         self._reg_param = reg_param
         self._w_in_scale = w_in_scale
         self._w_in_sparse = w_in_sparse
+        self._w_in_ordered = w_in_ordered
+        self._w_in_constant = w_in_constant
         self._x_dim = x_train.shape[1]
         self._create_w_in()
 

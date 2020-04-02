@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Measures &#8212; rescomp 0.1.0 documentation</title>
+    <title>Measures &#8212; rescomp 0.1.1 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="rescomp_esn.html" title="ESN"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.1.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -57,16 +57,19 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.demerge_time" title="rescomp.measures.demerge_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">demerge_time</span></code></a>(pred_time_series, …)</p></td>
 <td><p>Synonym for the divergence_time fct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.measures.divergence_time" title="rescomp.measures.divergence_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">divergence_time</span></code></a>(pred_time_series, …)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.measures.dimension" title="rescomp.measures.dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension</span></code></a>(time_series[, r_min, r_max, …])</p></td>
+<td><p>Calculates correlation dimension using the algorithm by Grassberger and Procaccia.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.divergence_time" title="rescomp.measures.divergence_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">divergence_time</span></code></a>(pred_time_series, …)</p></td>
 <td><p>Calculates how long it takes for measurement and prediction to diverge</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.nrmse" title="rescomp.measures.nrmse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nrmse</span></code></a>(pred_time_series, meas_time_series)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.measures.nrmse" title="rescomp.measures.nrmse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nrmse</span></code></a>(pred_time_series, meas_time_series)</p></td>
 <td><p>Calculates the NRME between two time series</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.measures.nrmse_over_time" title="rescomp.measures.nrmse_over_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nrmse_over_time</span></code></a>(pred_time_series, …)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.nrmse_over_time" title="rescomp.measures.nrmse_over_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nrmse_over_time</span></code></a>(pred_time_series, …)</p></td>
 <td><p>Calculates the NRME between to time series for each time step</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.measures.rmse" title="rescomp.measures.rmse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmse</span></code></a>(pred_time_series, meas_time_series[, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.measures.rmse" title="rescomp.measures.rmse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmse</span></code></a>(pred_time_series, meas_time_series[, …])</p></td>
 <td><p>Calculates the root mean squared error between two time series</p></td>
 </tr>
 </tbody>
@@ -75,6 +78,33 @@
 <dt id="rescomp.measures.demerge_time">
 <code class="sig-prename descclassname">rescomp.measures.</code><code class="sig-name descname">demerge_time</code><span class="sig-paren">(</span><em class="sig-param">pred_time_series</em>, <em class="sig-param">meas_time_series</em>, <em class="sig-param">epsilon</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.measures.demerge_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Synonym for the divergence_time fct.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rescomp.measures.dimension">
+<code class="sig-prename descclassname">rescomp.measures.</code><code class="sig-name descname">dimension</code><span class="sig-paren">(</span><em class="sig-param">time_series</em>, <em class="sig-param">r_min=1.5</em>, <em class="sig-param">r_max=5.0</em>, <em class="sig-param">nr_steps=2</em>, <em class="sig-param">plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.measures.dimension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates correlation dimension using
+the algorithm by Grassberger and Procaccia.</p>
+<p>First we calculate a sum over all points within a given radius, then
+average over all basis points and vary the radius
+(grassberger, procaccia).</p>
+<p>parameters depend on timesteps and the system itself!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_series</strong> (<em>np.ndarray</em>) – time series to calculate dimension of, shape (T, d)</p></li>
+<li><p><strong>r_min</strong> (<em>float</em>) – minimum radius</p></li>
+<li><p><strong>r_max</strong> (<em>float</em>) – maximum radius</p></li>
+<li><p><strong>nr_steps</strong> (<em>int</em>) – number of steps in radius, if r_min and r_max are chosen
+properly, then 2 is enough.</p></li>
+<li><p><strong>plot</strong> (<em>boolean</em>) – flag for plotting loglog plot</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns: dimension: slope of the log.log plot assumes:</dt><dd><p>N_r(radius) ~ radius**dimension</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -91,14 +121,14 @@ The distance measure is the supremum norm, NOT the euclidean one.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pred_time_series</strong> (<em>np.ndarray</em>) – predicted/simulated data, shape (T, d)</p></li>
 <li><p><strong>meas_time_series</strong> (<em>np.ndarray</em>) – observed/measured/real data, shape (T, d)</p></li>
-<li><p><strong>epsilon</strong> (<em>float</em>) – Distance threshold, above which the two time series
-count as diverged</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em><em> or </em><em>np.ndarray</em>) – Distance threshold, above which the two
+time series count as diverged. Either float or 1D-array with length d.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>divergence_time, the number of time steps for which</dt><dd><p>meas_time_series and pred_time_series are separated by less than
-than epsilon in each dimension.</p>
+epsilon in each dimension.</p>
 </dd>
 </dl>
 </p>
@@ -228,7 +258,7 @@ the meas_time_series.</p></li>
         <li class="right" >
           <a href="rescomp_esn.html" title="ESN"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">rescomp 0.1.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

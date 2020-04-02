@@ -364,48 +364,58 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
         sys_flag (str): The system to be simulated. Possible flags, their
             synonyms and corresponding possible kwargs are:
 
-            - 0, "mod_lorenz". Possible kwargs:
+            - "lorenz_63", "normal_lorenz", "lorenz": The normal, unmodified
+              Lorenz-63 system. Possible kwargs:
                 - sigma (float): 'sigma' parameter in the Lorenz 63 equations
                 - rho (float): 'rho' parameter in the Lorenz 63 equations
                 - b (float): 'b' parameter in the Lorenz 63 equations
-            - 1, "mod_lorenz_wrong". Possible kwargs:
-                - sigma (float): 'sigma' parameter in the Lorenz 63 equations
-                - rho (float): 'rho' parameter in the Lorenz 63 equations
-                - b (float): 'b' parameter in the Lorenz 63 equations
-            - 2, "lorenz_63", "normal_lorenz", "lorenz". Possible kwargs:
-                - sigma (float): 'sigma' parameter in the Lorenz 63 equations
-                - rho (float): 'rho' parameter in the Lorenz 63 equations
-                - b (float): 'b' parameter in the Lorenz 63 equations
-            - 3, "roessler". Possible kwargs:
+            - "roessler": The normal, unmodified Roessler system. Possible
+              kwargs:
                 - a (float): 'a' parameter in the Roessler equations
                 - b (float): 'b' parameter in the Roessler equations
                 - c (float): 'c' parameter in the Roessler equations
-            - 4, "lorenz_96". Possible kwargs:
+            - "mod_lorenz": Modified Lorenz system. Possible kwargs:
+                - sigma (float): 'sigma' parameter in the Lorenz 63 equations
+                - rho (float): 'rho' parameter in the Lorenz 63 equations
+                - b (float): 'b' parameter in the Lorenz 63 equations
+            - "mod_lorenz_wrong": Incorrectly modified Lorenz system, kept for
+              backward compatibility. Possible kwargs:
+                - sigma (float): 'sigma' parameter in the Lorenz 63 equations
+                - rho (float): 'rho' parameter in the Lorenz 63 equations
+                - b (float): 'b' parameter in the Lorenz 63 equations
+            - "lorenz_96": The d-dimensional Lorenz-96 System. Possible kwargs:
                 - force (float): force parameter in the Lorenz96 equations
-            - 5, "ueda". Possible kwargs:
-                - None
-            - 6, "chua". Possible kwargs:
-                - None
-            - 7, "complex_butterfly". Possible kwargs:
-                - None
-            - 8, "chen". Possible kwargs:
-                - None
-            - 9, "rucklidge". Possible kwargs:
-                - None
-            - 10, "rabinovich". Possible kwargs:
-                - None
-            - 11, "thomas". Possible kwargs:
-                - None
-            - 12, "roessler_sprott". Possible kwargs:
+            - "roessler_sprott". Identical to "roessler", uses the parameters
+              from Sprott as default. Possible kwargs:
                 - a (float): 'a' parameter in the Roessler equations
                 - b (float): 'b' parameter in the Roessler equations
                 - c (float): 'c' parameter in the Roessler equations
-            - 13, "kuramoto_sivashinsky". Possible kwargs:
-                - dimensions (int): nr. of dimensions of the system grid
-                - system_size (int): physical size of the system
+            - "kuramoto_sivashinsky". The d-dimensional Lorenz-96 System. Note
+              that, due to the way the KS system is simulated, the
+              "starting_point" parameter, does not have any effect! The system's
+              dimension is instead set by the following possible kwargs:
+                - dimensions (int): nr. of dimensions, d, of the system grid.
+                  The output will have shape (T, d).
+                - system_size (int): 'physical' size of the system
+            - "ueda". Possible kwargs:
+                - None
+            - "chua". Possible kwargs:
+                - None
+            - "complex_butterfly". Possible kwargs:
+                - None
+            - "chen". Possible kwargs:
+                - None
+            - "rucklidge". Possible kwargs:
+                - None
+            - "rabinovich". Possible kwargs:
+                - None
+            - "thomas". Possible kwargs:
+                - None
+
         dt (float): Size of time steps
         time_steps (int): Number of time steps to simulate
-        starting_point (np.ndarray): Starting point of the trajectory
+        starting_point (np.ndarray): Starting point of the trajectory. Typically
+            3-dimensional unless otherwise specified.
         **kwargs (): Further Arguments passed to the simulating function,
             usually not needed. See above for a list of possible arguments
 

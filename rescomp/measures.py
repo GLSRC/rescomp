@@ -153,10 +153,14 @@ def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
     tree = scipy.spatial.cKDTree(time_series)
     N_r = np.array(tree.count_neighbors(tree, radii), dtype=float) / nr_points
     N_r = np.vstack((radii, N_r))
-
-    # linear fit based on loglog scale, to get slope/dimension:
-    slope, intercept = np.polyfit(np.log(N_r[0]), np.log(N_r[1]), deg=1)[0:2]
-    dimension = slope
+    
+    if nr_steps > 2:
+        # linear fit based on loglog scale, to get slope/dimension:
+        slope, intercept = np.polyfit(np.log(N_r[0]), np.log(N_r[1]), deg=1)[0:2]
+        dimension = slope
+    elif nr_steps is 2:
+        slope = (N_r[1,1]-N_r[1,0])/(N_r[0,1]-N_r[0,0])
+        dimension = slope
 
     ###plotting
     if plot:
@@ -165,6 +169,7 @@ def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
         plt.show()
     return dimension
 
+    
 
 # def return_map(self, axis=2):
 #     """

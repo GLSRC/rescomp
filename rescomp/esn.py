@@ -266,7 +266,7 @@ class ESN(_ESNCore):
         self._act_fct_flag_synonyms = utilities._SynonymDict()
         self._act_fct_flag_synonyms.add_synonyms(0, ["tanh_simple", "simple"])
         self._act_fct_flag_synonyms.add_synonyms(1, "tanh_bias")
-        self._act_fct_flag_synonyms.add_synonyms(2, "tanh_half_squared")
+        self._act_fct_flag_synonyms.add_synonyms(2, "tanh_squared")
 
         # Dictionary defining synonyms for the different ways to create the
         # network. Internally the corresponding integers are used
@@ -512,6 +512,8 @@ class ESN(_ESNCore):
             self._act_fct = self._act_fct_tanh_simple
         elif self._act_fct_flag == 1:
             self._act_fct = self._act_fct_tanh_bias
+        elif self._act_fct_flag == 2:
+            self._act_fct = self._act_fct_tanh_squared
         else:
             raise Exception('self._act_fct_flag %s does not have a activation '
                             'function implemented!' % str(self._act_fct_flag))
@@ -543,6 +545,21 @@ class ESN(_ESNCore):
         """
 
         return np.tanh(self._w_in @ x + self._network @ r + self._bias)
+    
+    def _act_fct_tanh_squared(self, x, r):
+        """ Activation function of the elementwise np.tanh() squared with added
+            bias. Only recommended in mix with other activation functions.
+
+        Args:
+            x (np.ndarray): d-dim input
+            r (np.ndarray): n-dim network states
+
+        Returns:
+            np.ndarray n-dim
+
+        """
+
+        return np.tanh(self._w_in @ x + self._network @ r + self._bias)**2
 
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
                       w_in_sparse=True, w_in_ordered=True, w_in_constant=False,

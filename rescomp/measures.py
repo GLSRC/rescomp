@@ -159,7 +159,8 @@ def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
         slope, intercept = np.polyfit(np.log(N_r[0]), np.log(N_r[1]), deg=1)[0:2]
         dimension = slope
     elif nr_steps is 2:
-        slope = (N_r[1,1]-N_r[1,0])/(N_r[0,1]-N_r[0,0])
+        slope = (np.log(N_r[1,1])-np.log(N_r[1,0]))/(np.log(N_r[0,1])-
+                                                        np.log(N_r[0,0]))
         dimension = slope
 
     ###plotting

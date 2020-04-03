@@ -238,7 +238,9 @@ class ESN(_ESNCore):
         self._bias = None
         self._act_fct_flag = None
         self._act_fct = self._act_fct
-
+        self._normal_tanh_nodes = None
+        self._squared_tanh_nodes = None
+        
         # train() assigns values to:
         self._x_dim = None  # Typically called d
         self._reg_param = self._reg_param
@@ -267,6 +269,7 @@ class ESN(_ESNCore):
         self._act_fct_flag_synonyms.add_synonyms(0, ["tanh_simple", "simple"])
         self._act_fct_flag_synonyms.add_synonyms(1, "tanh_bias")
         self._act_fct_flag_synonyms.add_synonyms(2, "tanh_squared")
+        self._act_fct_flag_synonyms.add_synonyms(3, ["mixed", "mix"])
 
         # Dictionary defining synonyms for the different ways to create the
         # network. Internally the corresponding integers are used
@@ -488,7 +491,7 @@ class ESN(_ESNCore):
     #     """
     #     raise Exception("Not yet implemented")
 
-    def _set_activation_function(self, act_fct_flag, bias_scale=0):
+    def _set_activation_function(self, act_fct_flag, bias_scale=0, mix_ratio=0.5):
         """ Set the activation function corresponding to the act_fct_flag
 
         Args:
@@ -514,6 +517,9 @@ class ESN(_ESNCore):
             self._act_fct = self._act_fct_tanh_bias
         elif self._act_fct_flag == 2:
             self._act_fct = self._act_fct_tanh_squared
+        elif self._act_fct_flag == 3:
+            self.setup_mix(mix_ratio)
+            self._act_fct = self._act_fct_mixed
         else:
             raise Exception('self._act_fct_flag %s does not have a activation '
                             'function implemented!' % str(self._act_fct_flag))
@@ -548,7 +554,7 @@ class ESN(_ESNCore):
     
     def _act_fct_tanh_squared(self, x, r):
         """ Activation function of the elementwise np.tanh() squared with added
-            bias. Only recommended in mix with other activation functions.
+            bias.
 
         Args:
             x (np.ndarray): d-dim input
@@ -561,9 +567,42 @@ class ESN(_ESNCore):
 
         return np.tanh(self._w_in @ x + self._network @ r + self._bias)**2
 
+    def _act_fct_mixed(self, x, r):
+        """ Different activation functions for different nodes
+
+        Args:
+            x (np.ndarray): d-dim input
+            r (np.ndarray): n-dim network states
+
+        Returns:
+            np.ndarray n-dim
+
+        """
+        new_r = np.zeros(self._n_dim)
+        
+        new_r[self._normal_tanh_nodes] = self._act_fct_tanh_bias(x, r)[
+                                         self._normal_tanh_nodes]
+        
+        new_r[self._squared_tanh_nodes] = self._act_fct_tanh_squared(x, r)[
+                                          self._squared_tanh_nodes]
+        
+        return new_r
+    
+    def setup_mix(self, mix_ratio):
+        self._normal_tanh_nodes = []
+        self._squared_tanh_nodes = []
+        
+        
+        for d in range(self._x_dim):
+            dimwise_nodes = np.nonzero(self._w_in[:,d])[0]
+            self._normal_tanh_nodes.extend(
+                dimwise_nodes[:round(len(dimwise_nodes)*mix_ratio)])
+            self._squared_tanh_nodes.extend(
+                dimwise_nodes[round(len(dimwise_nodes)*mix_ratio):])
+
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
                       w_in_sparse=True, w_in_ordered=True, w_in_constant=False,
-                      act_fct_flag='tanh_simple', bias_scale=0,
+                      act_fct_flag='tanh_simple', bias_scale=0, mix_ratio=0.5,
                       save_r=False, save_input=False, w_out_fit_flag="simple"):
         """ Synchronize, then train the reservoir
 
@@ -589,8 +628,10 @@ class ESN(_ESNCore):
 
                 - "tanh_simple", "simple"
                 - "tanh_bias"
+                -
             bias_scale (float): Bias to be used in some activation functions
-                (currently only used in :func:`~esn.ESN._act_fct_tanh_bias`)
+            mix_ratio (float): Ratio of normal tanh vs squared tanh activation
+                functions if act_fct_flag "mixed" is chosen
             save_r (bool): If true, saves r(t) internally
             save_input (bool): If true, saves the input data internally
             w_out_fit_flag (str): Type of nonlinear transformation applied to

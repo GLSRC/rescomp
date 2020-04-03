@@ -143,9 +143,6 @@ def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
     Returns: dimension: slope of the log.log plot assumes:
         N_r(radius) ~ radius**dimension
     """
-    # TODO: write method to automatically find good parameters of r_min and
-    #       r_max for a given system. This method will probably be slow and 
-    #       should not be called everytime dimension is called. 
     
     nr_points = float(time_series.shape[0])
     radii = np.logspace(np.log10(r_min), np.log10(r_max), nr_steps)

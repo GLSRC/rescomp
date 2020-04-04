@@ -229,7 +229,6 @@ class ESN(_ESNCore):
         # _create_w_in() which is called from train() assigns values to:
         self._w_in_sparse = None
         self._w_in_ordered = None
-        self._w_in_constant = None
         self._w_in_scale = None
         self._w_in = self._w_in
 
@@ -292,39 +291,8 @@ class ESN(_ESNCore):
 
         """
         self.logger.debug("Create w_in")
-        if self._w_in_constant and not self._w_in_ordered:
-            self._w_in = np.zeros((self._n_dim, self._x_dim))
-            for i in range(self._n_dim):
-                random_x_coord = np.random.choice(np.arange(self._x_dim))
-                self._w_in[i, random_x_coord] = self._w_in_scale
-                # maps input values to reservoir
-                
-            self._w_in*=(2*np.random.randint(0,2,size=(self._n_dim,self._x_dim))-1)
-            
-        elif self._w_in_constant and self._w_in_ordered:
-            self._w_in = np.zeros((self._n_dim, self._x_dim))
-            dim_wise=np.array([int(self._n_dim/self._x_dim)]*self._x_dim)
-            dim_wise[:self._n_dim%self._x_dim]+=1
-            
-            s=0
-            
-            dim_wise_2 = dim_wise[:]
-            
-            for i in range(len(dim_wise_2)):
-                s+=dim_wise_2[i]
-                dim_wise[i]=s
-            
-            dim_wise=np.append(dim_wise,0)
-            
-            for d in range(self._x_dim):
-                for i in range(dim_wise[d-1],dim_wise[d]):
-                    
-                    self._w_in[i, d] = self._w_in_scale
-                # maps input values to reservoir
-                
-            self._w_in*=(2*np.random.randint(0,2,size=(self._n_dim,self._x_dim))-1)
-            
-        elif self._w_in_sparse and not self._w_in_ordered:
+   
+        if self._w_in_sparse and not self._w_in_ordered:
             self._w_in = np.zeros((self._n_dim, self._x_dim))
             for i in range(self._n_dim):
                 random_x_coord = np.random.choice(np.arange(self._x_dim))
@@ -601,7 +569,7 @@ class ESN(_ESNCore):
                 dimwise_nodes[round(len(dimwise_nodes)*mix_ratio):])
 
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
-                      w_in_sparse=True, w_in_ordered=True, w_in_constant=False,
+                      w_in_sparse=True, w_in_ordered=True,
                       act_fct_flag='tanh_simple', bias_scale=0, mix_ratio=0.5,
                       save_r=False, save_input=False, w_out_fit_flag="simple"):
         """ Synchronize, then train the reservoir
@@ -619,9 +587,6 @@ class ESN(_ESNCore):
             w_in_orderd (bool): If true and w_in_sparse is true, creates w_in 
                 such that elements are ordered by dimension and number of 
                 elements for each dimension is equal (as far as possible)
-            w_in_constant (bool):If true and w_in_sparse is true, creates w_in 
-                such that nonzero elements are equal to w_in_scale with a 
-                random sign   
             act_fct_flag (int_or_str): Specifies the activation function to be
                 used during training (and prediction). Possible flags and their
                 synonyms are:
@@ -643,7 +608,6 @@ class ESN(_ESNCore):
         self._w_in_scale = w_in_scale
         self._w_in_sparse = w_in_sparse
         self._w_in_ordered = w_in_ordered
-        self._w_in_constant = w_in_constant
         self._x_dim = x_train.shape[1]
         self._create_w_in()
 

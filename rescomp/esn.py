@@ -569,7 +569,7 @@ class ESN(_ESNCore):
                 dimwise_nodes[round(len(dimwise_nodes)*mix_ratio):])
 
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
-                      w_in_sparse=True, w_in_ordered=True,
+                      w_in_sparse=True, w_in_ordered=False,
                       act_fct_flag='tanh_simple', bias_scale=0, mix_ratio=0.5,
                       save_r=False, save_input=False, w_out_fit_flag="simple"):
         """ Synchronize, then train the reservoir

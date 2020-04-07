@@ -116,7 +116,7 @@ def divergence_time(pred_time_series, meas_time_series, epsilon):
     delta = np.abs(meas - pred)
     
     div_bool = (delta > epsilon).any(axis=1)
-    div_time = np.argmax(np.append(div_bool,True))+1
+    div_time = np.argmax(np.append(div_bool,True))
 
     return div_time
 

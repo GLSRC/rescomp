@@ -228,6 +228,7 @@ class ESN(_ESNCore):
 
         # _create_w_in() which is called from train() assigns values to:
         self._w_in_sparse = None
+        self._w_in_ordered = None
         self._w_in_scale = None
         self._w_in = self._w_in
 
@@ -236,7 +237,9 @@ class ESN(_ESNCore):
         self._bias = None
         self._act_fct_flag = None
         self._act_fct = self._act_fct
-
+        self._normal_tanh_nodes = None
+        self._squared_tanh_nodes = None
+        
         # train() assigns values to:
         self._x_dim = None  # Typically called d
         self._reg_param = self._reg_param
@@ -264,6 +267,8 @@ class ESN(_ESNCore):
         self._act_fct_flag_synonyms = utilities._SynonymDict()
         self._act_fct_flag_synonyms.add_synonyms(0, ["tanh_simple", "simple"])
         self._act_fct_flag_synonyms.add_synonyms(1, "tanh_bias")
+        self._act_fct_flag_synonyms.add_synonyms(2, "tanh_squared")
+        self._act_fct_flag_synonyms.add_synonyms(3, ["mixed", "mix"])
 
         # Dictionary defining synonyms for the different ways to create the
         # network. Internally the corresponding integers are used
@@ -286,14 +291,36 @@ class ESN(_ESNCore):
 
         """
         self.logger.debug("Create w_in")
-
-        if self._w_in_sparse:
+   
+        if self._w_in_sparse and not self._w_in_ordered:
             self._w_in = np.zeros((self._n_dim, self._x_dim))
             for i in range(self._n_dim):
                 random_x_coord = np.random.choice(np.arange(self._x_dim))
                 self._w_in[i, random_x_coord] = np.random.uniform(
                     low=-self._w_in_scale,
                     high=self._w_in_scale)  # maps input values to reservoir
+                
+        elif self._w_in_sparse and self._w_in_ordered:
+            self._w_in = np.zeros((self._n_dim, self._x_dim))
+            dim_wise=np.array([int(self._n_dim/self._x_dim)]*self._x_dim)
+            dim_wise[:self._n_dim%self._x_dim]+=1
+            
+            s=0
+            
+            dim_wise_2 = dim_wise[:]
+            
+            for i in range(len(dim_wise_2)):
+                s+=dim_wise_2[i]
+                dim_wise[i]=s
+            
+            dim_wise=np.append(dim_wise,0)
+            
+            for d in range(self._x_dim):
+                for i in range(dim_wise[d-1],dim_wise[d]):
+                    
+                    self._w_in[i, d] = np.random.uniform(
+                        low=-self._w_in_scale,
+                        high=self._w_in_scale)  # maps input values to reservoir
         else:
             self._w_in = np.random.uniform(low=-self._w_in_scale,
                                           high=self._w_in_scale,
@@ -432,7 +459,7 @@ class ESN(_ESNCore):
     #     """
     #     raise Exception("Not yet implemented")
 
-    def _set_activation_function(self, act_fct_flag, bias_scale=0):
+    def _set_activation_function(self, act_fct_flag, bias_scale=0, mix_ratio=0.5):
         """ Set the activation function corresponding to the act_fct_flag
 
         Args:
@@ -456,6 +483,11 @@ class ESN(_ESNCore):
             self._act_fct = self._act_fct_tanh_simple
         elif self._act_fct_flag == 1:
             self._act_fct = self._act_fct_tanh_bias
+        elif self._act_fct_flag == 2:
+            self._act_fct = self._act_fct_tanh_squared
+        elif self._act_fct_flag == 3:
+            self.setup_mix(mix_ratio)
+            self._act_fct = self._act_fct_mixed
         else:
             raise Exception('self._act_fct_flag %s does not have a activation '
                             'function implemented!' % str(self._act_fct_flag))
@@ -487,9 +519,58 @@ class ESN(_ESNCore):
         """
 
         return np.tanh(self._w_in @ x + self._network @ r + self._bias)
+    
+    def _act_fct_tanh_squared(self, x, r):
+        """ Activation function of the elementwise np.tanh() squared with added
+            bias.
+
+        Args:
+            x (np.ndarray): d-dim input
+            r (np.ndarray): n-dim network states
+
+        Returns:
+            np.ndarray n-dim
+
+        """
+
+        return np.tanh(self._w_in @ x + self._network @ r + self._bias)**2
+
+    def _act_fct_mixed(self, x, r):
+        """ Different activation functions for different nodes
+
+        Args:
+            x (np.ndarray): d-dim input
+            r (np.ndarray): n-dim network states
+
+        Returns:
+            np.ndarray n-dim
+
+        """
+        new_r = np.zeros(self._n_dim)
+        
+        new_r[self._normal_tanh_nodes] = self._act_fct_tanh_bias(x, r)[
+                                         self._normal_tanh_nodes]
+        
+        new_r[self._squared_tanh_nodes] = self._act_fct_tanh_squared(x, r)[
+                                          self._squared_tanh_nodes]
+        
+        return new_r
+    
+    def setup_mix(self, mix_ratio):
+        self._normal_tanh_nodes = []
+        self._squared_tanh_nodes = []
+        
+        
+        for d in range(self._x_dim):
+            dimwise_nodes = np.nonzero(self._w_in[:,d])[0]
+            self._normal_tanh_nodes.extend(
+                dimwise_nodes[:round(len(dimwise_nodes)*mix_ratio)])
+            self._squared_tanh_nodes.extend(
+                dimwise_nodes[round(len(dimwise_nodes)*mix_ratio):])
 
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
-                      w_in_sparse=True, act_fct_flag='tanh_simple', bias_scale=0,
+                      w_in_sparse=True, w_in_ordered=False,
+                      act_fct_flag='tanh_simple', bias_scale=0, mix_ratio=0.5,
                       save_r=False, save_input=False, w_out_fit_flag="simple"):
         """ Synchronize, then train the reservoir
 
@@ -503,14 +584,19 @@ class ESN(_ESNCore):
                 elements
             w_in_sparse (bool): If true, creates w_in such that one element in
                 each row is non-zero (Lu,Hunt, Ott 2018)
+            w_in_orderd (bool): If true and w_in_sparse is true, creates w_in 
+                such that elements are ordered by dimension and number of 
+                elements for each dimension is equal (as far as possible)
             act_fct_flag (int_or_str): Specifies the activation function to be
                 used during training (and prediction). Possible flags and their
                 synonyms are:
 
                 - "tanh_simple", "simple"
                 - "tanh_bias"
+                -
             bias_scale (float): Bias to be used in some activation functions
-                (currently only used in :func:`~esn.ESN._act_fct_tanh_bias`)
+            mix_ratio (float): Ratio of normal tanh vs squared tanh activation
+                functions if act_fct_flag "mixed" is chosen
             save_r (bool): If true, saves r(t) internally
             save_input (bool): If true, saves the input data internally
             w_out_fit_flag (str): Type of nonlinear transformation applied to
@@ -521,6 +607,7 @@ class ESN(_ESNCore):
         self._reg_param = reg_param
         self._w_in_scale = w_in_scale
         self._w_in_sparse = w_in_sparse
+        self._w_in_ordered = w_in_ordered
         self._x_dim = x_train.shape[1]
         self._create_w_in()
 

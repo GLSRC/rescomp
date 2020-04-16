@@ -116,7 +116,7 @@ def divergence_time(pred_time_series, meas_time_series, epsilon):
     delta = np.abs(meas - pred)
     
     div_bool = (delta > epsilon).any(axis=1)
-    div_time = np.argmax(np.append(div_bool,True))+1
+    div_time = np.argmax(np.append(div_bool,True))
 
     return div_time
 
@@ -143,9 +143,6 @@ def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
     Returns: dimension: slope of the log.log plot assumes:
         N_r(radius) ~ radius**dimension
     """
-    # TODO: write method to automatically find good parameters of r_min and
-    #       r_max for a given system. This method will probably be slow and 
-    #       should not be called everytime dimension is called. 
     
     nr_points = float(time_series.shape[0])
     radii = np.logspace(np.log10(r_min), np.log10(r_max), nr_steps)
@@ -153,10 +150,15 @@ def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
     tree = scipy.spatial.cKDTree(time_series)
     N_r = np.array(tree.count_neighbors(tree, radii), dtype=float) / nr_points
     N_r = np.vstack((radii, N_r))
-
-    # linear fit based on loglog scale, to get slope/dimension:
-    slope, intercept = np.polyfit(np.log(N_r[0]), np.log(N_r[1]), deg=1)[0:2]
-    dimension = slope
+    
+    if nr_steps > 2:
+        # linear fit based on loglog scale, to get slope/dimension:
+        slope, intercept = np.polyfit(np.log(N_r[0]), np.log(N_r[1]), deg=1)[0:2]
+        dimension = slope
+    elif nr_steps is 2:
+        slope = (np.log(N_r[1,1])-np.log(N_r[1,0]))/(np.log(N_r[0,1])-
+                                                        np.log(N_r[0,0]))
+        dimension = slope
 
     ###plotting
     if plot:
@@ -165,6 +167,122 @@ def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
         plt.show()
     return dimension
 
+def dimension_parameters(time_series, nr_steps=100, literature_value=None,
+                         plot=False, r_minmin=None,r_maxmax=None, 
+                         shortness_weight=0.5, literature_weight=1.):
+    """ Estimates parameters r_min and r_max for calculation of correlation
+    dimension using the algorithm by Grassberger and Procaccia and uses them 
+    to calculate it.
+     
+    This experimental function performs a simple grid search on r_min and r_max
+    in the intervall given by r_minmin, r_maxmax and nr_steps. The performance 
+    of the parameters is measured by a combination of NRMSE, a penalty for small 
+    intervalls relative to given r_minmin and r_maxmax and a quadratic penalty 
+    for the difference from the literature value if given.
+    
+    For calculating the dimension of a high number of similar time_series in a 
+    row it is advisable to use this function only once to get the parameters 
+    and then use the function dimension with them in the subsequent computations. 
+    
+    Might fail for short time_series or unreasonable choices of parameters. 
+    It is recommended to use the plot option to double check the plausibility 
+    of the results.
+
+    Args:
+        time_series (np.ndarray): time series to calculate dimension of, shape (T, d)
+        r_minmin (float): minimum radius in grid search
+        r_maxmax (float): maximum radius in grid search
+        nr_steps (int): number of steps in grid search
+        plot (boolean): flag for plotting loglog plot
+
+     Returns:
+            tuple: 3-element tuple containing:
+
+            - **best_r_min** (*float*): Estimation for r_min
+            - **best_r_max** (*float*): Estimation for r_max
+            - **dimension** (*float*): Estimation for dimension using 
+              the parameters best_r_min and best_r_max
+    """
+        
+    if r_maxmax is None:
+        expansion=[]
+        for d in range(time_series.shape[1]):
+            expansion.append(np.max(time_series[:,d]-np.min(time_series[:,d])))
+        
+        r_maxmax=np.max(expansion)
+    
+    if r_minmin is None:
+        r_minmin=0.001*r_maxmax
+        
+    literature_cost = 0
+    
+    nr_points = float(time_series.shape[0])
+    radii = np.logspace(np.log10(r_minmin), np.log10(r_maxmax), nr_steps)
+
+    tree = scipy.spatial.cKDTree(time_series)
+    N_r = np.array(tree.count_neighbors(tree, radii), dtype=float) / nr_points
+    N_r = np.vstack((radii, N_r))
+    
+    loss=None
+    
+    for start_index in range(nr_steps-1):
+        for end_index in range(start_index+1,nr_steps):
+            #print(str(start_index)+', '+ str(end_index))
+            current_N_r=N_r[:,start_index:end_index]
+            current_r_min=radii[start_index]
+            current_r_max=radii[end_index]
+    
+            # linear fit based on loglog scale, to get slope/dimension:
+            slope, intercept = np.polyfit(np.log(current_N_r[0]), 
+                                          np.log(current_N_r[1]), deg=1)[0:2]
+            
+            dimension = slope
+            
+            estimated_line = intercept + slope*np.log(current_N_r[0])
+            error = nrmse(np.log(current_N_r[1]),estimated_line)
+            shortness_cost = nr_steps/(end_index-start_index)**3
+            
+            if literature_value is not None:
+                literature_cost = np.sqrt(literature_value-dimension)
+            
+                
+            new_loss = error + shortness_weight*shortness_cost + \
+                        literature_weight*literature_cost*5.
+            
+            if loss is None:
+                
+                loss = new_loss
+                best_r_min = current_r_min
+                best_r_max = current_r_max
+                
+                best_slope = slope
+                best_intercept = intercept
+                
+            elif new_loss < loss:
+                loss = new_loss
+                
+                best_r_min = current_r_min
+                best_r_max = current_r_max
+                
+                best_slope = slope
+                best_intercept = intercept
+                
+    dimension = best_slope
+            
+
+    ###plotting
+    if plot:
+        
+        plt.loglog(N_r[0], N_r[1], 'x', basex=10., basey=10.,label='data')
+        plt.loglog(N_r[0], best_intercept + best_slope*N_r[1],
+                 label='fit: r_min ='+str(round(best_r_min,3))+', r_max = '+
+                 str(round(best_r_max,3)))
+        plt.axvline(x=best_r_min)
+        plt.axvline(x=best_r_max)
+        plt.title('loglog plot of the N_r(radius), slope/dim = ' + str(dimension))
+        plt.legend()
+        plt.show()
+    return best_r_min, best_r_max, dimension
 
 # def return_map(self, axis=2):
 #     """

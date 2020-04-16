@@ -9,5 +9,9 @@ build/
 dist/
 rescomp.egg-info/
 
+# Compiled doc files
+doc/_build/
+doc/_static/
+
 # IDE specific files
 .idea/

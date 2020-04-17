@@ -48,14 +48,14 @@ def _roessler_sprott(x, a=0.2, b=0.2, c=5.7):
         raise Exception('check shape of x, should have 3 components')
 
 
-def _normal_lorenz(x, sigma=10, rho=28, b=8/3):
+def _normal_lorenz(x, sigma=10, rho=28, beta=8/3):
     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
 
     Args:
         x (np.ndarray): (x,y,z) coordinates
         sigma (float): 'sigma' parameter in the Lorenz 63 equations
         rho (float): 'rho' parameter in the Lorenz 63 equations
-        b (float): 'b' parameter in the Lorenz 63 equations
+        beta (float): 'beta' parameter in the Lorenz 63 equations
 
     Returns:
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
@@ -65,12 +65,12 @@ def _normal_lorenz(x, sigma=10, rho=28, b=8/3):
     if x.shape == (3,):
         return np.array([sigma * (x[1] - x[0]),
                          x[0] * (rho - x[2]) - x[1],
-                         x[0] * x[1] - b * x[2]])
+                         x[0] * x[1] - beta * x[2]])
     else:
         raise Exception('check shape of x, should have 3 components')
 
 
-def _mod_lorenz(x, sigma=10, rho=28, b=8/3):
+def _mod_lorenz(x, sigma=10, rho=28, beta=8/3):
     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
 
     with dz/dt += x(t) to break symmetry
@@ -79,7 +79,7 @@ def _mod_lorenz(x, sigma=10, rho=28, b=8/3):
         x (np.ndarray): (x,y,z) coordinates
         sigma (float): 'sigma' parameter in the Lorenz 63 equations
         rho (float): 'rho' parameter in the Lorenz 63 equations
-        b (float): 'b' parameter in the Lorenz 63 equations
+        beta (float): 'beta' parameter in the Lorenz 63 equations
 
     Returns:
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
@@ -92,12 +92,12 @@ def _mod_lorenz(x, sigma=10, rho=28, b=8/3):
     if x.shape == (3,):
         return np.array([sigma * (x[1] - x[0]),
                          x[0] * (rho - x[2]) - x[1],
-                         x[0] * x[1] - b * x[2] + x[0]])
+                         x[0] * x[1] - beta * x[2] + x[0]])
     else:
         raise Exception('check shape of x, should have 3 components')
 
 
-def _mod_lorenz_wrong(x, sigma=10, rho=28, b=8/3):
+def _mod_lorenz_wrong(x, sigma=10, rho=28, beta=8 / 3):
     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
 
     with dz/dt += x(t) to break symmetry
@@ -106,7 +106,7 @@ def _mod_lorenz_wrong(x, sigma=10, rho=28, b=8/3):
         x (np.ndarray): (x,y,z) coordinates
         sigma (float): 'sigma' parameter in the Lorenz 63 equations
         rho (float): 'rho' parameter in the Lorenz 63 equations
-        b (float): 'b' parameter in the Lorenz 63 equations
+        beta (float): 'beta' parameter in the Lorenz 63 equations
 
     Returns:
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
@@ -116,7 +116,7 @@ def _mod_lorenz_wrong(x, sigma=10, rho=28, b=8/3):
     if x.shape == (3,):
         return np.array([sigma * (x[1] - x[0]),
                          x[0] * (rho - x[2]) - x[1],
-                         x[0] * x[1] - b * x[2]] + x[0])
+                         x[0] * x[1] - beta * x[2]] + x[0])
     else:
         raise Exception('check shape of x, should have 3 components')
 
@@ -337,6 +337,7 @@ def _runge_kutta(f, dt, y=np.array([2.2, -3.5, 4.3])):
     k4 = dt * f(y + k3)
     return y + 1. / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
 
+
 # If you add/change a flag here, please also change it in the
 # simulate_trajectory docstring
 _sys_flag_synonyms = utilities._SynonymDict()
@@ -368,7 +369,7 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
               Lorenz-63 system. Possible kwargs:
                 - sigma (float): 'sigma' parameter in the Lorenz 63 equations
                 - rho (float): 'rho' parameter in the Lorenz 63 equations
-                - b (float): 'b' parameter in the Lorenz 63 equations
+                - beta (float): 'beta' parameter in the Lorenz 63 equations
             - "roessler": The normal, unmodified Roessler system. Possible
               kwargs:
                 - a (float): 'a' parameter in the Roessler equations
@@ -377,12 +378,12 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
             - "mod_lorenz": Modified Lorenz system. Possible kwargs:
                 - sigma (float): 'sigma' parameter in the Lorenz 63 equations
                 - rho (float): 'rho' parameter in the Lorenz 63 equations
-                - b (float): 'b' parameter in the Lorenz 63 equations
+                - beta (float): 'beta' parameter in the Lorenz 63 equations
             - "mod_lorenz_wrong": Incorrectly modified Lorenz system, kept for
               backward compatibility. Possible kwargs:
                 - sigma (float): 'sigma' parameter in the Lorenz 63 equations
                 - rho (float): 'rho' parameter in the Lorenz 63 equations
-                - b (float): 'b' parameter in the Lorenz 63 equations
+                - beta (float): 'beta' parameter in the Lorenz 63 equations
             - "lorenz_96": The d-dimensional Lorenz-96 System. Possible kwargs:
                 - force (float): force parameter in the Lorenz96 equations
             - "roessler_sprott". Identical to "roessler", uses the parameters

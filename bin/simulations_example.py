@@ -29,13 +29,13 @@ plt.show()
 # --- Simulate the Lorenz 63 System with parameters different than the default
 sigma=20  # default: sigma=10
 rho=14  # default: rho=28
-b=8/3  # default: b=8/3
+beta=8/3  # default: b=8/3
 # For more information on the possible parameters, please see the HTML
 # documentation on the simulate_trajectory function
 
 sim_data = rescomp.simulate_trajectory(
     sys_flag='lorenz', dt=2e-2, time_steps=simulation_time_steps,
-    starting_point=starting_point, sigma=sigma, rho=rho, b=b)
+    starting_point=starting_point, sigma=sigma, rho=rho, beta=beta)
 
 
 # --- Plot the Lorenz 63 with different parameters

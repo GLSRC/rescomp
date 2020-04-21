@@ -13,7 +13,7 @@ Table of Contents
     Welcome <self>
 
 .. toctree::
-    :maxdepth: 4
+    :maxdepth: 2
     :includehidden:
 
     .. _installation:
@@ -24,12 +24,3 @@ Table of Contents
     For Contributors <for_contributors.md>
     CHANGELOG <changelog.rst>
 
-
-Rescomp Modules
----------------------
-
-.. autosummary::
-    rescomp.esn
-    rescomp.measures
-    rescomp.utilities
-    rescomp.simulations

@@ -2,7 +2,7 @@
 
 This is the changelog for the rescomp package
 
-### rescomp 0.1.3 - Current Master
+### rescomp 0.1.3 - Current Master and Development Branch
 
 * Rewrote the documentation for gitlab pages
 * Rewrote the examples as jupyter files for integration in the new documenation

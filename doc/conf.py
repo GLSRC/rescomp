@@ -27,7 +27,7 @@ author = 'Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk'
 
 # The full version, including alpha/beta/rc tags
 release = __version__
-
+version = __version__
 
 # -- General configuration ---------------------------------------------------
 
@@ -40,6 +40,7 @@ master_doc = 'index'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
+    'sphinx.ext.autosectionlabel',
     'm2r',
     'autodocsumm',
     # 'sphinx_automodapi.automodapi',
@@ -47,6 +48,8 @@ extensions = [
     'sphinx.ext.autosummary',
     # 'sphinx_autopackagesummary',
     'sphinx.ext.inheritance_diagram',
+    'nbsphinx',
+    'nbsphinx_link',
 ]
 
 autodoc_default_options = {
@@ -63,6 +66,11 @@ autodoc_default_options = {
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
+# Add any paths that contain custom static files (such as style sheets) here,
+# relative to this directory. They are copied after the builtin static files,
+# so a file named "default.css" will overwrite the builtin "default.css".
+html_static_path = ['_static']
+
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
@@ -71,30 +79,37 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # -- Options for HTML output -------------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-
-
-html_theme = "classic"
-html_theme_options = {
-    # Toc options
-    'stickysidebar': True,
-}
-
-# html_theme = "sphinx_rtd_theme"
-# extensions.append("sphinx_rtd_theme")
+# html_theme = "classic"
 # html_theme_options = {
-#     #  Toc options
-#     'collapse_navigation': True,
-#     'includehidden': True,
+#     'body_min_width': 1200,
+#     # Toc options
+#     'stickysidebar': True,
 # }
+
+
+extensions.append("sphinx_rtd_theme")
+html_theme = "sphinx_rtd_theme"
+html_theme_options = {
+    'display_version': True,
+    #  Toc options
+    'collapse_navigation': False,
+    'includehidden': True,
+}
+# Override default css to get a larger page width for ReadTheDoc build. See:
+# https://stackoverflow.com/questions/23211695/modifying-content-width-of-the-sphinx-theme-read-the-docs
+html_css_files = [
+    'theme_overrides.css',
+]
 
 # import wild_sphinx_theme
 # html_theme = 'wild'
 # html_theme_path = [wild_sphinx_theme.get_theme_dir()]
 
+# html_title = project + ' version ' + release
 
-html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'searchbox.html'] }
+html_show_sourcelink = False
+
+# html_sidebars = {'**': ['globaltoc.html', 'relations.html', 'searchbox.html']}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

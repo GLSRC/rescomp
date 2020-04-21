@@ -1,36 +1,35 @@
-.. rescomp documentation master file, created by
-   sphinx-quickstart on Mon Mar 23 12:36:28 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Rescomp Documentation
 =====================
 
-Welcome to the Rescomp Documentation!
-
-For Documentation on the state/usage/idea of this package, please consult the README section.
-
-For Documentation of the code itself, visit the individual module pages.
+.. mdinclude:: welcome.rst
 
 Table of Contents
 ---------------------
-.. toctree::
-   :maxdepth: 2
-   :includehidden:
 
-   README <readme.rst>
-   ESN <rescomp_esn.rst>
-   Measures <rescomp_measures.rst>
-   Utilities <rescomp_utilities.rst>
-   Simulations <rescomp_simulations.rst>
-   CHANGELOG <changelog.rst>
+.. toctree::
+    :maxdepth: 4
+    :hidden:
+
+    Welcome <self>
+
+.. toctree::
+    :maxdepth: 4
+    :includehidden:
+
+    .. _installation:
+    Installation <installation.md>
+    Examples <examples.rst>
+    Rescomp Modules <code.rst>
+    FAQ <faq.md>
+    For Contributors <for_contributors.md>
+    CHANGELOG <changelog.rst>
 
 
 Rescomp Modules
 ---------------------
 
 .. autosummary::
-   rescomp.esn
-   rescomp.measures
-   rescomp.utilities
-   rescomp.simulations
+    rescomp.esn
+    rescomp.measures
+    rescomp.utilities
+    rescomp.simulations

@@ -1,0 +1,42 @@
+variables:
+  GIT_STRATEGY: clone
+
+pages:
+  only:
+    - master
+  before_script:
+#    - echo "1"
+#    - whoami
+    - source ~/anaconda3/etc/profile.d/conda.sh
+#    - which conda
+    - conda activate rescomp_runner
+#    - which python
+#    - which pip
+    - python setup.py sdist bdist_wheel
+    - pip install .
+  script:
+#    - whoami
+#    - source ~/anaconda3/etc/profile.d/conda.sh
+#    - which conda
+#    - conda activate rescomp_runner
+#    - which python
+#    - which pip
+    - cd doc
+    - make html
+    - cd ..
+    - rsync -r --remove-source-files --delete doc/_build/html/ public/
+#    - mv doc/_build/html/ public/
+#    - sphinx-build -b html docs/ public/
+  after_script:
+#    - whoami
+    - source ~/anaconda3/etc/profile.d/conda.sh
+#    - which conda
+    - conda activate rescomp_runner
+#    - which python
+#    - which pip
+    - yes | pip uninstall rescomp
+    - conda deactivate
+  artifacts:
+    paths:
+      - public
+

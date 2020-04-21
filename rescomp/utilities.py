@@ -399,7 +399,11 @@ def _get_environment_version():
         str: env_version, environment rescomp package version
 
     """
-    env_version = pkg_resources.require("rescomp")[0].version
+    try:
+        import rescomp
+        env_version = pkg_resources.require("rescomp")[0].version
+    except (ImportError, pkg_resources.DistributionNotFound):
+        env_version = "0.0.0"
     return env_version
 
 

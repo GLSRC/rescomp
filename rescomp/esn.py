@@ -569,7 +569,7 @@ class ESN(_ESNCore):
                 dimwise_nodes[round(len(dimwise_nodes)*mix_ratio):])
 
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
-                      w_in_sparse=True, w_in_ordered=False,
+                      w_in_sparse=True, w_in_ordered=False, w_in_no_update=False,
                       act_fct_flag='tanh_simple', bias_scale=0, mix_ratio=0.5,
                       save_r=False, save_input=False, w_out_fit_flag="simple"):
         """ Synchronize, then train the reservoir
@@ -584,9 +584,12 @@ class ESN(_ESNCore):
                 elements
             w_in_sparse (bool): If true, creates w_in such that one element in
                 each row is non-zero (Lu,Hunt, Ott 2018)
-            w_in_orderd (bool): If true and w_in_sparse is true, creates w_in 
+            w_in_orderd (bool): If true and w_in_sparse is true, creates w_in
                 such that elements are ordered by dimension and number of 
                 elements for each dimension is equal (as far as possible)
+            w_in_no_update (bool): If true and the input matrix W_in does
+                already exist from a previous training run, W_in does not get
+                updated, regardless of all other parameters concerning it.
             act_fct_flag (int_or_str): Specifies the activation function to be
                 used during training (and prediction). Possible flags and their
                 synonyms are:
@@ -605,11 +608,14 @@ class ESN(_ESNCore):
 
         """
         self._reg_param = reg_param
-        self._w_in_scale = w_in_scale
-        self._w_in_sparse = w_in_sparse
-        self._w_in_ordered = w_in_ordered
-        self._x_dim = x_train.shape[1]
-        self._create_w_in()
+        if self._w_in is not None and w_in_no_update:
+            pass
+        else:
+            self._w_in_scale = w_in_scale
+            self._w_in_sparse = w_in_sparse
+            self._w_in_ordered = w_in_ordered
+            self._x_dim = x_train.shape[1]
+            self._create_w_in()
 
         self._set_activation_function(act_fct_flag=act_fct_flag,
                                       bias_scale=bias_scale)

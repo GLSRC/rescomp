@@ -8,6 +8,7 @@ from scipy.sparse.linalg.eigen.arpack.arpack \
     import ArpackNoConvergence as _ArpackNoConvergence
 import networkx as nx
 import pickle
+from copy import deepcopy
 import pandas.io.pickle
 from . import utilities
 from ._version import __version__
@@ -75,7 +76,7 @@ class _ESNCore(utilities._ESNLogging):
             r[0] = self._act_fct(x[0], self._last_r)
             for t in np.arange(x.shape[0] - 1):
                 r[t+1] = self._act_fct(x[t + 1], r[t])
-            self._last_r = r[-1]
+            self._last_r = deepcopy(r[-1])
             return r
         else:
             for t in np.arange(x.shape[0]):
@@ -130,7 +131,7 @@ class _ESNCore(utilities._ESNLogging):
 
         """
 
-        self.logger.debug('Fit _w_out according to method%s' %
+        self.logger.debug('Fit _w_out according to method %s' %
                           str(self._w_out_fit_flag))
 
         r_gen = self._r_to_generalized_r(r)

@@ -9,6 +9,8 @@ import inspect
 import pkg_resources
 from ._version import __version__
 
+_rescomp_loggers = {}
+_rescomp_logger_counter = 0
 
 class _ESNLogging:
     """ Custom logging class, logging both to stdout as well as to file
@@ -61,12 +63,8 @@ class _ESNLogging:
         """
         self._console_log_level = self._log_level_synonyms.get_flag(log_level)
 
-        # Remove the old handler if there is one
-        if self._console_handler is not None:
-            self.logger.removeHandler(self._console_handler)
-
         if self._console_log_level == 100:
-            self._console_handler = None   # deactivated handler
+            self._console_handler = None  # deactivated handler
         else:
             # console log output format
             ch_formatter = logging.Formatter(
@@ -78,8 +76,21 @@ class _ESNLogging:
             self._console_handler.setLevel(self._console_log_level)
             self._console_handler.setFormatter(ch_formatter)
 
+            # Remove the old handler if there is one
+            if self._console_handler in self.logger.handlers:
+                self.logger.removeHandler(self._console_handler)
+
             # Add console handler to logger
             self.logger.addHandler(self._console_handler)
+
+        # for h in self.logger.handlers:
+        #     print('     %s' % h)
+        #
+        #     for nm, lgr in logging.Logger.manager.loggerDict.items():
+        #         print('+ [%-20s] %s ' % (nm, lgr))
+        #         if not isinstance(lgr, logging.PlaceHolder):
+        #             for h in lgr.handlers:
+        #                 print('     %s' % h)
 
     def set_file_logger(self, log_level, log_file_path):
         """ Set's the logging file path
@@ -125,12 +136,46 @@ class _ESNLogging:
             None
 
         """
-        self._logger_name = logger_name
 
-        # Create logger. Note that the 2nd line is necessary, even if the
-        # desired loglevel is not DEBUG
-        self.logger = logging.getLogger(self._logger_name)
-        self.logger.setLevel(logging.DEBUG)
+        global _rescomp_logger_counter
+        self._logger_name = logger_name + str(_rescomp_logger_counter)
+
+        global _rescomp_loggers
+
+        if self._logger_name in _rescomp_loggers.keys():
+            self.logger = _rescomp_loggers[self._logger_name]
+            self.logger.propagate = False
+        else:
+
+            # Create logger
+            self.logger = logging.getLogger(self._logger_name)
+
+            # for h in self.logger.handlers:
+            #     print('     %s' % h)
+
+            # self.logger.handlers.clear()
+
+            # Hack to avoid multiple logging outputs resulting from calling
+            # logging.getLogger mutliple times as e.g. happens when you create
+            # multiple instances of this class
+            # Delete old handlers attached to previous loggers with the same name
+            # Happens e.g. when creating a class instance multiple times
+            # TODO: Do this correctly!
+            # if self.logger.hasHandlers():
+            #     self.logger.removeHandler(self.logger.handlers[0])
+            #
+            self.logger.propagate = False
+
+            # Note that this line is necessary, even if the desired loglevel
+            # is not DEBUG
+            self.logger.setLevel(logging.DEBUG)
+
+            _rescomp_loggers[self._logger_name] = self.logger
+            # _rescomp_loggers["a"] = "b"
+            _rescomp_logger_counter += 1
+
+
+
 
     # def _update_logger(self):
     #     self.logger.addHandler(self._console_handler)

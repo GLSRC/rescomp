@@ -459,12 +459,12 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
         f = lambda x: _roessler_sprott(x, **kwargs)
     elif sys_flag_syn == 13:
         # TODO Starting point is ignored here atm
-        if np.array_equal(starting_point, np.array([1, 2, 3])):
+        if not np.array_equal(starting_point, np.array([1, 2, 3])):
             print("WARNING starting point is ignored for this simulation fct!")
         return _kuramoto_sivashinsky(dt=dt, time_steps=time_steps - 1, **kwargs)
     elif sys_flag_syn == 14:
         # TODO Starting point is ignored here atm
-        if np.array_equal(starting_point, np.array([1, 2, 3])):
+        if not np.array_equal(starting_point, np.array([1, 2, 3])):
             print("WARNING starting point is ignored for this simulation fct!")
         return _kuramoto_sivashinsky_old(dt=dt, time_steps=time_steps - 1, **kwargs)
     else:

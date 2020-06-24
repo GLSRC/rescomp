@@ -600,7 +600,8 @@ def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps):
     L = k ** 2 - k ** 4
     E = np.exp(h * L)
     E_2 = np.exp(h * L / 2)
-    M = int(size/(2 * np.pi))
+    M = int(np.ceil(size/(2 * np.pi)))
+    # M = int(size/(2 * np.pi))
     # M = (size * np.pi) // 2
     r = np.exp(1j * np.pi * (np.arange(1, M + 1) - 0.5) / M)
     LR = h * np.transpose(np.repeat([L], M, axis=0)) + np.repeat([r], n, axis=0)

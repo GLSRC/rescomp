@@ -6,45 +6,46 @@ import scipy
 import matplotlib.pyplot as plt
 
 
-def nrmse_over_time(pred_time_series, meas_time_series):
-    """ Calculates the NRME between to time series for each time step
+# def nrmse_std_over_time(pred_time_series, meas_time_series):
+#     """ Calculates the RMSE between to time series for each time step
+#
+#     Args:
+#         pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
+#         meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
+#         normalization (str): normalization for rmse, see rmse() for details
+#
+#     Returns:
+#         np.ndarray: NRMSE for each time step, shape (T,)
+#
+#     """
+#     pred = pred_time_series
+#     meas = meas_time_series
+#
+#     nrmse_list = []
+#
+#     for i in range(0, meas.shape[0]):
+#         local_nrmse = rmse(pred[i: i+1], meas[i: i+1])
+#         nrmse_list.append(local_nrmse)
+#
+#     return np.array(nrmse_list)
 
-    Args:
-        pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
-        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
+# NOTE: Removed due to ambiguity of normalization type
+# def nrmse(pred_time_series, meas_time_series):
+#     """ Calculates the NRME between two time series
+#
+#     Internally just calls rmse with normalized=True
+#
+#     Args:
+#         pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
+#         meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
+#
+#     Returns:
+#         float: NRMSE
+#     """
+#     return rmse(pred_time_series, meas_time_series, normalized=True)
 
-    Returns:
-        np.ndarray: NRMSE for each time step, shape (T,)
-
-    """
-    pred = pred_time_series
-    meas = meas_time_series
-
-    nrmse_list = []
-
-    for i in range(0, meas.shape[0]):
-        local_nrmse = nrmse(pred[i: i+1], meas[i: i+1])
-        nrmse_list.append(local_nrmse)
-
-    return np.array(nrmse_list)
-
-
-def nrmse(pred_time_series, meas_time_series):
-    """ Calculates the NRME between two time series
-
-    Internally just calls rmse with normalized=True
-
-    Args:
-        pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
-        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
-
-    Returns:
-        float: NRMSE
-    """
-    return rmse(pred_time_series, meas_time_series, normalized=True)
-
-
-def rmse(pred_time_series, meas_time_series, normalized=False):
+# TODO: there should be a utilities._SynonymDict() here
+def rmse(pred_time_series, meas_time_series, normalization=None):
     """ Calculates the root mean squared error between two time series
 
     The time series must be of equal length and dimension
@@ -52,10 +53,10 @@ def rmse(pred_time_series, meas_time_series, normalized=False):
     Args:
         pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
         meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
-        normalized (bool): If False, normalizes the result w.r.t. to the length
-            T of the time series.
-            If True normalizes the result w.r.t. the length T and the std. of
-            the meas_time_series.
+        normalization (str_or_None_or_float): The normalization method to use. Possible are:
+
+            - None: Calculates the pure, standard RMSE
+            - "mean": Calulates RMSE divided by the measured time series mean
 
     Returns:
         float: RMSE or NRMSE
@@ -64,23 +65,16 @@ def rmse(pred_time_series, meas_time_series, normalized=False):
     pred = pred_time_series
     meas = meas_time_series
 
-    # if normalized: norm = (y_real_cut ** 2).sum()
-    # else: norm = y_real_cut.shape[0]
-    # error = np.sqrt(((y_pred_cut - y_real_cut) ** 2).sum() / norm)
-    #
-    # if normalized: norm = np.linalg.norm(y_real_cut) ** 2
-    # else: norm = y_real_cut.shape[0]
-    # error = np.sqrt(np.linalg.norm(y_pred_cut - y_real_cut) ** 2 / norm)
+    error = np.linalg.norm(pred - meas)/ np.sqrt(meas.shape[0])
 
-    if normalized:
-        error = np.linalg.norm(pred - meas) \
-                / np.linalg.norm(meas)
+    if normalization is None:
+        rmse = error
+        return rmse
+    elif normalization == "mean":
+        nrmse = error/np.mean(meas)
+        return nrmse
     else:
-        error = np.linalg.norm(pred - meas) \
-                / np.sqrt(meas.shape[0])
-
-    return error
-
+        raise Exception("Type of normalization not implemented")
 
 def demerge_time(pred_time_series, meas_time_series, epsilon):
     """ Synonym for the divergence_time fct. """

@@ -19,40 +19,39 @@ class testMeasures(unittest.TestCase):
         pred = np.random.random((length, dim))
         meas = np.random.random((length, dim))
 
-        norm = pred.shape[0]
-        rmse_desired = np.sqrt(((pred - meas) ** 2).sum() / norm)
+        rmse_desired = np.sqrt(((pred - meas) ** 2).sum() / meas.shape[0])
 
         rmse = measures.rmse(pred, meas)
 
         # results not exactly equal due to numpy optimizations
         np.testing.assert_allclose(rmse, rmse_desired, rtol=1e-15)
 
-    def test_nrmse(self):
+    def test_rmse_normalization_mean(self):
         length = np.random.randint(10, 100)
         dim = np.random.randint(10, 100)
 
         pred = np.random.random((length, dim))
         meas = np.random.random((length, dim))
 
-        norm = (meas ** 2).sum()
-        nrmse_desired = np.sqrt(((pred - meas) ** 2).sum() / norm)
+        nrmse_desired = \
+            np.sqrt(((pred - meas) ** 2).sum() / meas.shape[0]) / np.mean(meas)
 
-        nrmse = measures.nrmse(pred, meas)
+        nrmse = measures.rmse(pred, meas, normalization="mean")
 
         # results not exactly equal due to numpy optimizations
         np.testing.assert_allclose(nrmse, nrmse_desired, rtol=1e-15)
 
-    def test_nrmse_over_time(self):
-        length = 1
-        dim = np.random.randint(10, 100)
-
-        pred = np.random.random((length, dim))
-        meas = np.random.random((length, dim))
-
-        nrmse_desired = measures.nrmse(pred, meas)
-        nrmse = measures.nrmse_over_time(pred, meas)
-
-        np.testing.assert_equal(nrmse, nrmse_desired)
+    # def test_nrmse_over_time(self):
+    #     length = 1
+    #     dim = np.random.randint(10, 100)
+    #
+    #     pred = np.random.random((length, dim))
+    #     meas = np.random.random((length, dim))
+    #
+    #     nrmse_desired = measures.nrmse(pred, meas)
+    #     nrmse = measures.nrmse_over_time(pred, meas)
+    #
+    #     np.testing.assert_equal(nrmse, nrmse_desired)
 
     def test_divergence_time(self):
         pred = np.array([[i, i+1] for i in range(10)])

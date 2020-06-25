@@ -41,17 +41,34 @@ class testMeasures(unittest.TestCase):
         # results not exactly equal due to numpy optimizations
         np.testing.assert_allclose(nrmse, nrmse_desired, rtol=1e-15)
 
-    # def test_nrmse_over_time(self):
-    #     length = 1
-    #     dim = np.random.randint(10, 100)
-    #
-    #     pred = np.random.random((length, dim))
-    #     meas = np.random.random((length, dim))
-    #
-    #     nrmse_desired = measures.nrmse(pred, meas)
-    #     nrmse = measures.nrmse_over_time(pred, meas)
-    #
-    #     np.testing.assert_equal(nrmse, nrmse_desired)
+    def test_rmse_normalization_std_over_time(self):
+        length = np.random.randint(10, 100)
+        dim = np.random.randint(10, 100)
+
+        pred = np.random.random((length, dim))
+        meas = np.random.random((length, dim))
+
+        std = np.std(meas, axis=0)
+        mean_std = np.mean(std)
+        nrmse_desired = \
+            np.sqrt(((pred - meas) ** 2).sum() / meas.shape[0]) / mean_std
+
+        nrmse = measures.rmse(pred, meas, normalization="std_over_time")
+
+        # results not exactly equal due to numpy optimizations
+        np.testing.assert_allclose(nrmse, nrmse_desired, rtol=1e-15)
+
+    def test_rmse_over_time(self):
+        length = 1
+        dim = np.random.randint(10, 100)
+
+        pred = np.random.random((length, dim))
+        meas = np.random.random((length, dim))
+
+        rmse_desired = measures.rmse(pred, meas)
+        rmse = measures.rmse_over_time(pred, meas)
+
+        np.testing.assert_equal(rmse, rmse_desired)
 
     def test_divergence_time(self):
         pred = np.array([[i, i+1] for i in range(10)])

@@ -4,30 +4,38 @@
 import numpy as np
 import scipy
 import matplotlib.pyplot as plt
+from . import utilities
 
+# TODO: there should be a utilities._SynonymDict() here
+def rmse_over_time(pred_time_series, meas_time_series, normalization=None):
+    """ Calculates the NRMSE over time,
 
-# def nrmse_std_over_time(pred_time_series, meas_time_series):
-#     """ Calculates the RMSE between to time series for each time step
-#
-#     Args:
-#         pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
-#         meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
-#         normalization (str): normalization for rmse, see rmse() for details
-#
-#     Returns:
-#         np.ndarray: NRMSE for each time step, shape (T,)
-#
-#     """
-#     pred = pred_time_series
-#     meas = meas_time_series
-#
-#     nrmse_list = []
-#
-#     for i in range(0, meas.shape[0]):
-#         local_nrmse = rmse(pred[i: i+1], meas[i: i+1])
-#         nrmse_list.append(local_nrmse)
-#
-#     return np.array(nrmse_list)
+    Args:
+        pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
+        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
+            normalization (str_or_None_or_float): see rmse() for details, If
+            "std_over_time" is given, the std used is calculated over the entire
+            length of the meas_time_series, instead of for each time step (which
+            would be impossible)
+
+    Returns:
+        np.ndarray: RMSE for each time step, shape (T,)
+
+    """
+    pred = pred_time_series
+    meas = meas_time_series
+
+    if normalization == "std_over_time":
+        mean_std_over_time = np.mean(np.std(meas, axis=0))
+        normalization = mean_std_over_time
+
+    nrmse_list = []
+
+    for i in range(0, meas.shape[0]):
+        local_nrmse = rmse(pred[i: i+1], meas[i: i+1], normalization)
+        nrmse_list.append(local_nrmse)
+
+    return np.array(nrmse_list)
 
 # NOTE: Removed due to ambiguity of normalization type
 # def nrmse(pred_time_series, meas_time_series):
@@ -57,7 +65,10 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
 
             - None: Calculates the pure, standard RMSE
             - "mean": Calulates RMSE divided by the measured time series mean
-
+            - "std_over_time": Calulates RMSE divided by the measured time
+              series' standard deviation in time of dimension. See the NRSME
+              definition of Vlachas, Pathak et al. (2019) for details
+            - float: Calulates the RMSE, then divides it by the given float
     Returns:
         float: RMSE or NRMSE
 
@@ -68,13 +79,17 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
     error = np.linalg.norm(pred - meas)/ np.sqrt(meas.shape[0])
 
     if normalization is None:
-        rmse = error
-        return rmse
+        error = error
     elif normalization == "mean":
-        nrmse = error/np.mean(meas)
-        return nrmse
+        error = error / np.mean(meas)
+    elif normalization == "std_over_time":
+        error = error / np.mean(np.std(meas, axis=0))
+    elif utilities._is_number(normalization):
+        error = error / normalization
     else:
         raise Exception("Type of normalization not implemented")
+
+    return error
 
 def demerge_time(pred_time_series, meas_time_series, epsilon):
     """ Synonym for the divergence_time fct. """

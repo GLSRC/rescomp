@@ -6,6 +6,7 @@ import logging
 import sys
 import pandas
 import inspect
+import fractions
 import pkg_resources
 from ._version import __version__
 
@@ -487,6 +488,26 @@ def _compare_version_file_vs_env(segment_threshold="minor"):
         raise Exception("segment_threshold %s not recognized"%segment_threshold)
 
     return int_version == env_version
+
+
+def _is_number(s):
+    """ Tests if input is a number
+
+    Args:
+        s (any): Object you want to check
+
+    Returns:
+        True if s is a number, False if not
+    """
+    try:
+        float(s)
+        return True
+    except ValueError:
+        try:
+            fractions.Fraction(s)
+            return True
+        except ValueError:
+            return False
 
 
 

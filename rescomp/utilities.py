@@ -376,7 +376,7 @@ def _remove_invalid_args(func, args_dict):
 
 
 def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0,
-                                  train_steps=None, pred_steps=None):
+                                  train_steps=None, pred_sync_steps=0, pred_steps=None):
     """ Splits ESN input data for consecutive training and prediction
 
     This function is useful because there is an unintuitive overlap between
@@ -387,6 +387,7 @@ def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0,
         disc_steps (int): steps to discard completely before training begins
         train_sync_steps (int): steps to sync the reservoir with before training
         train_steps (int): steps to use for training and fitting w_in
+        pred_sync_steps (int): steps to sync the reservoir with before prediction
         pred_steps (int): how many steps to predict the evolution for
 
     Returns:
@@ -400,8 +401,8 @@ def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0,
     if pred_steps is None: pred_steps = data.shape[0] - train_steps - disc_steps
 
     x_train = data[disc_steps: disc_steps + train_sync_steps + train_steps]
-    x_pred = data[disc_steps + train_sync_steps + train_steps - 1:
-                  disc_steps + train_sync_steps + train_steps + pred_steps]
+    x_pred = data[disc_steps + train_sync_steps + train_steps + pred_sync_steps - 1:
+                  disc_steps + train_sync_steps + train_steps + pred_sync_steps + pred_steps]
 
     return x_train, x_pred
 

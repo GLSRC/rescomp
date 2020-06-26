@@ -820,7 +820,7 @@ class ESNWrapper(ESN):
         self.logger.debug("Create ESNWrapper instance")
 
     def train_and_predict(self, x_data, train_sync_steps, train_steps,
-                          pred_steps=None, disc_steps=0, **kwargs):
+                          pred_sync_steps=0, pred_steps=None, disc_steps=0, **kwargs):
         """ Train, then predict the evolution directly following the train data
 
         Args:
@@ -829,6 +829,8 @@ class ESNWrapper(ESN):
             train_sync_steps (int): Steps to synchronize the reservoir with
                 before the 'real' training begins
             train_steps (int): Steps to use for training and fitting w_in
+            pred_sync_steps (int): steps to sync the reservoir with before
+                prediction
             pred_steps (int): How many steps to predict the evolution for
             **kwargs: further arguments passed to :func:`~esn.ESN.train` and
                 :func:`~esn.ESN.predict`
@@ -853,7 +855,7 @@ class ESNWrapper(ESN):
 
         self.train(x_train, train_sync_steps, **train_kwargs)
 
-        y_pred, y_test = self.predict(x_pred, sync_steps=0,
+        y_pred, y_test = self.predict(x_pred, sync_steps=pred_sync_steps,
                         pred_steps=pred_steps, **predict_kwargs)
 
         return y_pred, y_test

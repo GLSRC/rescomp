@@ -13,10 +13,18 @@ def rmse_over_time(pred_time_series, meas_time_series, normalization=None):
     Args:
         pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
         meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
-            normalization (str_or_None_or_float): see rmse() for details, If
-            "std_over_time" is given, the std used is calculated over the entire
-            length of the meas_time_series, instead of for each time step (which
-            would be impossible)
+        normalization (str_or_None_or_float): The normalization method to use.
+            Possible are:
+
+            - None: Calculates the pure, standard RMSE
+            - "mean": Calulates RMSE divided by the entire, flattened
+              meas_time_series mean
+            - "std_over_time": Calulates RMSE divided by the entire
+              meas_time_series' standard deviation in time of dimension.
+              See Vlachas, Pathak et al. (2019) for details
+            - "2norm": Uses the vector  2-norm of the meas_time_series averaged
+              over time normalize the RMSE for each time step
+            - float: Calulates the RMSE, then divides it by the given float
 
     Returns:
         np.ndarray: RMSE for each time step, shape (T,)
@@ -25,10 +33,15 @@ def rmse_over_time(pred_time_series, meas_time_series, normalization=None):
     pred = pred_time_series
     meas = meas_time_series
 
+    if normalization == "mean":
+        normalization = np.mean(meas)
     if normalization == "std_over_time":
         mean_std_over_time = np.mean(np.std(meas, axis=0))
         normalization = mean_std_over_time
-
+    if normalization == "2norm":
+        # euclid_norms = np.linalg.norm(meas, axis=0)
+        # normalization = np.mean(euclid_norms)
+        pass
     nrmse_list = []
 
     for i in range(0, meas.shape[0]):
@@ -69,6 +82,8 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
               series' standard deviation in time of dimension. See the NRSME
               definition of Vlachas, Pathak et al. (2019) for details
             - float: Calulates the RMSE, then divides it by the given float
+            - "2norm": Uses the vector 2-norm of the meas_time_series to
+              normalize the RMSE for each time step
     Returns:
         float: RMSE or NRMSE
 
@@ -84,6 +99,8 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
         error = error / np.mean(meas)
     elif normalization == "std_over_time":
         error = error / np.mean(np.std(meas, axis=0))
+    elif normalization == "2norm":
+        error = error / np.linalg.norm(meas)
     elif utilities._is_number(normalization):
         error = error / normalization
     else:

@@ -24,6 +24,7 @@ def rmse_over_time(pred_time_series, meas_time_series, normalization=None):
               See Vlachas, Pathak et al. (2019) for details
             - "2norm": Uses the vector  2-norm of the meas_time_series averaged
               over time normalize the RMSE for each time step
+            - "maxmin": Divides the RMSE by (max(meas) - min(meas))
             - float: Calulates the RMSE, then divides it by the given float
 
     Returns:
@@ -41,6 +42,10 @@ def rmse_over_time(pred_time_series, meas_time_series, normalization=None):
     if normalization == "2norm":
         # euclid_norms = np.linalg.norm(meas, axis=0)
         # normalization = np.mean(euclid_norms)
+        pass
+    if normalization == "maxmin":
+        maxmin = np.max(meas) - np.min(meas)
+        normalization = maxmin
         pass
     nrmse_list = []
 
@@ -84,6 +89,7 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
             - float: Calulates the RMSE, then divides it by the given float
             - "2norm": Uses the vector 2-norm of the meas_time_series to
               normalize the RMSE for each time step
+            - "maxmin": Divides the RMSE by (max(meas) - min(meas))
     Returns:
         float: RMSE or NRMSE
 
@@ -101,10 +107,19 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
         error = error / np.mean(np.std(meas, axis=0))
     elif normalization == "2norm":
         error = error / np.linalg.norm(meas)
+    elif normalization == "maxmin":
+        error = error / (np.max(meas) - np.min(meas))
     elif utilities._is_number(normalization):
         error = error / normalization
     else:
         raise Exception("Type of normalization not implemented")
+
+    # if normalized:
+    #     error = np.linalg.norm(pred - meas) \
+    #             / np.linalg.norm(meas)
+    # else:
+    #     error = np.linalg.norm(pred - meas) \
+    #             / np.sqrt(meas.shape[0])
 
     return error
 

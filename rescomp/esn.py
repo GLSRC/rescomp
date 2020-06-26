@@ -46,8 +46,9 @@ class _ESNCore(utilities._ESNLogging):
 
         self._last_r = None
         self._last_r_gen = None
-        # self._last_r = np.zeros(self._network.shape[0])
-        # self._last_r_gen = self._r_to_generalized_r(self._last_r)
+
+        # TODO: Local States Hack
+        self._loc_nbhd = None
 
         self._reg_param = None
 
@@ -136,9 +137,15 @@ class _ESNCore(utilities._ESNLogging):
 
         r_gen = self._r_to_generalized_r(r)
 
-        self._w_out = np.linalg.solve(
-            r_gen.T @ r_gen + self._reg_param * np.eye(r_gen.shape[1]),
-            r_gen.T @ y_train).T
+        # TODO: Local States Hack
+        if self._loc_nbhd is None:
+            self._w_out = np.linalg.solve(
+                r_gen.T @ r_gen + self._reg_param * np.eye(r_gen.shape[1]),
+                r_gen.T @ y_train).T
+        else:
+            self._w_out = np.linalg.solve(
+                r_gen.T @ r_gen + self._reg_param * np.eye(r_gen.shape[1]),
+                r_gen.T @ y_train[:,self._loc_nbhd == 2]).T
 
         return r_gen
 
@@ -198,6 +205,14 @@ class _ESNCore(utilities._ESNLogging):
         self._last_r_gen = self._r_to_generalized_r(self._last_r)
 
         y = self._w_out @ self._last_r_gen
+
+        # TODO: Local States Hack
+        # pad with NANs
+        if self._loc_nbhd is not None:
+            temp = np.empty(self._loc_nbhd.shape)
+            temp[:] = np.nan
+            temp[self._loc_nbhd == 2] = y
+            y = temp
 
         return y
 
@@ -569,10 +584,12 @@ class ESN(_ESNCore):
             self._squared_tanh_nodes.extend(
                 dimwise_nodes[round(len(dimwise_nodes)*mix_ratio):])
 
+    # TODO: Needs local states docu
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
-                      w_in_sparse=True, w_in_ordered=False, w_in_no_update=False,
-                      act_fct_flag='tanh_simple', bias_scale=0, mix_ratio=0.5,
-                      save_r=False, save_input=False, w_out_fit_flag="simple"):
+              w_in_sparse=True, w_in_ordered=False, w_in_no_update=False,
+              act_fct_flag='tanh_simple', bias_scale=0, mix_ratio=0.5,
+              save_r=False, save_input=False, w_out_fit_flag="simple",
+              loc_nbhd=None):
         """ Synchronize, then train the reservoir
 
         Args:
@@ -609,6 +626,7 @@ class ESN(_ESNCore):
 
         """
         self._reg_param = reg_param
+        self._loc_nbhd = loc_nbhd
         if self._w_in is not None and w_in_no_update:
             pass
         else:

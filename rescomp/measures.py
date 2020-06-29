@@ -90,6 +90,9 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
             - "2norm": Uses the vector 2-norm of the meas_time_series to
               normalize the RMSE for each time step
             - "maxmin": Divides the RMSE by (max(meas) - min(meas))
+            - "historic": Old, weird way to normalize the NRMSE, kept here
+              purely for backwards compatibility. Don't use if you are not 100%
+              sure that's what you want.
     Returns:
         float: RMSE or NRMSE
 
@@ -109,6 +112,8 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
         error = error / np.linalg.norm(meas)
     elif normalization == "maxmin":
         error = error / (np.max(meas) - np.min(meas))
+    elif normalization == "historic":
+        error = error / np.linalg.norm(meas) * np.sqrt(meas.shape[0])
     elif utilities._is_number(normalization):
         error = error / normalization
     else:
@@ -280,7 +285,8 @@ def dimension_parameters(time_series, nr_steps=100, literature_value=None,
             dimension = slope
             
             estimated_line = intercept + slope*np.log(current_N_r[0])
-            error = nrmse(np.log(current_N_r[1]),estimated_line)
+            error = rmse(np.log(current_N_r[1]), estimated_line,
+                         normalization="historic")
             shortness_cost = nr_steps/(end_index-start_index)**3
             
             if literature_value is not None:

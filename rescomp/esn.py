@@ -185,7 +185,9 @@ class _ESNCore(utilities._ESNLogging):
 
         return r, r_gen
 
-    def _predict_step(self, x):
+    # TODO: Document Local States Hack
+    # TODO: Document behavior of x=None => use last_r
+    def _predict_step(self, x=None):
         """ Predict a single time step
 
         Assumes a synchronized reservoir.
@@ -201,12 +203,15 @@ class _ESNCore(utilities._ESNLogging):
         
         """
 
+        if x is None:
+            x = self._w_out @ self._r_to_generalized_r(self._last_r)
+
         self._last_r = self._act_fct(x, self._last_r)
         self._last_r_gen = self._r_to_generalized_r(self._last_r)
 
         y = self._w_out @ self._last_r_gen
 
-        # TODO: Local States Hack
+        # TODO: Document Local States Hack
         # pad with NANs
         if self._loc_nbhd is not None:
             temp = np.empty(self._loc_nbhd.shape)
@@ -656,7 +661,8 @@ class ESN(_ESNCore):
         else:
             self._train_synced(x_train, w_out_fit_flag=w_out_fit_flag)
 
-    def predict(self, x_pred, sync_steps, pred_steps=None,
+    #TODO: Document x_pred=None
+    def predict(self, x_pred=None, sync_steps=0, pred_steps=None,
                 save_r=False, save_input=False):
         """ Synchronize the reservoir, then predict the system evolution
 
@@ -686,9 +692,11 @@ class ESN(_ESNCore):
 
         if pred_steps is None:
             pred_steps = x_pred.shape[0] - sync_steps - 1
-            
-        if len(x_pred)>sync_steps+pred_steps+1:
-            x_pred=x_pred[:sync_steps+pred_steps+1]
+
+        # if x_pred is None:
+        #
+        if len(x_pred) > sync_steps+pred_steps+1:
+            x_pred = x_pred[:sync_steps+pred_steps+1]
 
         # Automatically generates a y_test to compare the prediction against, if
         # the input data is longer than the number of synchronization tests

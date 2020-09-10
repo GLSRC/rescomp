@@ -425,9 +425,13 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
         trajectory (np.ndarray) the full trajectory, ready to be used for RC
 
     """
-    if starting_point is None: starting_point = np.array([1, 2, 3])
 
     sys_flag_syn = _sys_flag_synonyms.get_flag(sys_flag)
+
+    if starting_point is None and (sys_flag_syn == 13 or sys_flag_syn == 14):
+        starting_point = None
+    elif starting_point is None:
+        starting_point = np.array([1, 2, 3])
 
     if sys_flag_syn == 0:
         f = lambda x: _mod_lorenz(x, **kwargs)
@@ -458,13 +462,11 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
     elif sys_flag_syn == 12:
         f = lambda x: _roessler_sprott(x, **kwargs)
     elif sys_flag_syn == 13:
-        # TODO Starting point is ignored here atm
-        if not np.array_equal(starting_point, np.array([1, 2, 3])):
-            print("WARNING starting point is ignored for this simulation fct!")
-        return _kuramoto_sivashinsky(dt=dt, time_steps=time_steps - 1, **kwargs)
+        # if not np.array_equal(starting_point, np.array([1, 2, 3])):
+        #     print("WARNING starting point is ignored for this simulation fct!")
+        return _kuramoto_sivashinsky(dt=dt, time_steps=time_steps - 1, starting_point=starting_point, **kwargs)
     elif sys_flag_syn == 14:
-        # TODO Starting point is ignored here atm
-        if not np.array_equal(starting_point, np.array([1, 2, 3])):
+        if not starting_point is None:
             print("WARNING starting point is ignored for this simulation fct!")
         return _kuramoto_sivashinsky_old(dt=dt, time_steps=time_steps - 1, **kwargs)
     else:
@@ -558,7 +560,7 @@ def _kuramoto_sivashinsky_old(dimensions, system_size, dt, time_steps):
     return uu
 
 # reproduce_ETDRK4_Kassam2005_KS_simulation
-def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps):
+def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_point):
     """ This function simulates the Kuramoto–Sivashinsky PDE
 
     Even though it doesn't use the RK4 algorithm, it is bundled with the other
@@ -575,6 +577,8 @@ def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps):
         system_size (int): physical size of the system
         dt (float): time step size
         time_steps (int): nr. of time steps to simulate
+        starting_point (np.ndarray): starting point for the simulation of shape
+            (dimensions, )
 
     Returns:
         (np.ndarray): simulated trajectory of shape (time_steps, dimensions)
@@ -584,8 +588,14 @@ def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps):
     size = system_size  # system size
 
     # Define initial conditions and Fourier Transform them
-    x = size * np.transpose(np.conj(np.arange(1, n + 1))) / n
-    u = np.cos(2 * np.pi * x / size) * (1 + np.sin(2 * np.pi * x / size))
+    if starting_point is None:
+        # Use the starting point from the Kassam_2005 paper
+        x = size * np.transpose(np.conj(np.arange(1, n + 1))) / n
+        u = np.cos(2 * np.pi * x / size) * (1 + np.sin(2 * np.pi * x / size))
+    else:
+        # x = starting_point
+        u = starting_point
+
     v = np.fft.fft(u)
 
     h = dt  # time step

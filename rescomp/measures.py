@@ -3,6 +3,7 @@
 
 import numpy as np
 import scipy
+import scipy.sparse
 import matplotlib.pyplot as plt
 from . import utilities
 
@@ -127,6 +128,7 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
     #             / np.sqrt(meas.shape[0])
 
     return error
+
 
 def demerge_time(pred_time_series, meas_time_series, epsilon):
     """ Synonym for the divergence_time fct. """
@@ -315,7 +317,7 @@ def dimension_parameters(time_series, nr_steps=100, literature_value=None,
                 best_intercept = intercept
                 
     dimension = best_slope
-            
+
 
     ###plotting
     if plot:
@@ -331,60 +333,6 @@ def dimension_parameters(time_series, nr_steps=100, literature_value=None,
         plt.show()
     return best_r_min, best_r_max, dimension
 
-
-def equation_based_lyapunov_spectrum_discrete(f, Jacobian, starting_point,
-                                              nr_steps=3000, dt=1.,
-                                              return_convergence=False):
-    """ Calculates the lyapunov spectrum of a discrete dynamical system
-    with x_n+1 = f(x_n) using a standard QR-based algorithm.
-
-    Based on equations not data.
-
-    Measure for chaotic behaviour in the system.
-
-    Important characteristic to compare attractors.
-
-    Args:
-        f (function): mapping with x_n+1 = f(x_n)
-        Jacobian (function): Jacobian of f , takes x as argument
-        starting_point (np.ndarray): inintial condition of iteration
-        nr_steps (int): number of iteration steps
-        dt (float): time scale of a step
-        return_convergence (bool): if True returns the development of the
-                estimate for the lyapunov spectrum over time in steps of 100
-                iterations.
-
-    Returns:
-        np.ndarray_or_tuple : lyapunov spectrum if return_convergence is False,
-                                tuple of final lyapunov spectrum and development
-                                of lyapunov spectrum if return_convergence is
-                                True
-
-
-     """
-    x = starting_point
-
-    Q, R = np.linalg.qr(Jacobian(x))
-
-    s = []
-    lces = []
-
-    for n in range(nr_steps):
-        x = f(x)
-        Q, R = np.linalg.qr(np.matmul(Jacobian(x), Q))
-
-        s.append(np.array([R[i, i] for i in range(len(R))]))
-
-        if n % 100 == 0 and return_convergence:
-            lya = np.sum(np.log(np.abs(s)), axis=0) / (n * dt)
-            lces.append(lya)
-
-    lya = np.sum(np.log(np.abs(s)), axis=0) / (nr_steps * dt)
-
-    if return_convergence:
-        return lya, np.array(lces)
-    else:
-        return lya
 
 
 def reservoir_lyapunov_spectrum(esn, nr_steps=2500, return_convergence=False,
@@ -443,8 +391,10 @@ def reservoir_lyapunov_spectrum(esn, nr_steps=2500, return_convergence=False,
 
             J = (np.cosh(M_r) ** (-2) * M.T).T
 
-            return np.array(J)
-
+            # J[np.abs(J) <= 0.001 * np.max(np.abs(J))] = 0
+            # J_sparse = scipy.sparse.csr_matrix(J)
+            # return np.array(J)
+            return J
 
     elif esn._act_fct_flag == 0 and esn._w_out_fit_flag == 1:
         # Standard tanh activation function, linear and squared readout, no bias
@@ -550,7 +500,6 @@ def reservoir_lyapunov_spectrum(esn, nr_steps=2500, return_convergence=False,
 
             return np.array(J)
 
-
     elif esn._act_fct_flag == 3 and esn._w_out_fit_flag == 0:
         # Mix of normal tanh and tanh^2 activation functions, linear readout,
         # no bias
@@ -606,6 +555,360 @@ def reservoir_lyapunov_spectrum(esn, nr_steps=2500, return_convergence=False,
                                                      nr_steps=nr_steps, dt=dt,
                                                      return_convergence=return_convergence)
 
+
+def equation_based_lyapunov_spectrum_discrete(f, Jacobian, starting_point,
+                                              nr_steps=3000, dt=1.,
+                                              return_convergence=False):
+    """ Calculates the lyapunov spectrum of a discrete dynamical system
+    with x_n+1 = f(x_n) using a standard QR-based algorithm.
+
+    Based on equations not data.
+
+    Measure for chaotic behaviour in the system.
+
+    Important characteristic to compare attractors.
+
+    Args:
+        f (function): mapping with x_n+1 = f(x_n)
+        Jacobian (function): Jacobian of f , takes x as argument
+        starting_point (np.ndarray): inintial condition of iteration
+        nr_steps (int): number of iteration steps
+        dt (float): time scale of a step
+        return_convergence (bool): if True returns the development of the
+                estimate for the lyapunov spectrum over time in steps of 100
+                iterations.
+
+    Returns:
+        np.ndarray_or_tuple : lyapunov spectrum if return_convergence is False,
+                                tuple of final lyapunov spectrum and development
+                                of lyapunov spectrum if return_convergence is
+                                True
+
+
+     """
+    x = starting_point
+
+    # jac = Jacobian(x)
+    # jac_sparse = scipy.sparse.csr_matrix(Jacobian(x))
+
+    Q, R = np.linalg.qr(Jacobian(x))
+
+    s = []
+    lces = []
+
+    for n in range(nr_steps):
+        x = f(x)
+        Q, R = np.linalg.qr(np.matmul(Jacobian(x), Q))
+
+        s.append(np.array([R[i, i] for i in range(len(R))]))
+
+        # if n % 100 == 0 and return_convergence:
+        #     lya = np.sum(np.log(np.abs(s)), axis=0) / (n * dt)
+        #     lces.append(lya)
+
+        if return_convergence:
+            lya = np.sum(np.log(np.abs(s)), axis=0) / ((n + 1) * dt)
+            lces.append(lya)
+
+    lya = np.sum(np.log(np.abs(s)), axis=0) / (nr_steps * dt)
+
+    if return_convergence:
+        return lya, np.array(lces)
+    else:
+        return lya
+
+
+# # NOTE: Doesn't and can't work
+# def reservoir_lyapunov_spectrum_from_pred(esn, nr_steps=2500, return_convergence=False,
+#                                 dt=1.):
+#     """ Calculates the lyapunov spectrum of the esn using a standard QR-based
+#     algorithm.
+#
+#    Calls equation_based_lyapunov_spectrum_discrete()
+#
+#     Args:
+#         f (function): mapping with x_n+1 = f(x_n)
+#         Jacobian (function): Jacobian of f , takes x as argument
+#         starting_point (np.ndarray): inintial condition of iteration
+#         nr_steps (int): number of iteration steps
+#         dt (float): time scale of a step
+#         return_convergence (bool): if True returns the development of the
+#                 estimate for the lyapunov spectrum over time in steps of 100
+#                 iterations.
+#
+#     Returns:
+#         np.ndarray_or_tuple : lyapunov spectrum if return_convergence is False,
+#                                 tuple of final lyapunov spectrum and development
+#                                 of lyapunov spectrum if return_convergence is
+#                                 True
+#
+#
+#      """
+#
+#     d = esn._network.shape[0]
+#
+#     if esn._act_fct_flag == 0 and esn._w_out_fit_flag == 0:
+#         # Standard tanh activation function, linear readout, no bias
+#
+#         w_in = esn._w_in
+#         w_out = esn._w_out
+#         network = esn._network
+#
+#         # def f(x):
+#         #     r = esn._last_r
+#         #     return w_out @ np.tanh(w_in * x + network * r)
+#
+#         # def Jacobian1(r):
+#         #    M_r=M@r
+#         #    J=np.zeros((d,d))
+#         #
+#         #    for i in range(d):
+#         #        for j in range(d):
+#         #            J[i,j] = M[i,j]/(np.cosh(M_r[i])**2)
+#         #    return np.array(J)
+#
+#         def Jacobian(x, r):
+#
+#             # J = (np.cosh(M_r) ** (-2) * M.T).T
+#
+#             J = w_out @ (np.cosh(w_in @ x + network @ r) ** (-2) * w_in.T).T
+#
+#             # J[np.abs(J) <= 0.001 * np.max(np.abs(J))] = 0
+#             # J_sparse = scipy.sparse.csr_matrix(J)
+#             # return np.array(J)
+#             return J
+#
+#     # elif esn._act_fct_flag == 0 and esn._w_out_fit_flag == 1:
+#     #     # Standard tanh activation function, linear and squared readout, no bias
+#     #
+#     #     W_out_1 = esn._w_out[:, :d]
+#     #     W_out_2 = esn._w_out[:, d:]
+#     #
+#     #     # M  = np.array(esn._w_in@esn._w_out + esn._network)
+#     #
+#     #     def f(r):
+#     #         return np.tanh(
+#     #             esn._network @ r + esn._w_in @ (W_out_1 @ r + W_out_2 @ r ** 2))
+#     #
+#     #     # def Jacobian1(r):
+#     #     #    M_r=esn._network@r + esn._w_in@(W_out_1@r + W_out_2@r**2)
+#     #     #
+#     #     #    J=np.zeros((d,d))
+#     #     #
+#     #     #    M_1 = esn._network + esn._w_in@W_out_1
+#     #     #    M_2 = esn._w_in@W_out_2
+#     #     #
+#     #     #    for i in range(d):
+#     #     #        for j in range(d):
+#     #     #            J[i,j] = (M_1[i,j]+2*M_2[i,j]*r[j])/(np.cosh(M_r[i])**2)
+#     #     #    return np.array(J)
+#     #
+#     #     def Jacobian(r):
+#     #         '''
+#     #         #B = 2*esn._w_in@W_out_2*r
+#     #         M_r=esn._network@r + esn._w_in@(W_out_1@r + W_out_2@r**2)
+#     #
+#     #         J = np.cosh(M_r)**(-2)*(esn._network + esn._w_in@W_out_1 +
+#     #                                 2*esn._w_in@W_out_2*r)
+#     #         '''
+#     #
+#     #         M_r = esn._network @ r + esn._w_in @ (
+#     #                     W_out_1 @ r + W_out_2 @ (r ** 2))
+#     #         J = ((esn._network.T + (esn._w_in @ W_out_1).T +
+#     #               2 * (esn._w_in @ W_out_2 * r).T) / (np.cosh(M_r) ** 2)).T
+#     #
+#     #         return np.array(J)
+#     #
+#     # elif esn._act_fct_flag == 0 and esn._w_out_fit_flag == 2:
+#     #     # Standard tanh activation function, linear readout with bias
+#     #
+#     #     W_out = esn._w_out[:, :-1]
+#     #
+#     #     b = esn._w_out[:, -1:].reshape(esn._w_out.shape[0], )
+#     #
+#     #     M = np.array(esn._w_in @ W_out + esn._network)
+#     #
+#     #     def f(r):
+#     #         return np.tanh(M @ r + esn._w_in @ b)
+#     #
+#     #     # def Jacobian1(r):
+#     #     #    M_r=M@r+esn._w_in@b
+#     #     #
+#     #     #    J=np.zeros((d,d))
+#     #     #
+#     #     #    for i in range(d):
+#     #     #        for j in range(d):
+#     #     #            J[i,j] = M[i,j]/(np.cosh(M_r[i])**2)
+#     #     #
+#     #     #    return np.array(J)
+#     #
+#     #     def Jacobian(r):
+#     #         M_r = M @ r + esn._w_in @ b
+#     #
+#     #         J = (np.cosh(M_r) ** (-2) * M.T).T
+#     #
+#     #         return np.array(J)
+#     #
+#     # elif esn._act_fct_flag == 1 and esn._w_out_fit_flag == 0:
+#     #     # Tanh activation function with bias, linear readout
+#     #
+#     #     M = np.array(esn._w_in @ esn._w_out + esn._network)
+#     #
+#     #     bias = esn._bias
+#     #
+#     #     def f(r):
+#     #         return np.tanh(M @ r + bias)
+#     #
+#     #     # def Jacobian1(r):
+#     #     #    M_r=M@r
+#     #     #    J=np.zeros((d,d))
+#     #     #
+#     #     #    for i in range(d):
+#     #     #        for j in range(d):
+#     #     #            J[i,j] = M[i,j]/(np.cosh(M_r[i] + bias[i])**2)
+#     #     #    return np.array(J)
+#     #
+#     #     def Jacobian(r):
+#     #         '''
+#     #         M_r=M@r
+#     #
+#     #         J = np.cosh(M_r + bias)**(-2)*M
+#     #
+#     #         return np.array(J)
+#     #         '''
+#     #         M_r = M @ r
+#     #
+#     #         J = (np.cosh(M_r + bias) ** (-2) * M.T).T
+#     #
+#     #         return np.array(J)
+#     #
+#     # elif esn._act_fct_flag == 3 and esn._w_out_fit_flag == 0:
+#     #     # Mix of normal tanh and tanh^2 activation functions, linear readout,
+#     #     # no bias
+#     #
+#     #     M = np.array(esn._w_in @ esn._w_out + esn._network)
+#     #
+#     #     def f(r):
+#     #         new_r = np.zeros(r.shape)
+#     #         new_r[esn._normal_tanh_nodes] = np.tanh(M @ r)[
+#     #             esn._normal_tanh_nodes]
+#     #         new_r[esn._squared_tanh_nodes] = np.tanh(M @ r)[
+#     #                                              esn._squared_tanh_nodes] ** 2
+#     #         return new_r
+#     #
+#     #     # def Jacobian1(r):
+#     #     #    M_r=M@r
+#     #     #    J=np.zeros((d,d))
+#     #     #
+#     #     #    for i in range(d):
+#     #     #        for j in range(d):
+#     #     #            if i in esn._normal_tanh_nodes:
+#     #     #                J[i,j] = M[i,j]/(np.cosh(M_r[i])**2)
+#     #     #            elif i in esn._squared_tanh_nodes:
+#     #     #                J[i,j] = 2*M[i,j]*np.tanh(M_r[i])/(np.cosh(M_r[i])**2)
+#     #     #    return np.array(J)
+#     #
+#     #     def Jacobian(r):
+#     #
+#     #         M_r = M @ r
+#     #
+#     #         J = np.zeros((r.shape[0], r.shape[0]))
+#     #
+#     #         J[esn._normal_tanh_nodes] = (
+#     #                     np.cosh(M_r[esn._normal_tanh_nodes]) ** (-2) *
+#     #                     M[esn._normal_tanh_nodes].T).T
+#     #         J[esn._squared_tanh_nodes] = (
+#     #                     2 * np.tanh(M_r[esn._squared_tanh_nodes]) *
+#     #                     np.cosh(M_r[esn._squared_tanh_nodes]) ** (-2) *
+#     #                     M[esn._squared_tanh_nodes].T).T
+#     #
+#     #         return np.array(J)
+#
+#     else:
+#         raise Exception(
+#             "reservoir_lyapunov_spectrum_from_pred not implemented for this " +
+#             "activation function and readout")
+#
+#     # if starting_point is None:
+#     #     starting_point = esn._last_r
+#
+#     return equation_based_lyapunov_spectrum_from_pred(
+#         esn, Jacobian, nr_steps=nr_steps, dt=dt,
+#         return_convergence=return_convergence)
+
+# # # NOTE: Doesn't and can't work
+# def equation_based_lyapunov_spectrum_from_pred(esn, Jacobian,
+#                                               nr_steps=3000, dt=1.,
+#                                               return_convergence=False):
+#     """ Calculates the lyapunov spectrum of a discrete dynamical system
+#     with x_n+1 = f(x_n) using a standard QR-based algorithm.
+#
+#     Based on equations not data.
+#
+#     Measure for chaotic behaviour in the system.
+#
+#     Important characteristic to compare attractors.
+#
+#     Args:
+#         f (function): mapping with x_n+1 = f(x_n)
+#         Jacobian (function): Jacobian of f , takes x as argument
+#         starting_point (np.ndarray): inintial condition of iteration
+#         nr_steps (int): number of iteration steps
+#         dt (float): time scale of a step
+#         return_convergence (bool): if True returns the development of the
+#                 estimate for the lyapunov spectrum over time in steps of 100
+#                 iterations.
+#
+#     Returns:
+#         np.ndarray_or_tuple : lyapunov spectrum if return_convergence is False,
+#                                 tuple of final lyapunov spectrum and development
+#                                 of lyapunov spectrum if return_convergence is
+#                                 True
+#
+#
+#      """
+#
+#     # r = np.copy(esn._last_r)
+#     r_curr = esn._last_r
+#     esn._predict_step()
+#     r_next = esn._last_r
+#     x = esn._predict_step()
+#
+#     # esn._predict_step()
+#     # y = esn._predict_step(x)
+#
+#     Q, R = np.linalg.qr(Jacobian(x, r_curr))
+#
+#     s = []
+#     lces = []
+#
+#     for n in range(nr_steps):
+#         if n % 100 == 0: print(n, nr_steps)
+#         r_curr = r_next
+#         r_next = esn._last_r
+#         # r = np.copy(esn._last_r)
+#         # r = esn._last_r
+#         x = esn._predict_step()
+#
+#         Q, R = np.linalg.qr(np.matmul(Jacobian(x, r_curr), Q))
+#
+#         s.append(np.array([R[i, i] for i in range(len(R))]))
+#
+#         # if n % 100 == 0 and return_convergence:
+#         #     lya = np.sum(np.log(np.abs(s)), axis=0) / (n * dt)
+#         #     lces.append(lya)
+#
+#         if return_convergence:
+#             lya = np.sum(np.log(np.abs(s)), axis=0) / ((n + 1) * dt)
+#             lces.append(lya)
+#
+#     # lya = np.sum(np.log(np.abs(s[max(nr_steps-2500,2500):])), axis=0) / (nr_steps * dt)
+#     lya = np.sum(np.log(np.abs(s)), axis=0) / (nr_steps * dt)
+#
+#     if return_convergence:
+#         return lya, np.array(lces)
+#     else:
+#         return lya
 
 # def equation_based_lyapunov_spectrum_continuous(f, Jacobian, starting_point,
 #                                                 nr_steps=1000, dt=0.02,

@@ -2,7 +2,7 @@
 
 # from . import *
 from . import simulations, utilities, measures, esn
-from .esn import ESN, ESNWrapper
+from .esn import ESN, ESNWrapper, ESNGenLoc
 from .utilities import read_pickle
 from .simulations import simulate_trajectory
 from ._version import __version__

@@ -10,7 +10,7 @@ import sklearn.cluster
 # TODO: add synonym dict for cluster method
 # TODO this should use the LocESN internal functions
 # TODO: Comments, docstring, ...
-def find_local_neighborhood(locality_matrix, neighbors, cores=1, cluster_method="hacky_loc_neighbors", cluster_linkage="average"):
+def find_local_neighborhoods(locality_matrix, neighbors, cores=1, cluster_method="hacky_loc_neighbors", cluster_linkage="average"):
 
     input_dim = locality_matrix.shape[1]
 
@@ -193,7 +193,7 @@ def nmi_ts(x, y, bins=None):
 
 
 # TODO: Normalize the time series?
-def nmi(matrix, bins=None, rowvar=False):
+def nmi_loc(matrix, bins=None, rowvar=False):
     """
     Calculate the paiwise normalized mutual information for a set of time series
     Args:
@@ -225,6 +225,31 @@ def nmi(matrix, bins=None, rowvar=False):
                     nmi_matrix[ts2_index, ts1_index]
 
     return nmi_matrix
+
+
+def sn_loc(matrix, rowvar=False):
+    if rowvar == True: matrix = matrix.T
+
+    input_dim = matrix.shape[1]
+
+    pass  # --- Just use the spatial local states pathak neighborhood
+
+    loc_inverse_dist_matrix = np.zeros((input_dim, input_dim))
+
+    # NOTE loc neighborhood doesn't have a fallback for when there are 2 distances in a row that are both exactly at the cutoff, but the nr neighbors is odd. This tie breaker solves this, by always choosing the element with the smaller index.
+    tie_breaker = 1e-8
+
+    for row in range(input_dim):
+        for i in range(input_dim):
+            # loc_inverse_dist_matrix[row, i] = 1 - abs((i - row)/input_dim)
+            loc_inverse_dist_matrix[row, i] = \
+                input_dim - min(
+                    abs(i + tie_breaker - row),
+                    abs(i + tie_breaker - (row + input_dim)),
+                    abs(i + tie_breaker - (row - input_dim))
+                )
+
+    return loc_inverse_dist_matrix
 
 
 def cc_loc(matrix, rowvar=False):

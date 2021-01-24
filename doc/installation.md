@@ -54,9 +54,9 @@ Alternatively, to install everything like a normal, unchanging package, use (the
 
 After the installation, try
     
-    python bin/minimal_example.py
+    python -m unittest -v
 
-and you should see the famous Lorenz attractor.
+and you should see a variety of tests being executed. If all of them end with "ok" and no errors are thrown, the installation was successful. 
 
 ### Common Installation Problems
 ####  The installation seems to have worked without error, but the package is not found when I try to import it. 

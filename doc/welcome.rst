@@ -6,14 +6,13 @@ For questions, feedback and ideas, `write us!`_
 
 Licensing
 ---------------------
-This repository does not yet have a license assigned, as we are currently discussing which licence would be appropriate for this project.  
-
-As such we ask you not to share this code with _anyone_ that didn't explicitly get access to the `DLR GitLab repository`_ via official channels until an appropriate license has been added.
+This repository and the rescomp package are licensed under the MIT license, see our `LICENSE`_ file.
 
 Quick Start
 ---------------------
 
 First, :ref:`install<installation>` the package, then visit the :ref:`examples<examples>` for a short tutorial and showcase of Reservoir Computing.
 
+.. _`LICENSE`: https://gitlab.dlr.de/rescom/reservoir-computing/-/blob/master/license
 .. _`write us!`: mailto:Jonas.Aumeier@dlr.de,Sebastian.Baur@dlr.de,Joschka.Herteux@dlr.de,Youssef.Mabrouk@dlr.de?cc=Christoph.Raeth@dlr.de
 .. _`DLR GitLab repository`: https://gitlab.dlr.de/rescom/reservoir-computing

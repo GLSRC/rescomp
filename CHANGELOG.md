@@ -2,7 +2,16 @@
 
 This is the changelog for the rescomp package
 
-### rescomp 0.1.3 - Current Master and Development Branch
+### rescomp 0.2.0 - Current Master and Development Branch
+
+* Updated the repositories license from unlicensed to the MIT license
+
+### rescomp 0.1.4
+
+* Added the general local states (GLS) Code
+* Added a usage example for the general local states methods
+
+### rescomp 0.1.3
 
 * Rewrote the documentation for gitlab pages
 * Rewrote the examples as jupyter files for integration in the new documenation

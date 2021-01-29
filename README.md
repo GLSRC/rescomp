@@ -11,7 +11,7 @@ The Documentation that was previously part of this README, as well as much more,
 Rescomp is distributed under the MIT license, see our [**LICENSE**][license file link] file.
 
 
-[maintainer mail adresses]: mailto:Jonas.Aumeier@dlr.de,Sebastian.Baur@dlr.de,Joschka.Herteux@dlr.de,Youssef.Mabrouk@dlr.de?cc=Christoph.Raeth@dlr.de
+[maintainer mail adresses]: mailto:Sebastian.Baur@dlr.de,Joschka.Herteux@dlr.de,Youssef.Mabrouk@dlr.de?cc=Christoph.Raeth@dlr.de
 [gitlab pages website]: https://rescom.pages.gitlab.dlr.de/reservoir-computing/
 [rescomp gitlab link]: https://gitlab.dlr.de/rescom/reservoir-computing
 [license file link]: https://gitlab.dlr.de/rescom/reservoir-computing/-/blob/master/license

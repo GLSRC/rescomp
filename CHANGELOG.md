@@ -2,7 +2,18 @@
 
 This is the changelog for the rescomp package
 
-### rescomp 0.2.0 - Current Master and Development Branch
+### rescomp 0.2.1 - Current Master and Development Branch
+
+* Fixed Bug where the parameter pred_sync_steps was not passed on and used 
+incorrectly in the following functions:
+   * esn.ESNWrapper.train_and_predict()
+   * esn.ESNGenLoc.train_and_predict()
+   * utilities.train_and_predict_input_setup()
+   
+  Directly called predict() functions, the typical use case where an
+  additional synchronization is required, are unaffected.
+   
+### rescomp 0.2.0
 
 * Updated the repositories license from unlicensed to the MIT license
 

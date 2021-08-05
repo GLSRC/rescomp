@@ -16,19 +16,24 @@ class test_utilities(unittest.TestCase):
         disc_steps = 3
         train_sync_steps = 2
         train_steps = 4
-        pred_steps = 5
+        pred_sync_steps = 5
+        pred_steps = 6
+        some_steps_at_the_end = 13
         total_time_steps = disc_steps + train_sync_steps + train_steps + \
-                           pred_steps
+                           pred_sync_steps + pred_steps + some_steps_at_the_end
 
         x_dim = 3
         data = np.random.random((total_time_steps, x_dim))
 
-        x_train_desired = data[disc_steps: disc_steps + train_sync_steps + train_steps]
-        x_pred_desired = data[disc_steps + train_sync_steps + train_steps - 1:]
+        x_train_desired = data[disc_steps:
+                               disc_steps + train_sync_steps + train_steps]
+        x_pred_desired = data[disc_steps + train_sync_steps + train_steps - 1:
+                              -some_steps_at_the_end]
 
         x_train, x_pred = utilities.train_and_predict_input_setup(
             data, disc_steps=disc_steps, train_sync_steps=train_sync_steps,
-            train_steps=train_steps, pred_steps=pred_steps)
+            train_steps=train_steps, pred_sync_steps=pred_sync_steps,
+            pred_steps=pred_steps)
 
         np.testing.assert_equal(x_train, x_train_desired)
         np.testing.assert_equal(x_pred, x_pred_desired)

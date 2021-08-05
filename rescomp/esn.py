@@ -875,7 +875,8 @@ class ESNWrapper(ESN):
         """
         x_train, x_pred = utilities.train_and_predict_input_setup(
             x_data, disc_steps=disc_steps, train_sync_steps=train_sync_steps,
-            train_steps=train_steps, pred_steps=pred_steps)
+            train_steps=train_steps, pred_sync_steps=pred_sync_steps,
+            pred_steps=pred_steps)
 
         train_kwargs = utilities._remove_invalid_args(self.train, kwargs)
         predict_kwargs = utilities._remove_invalid_args(self.predict, kwargs)
@@ -1250,7 +1251,8 @@ class ESNGenLoc(utilities._ESNLogging):
 
         x_train, x_pred = utilities.train_and_predict_input_setup(
             x_data, disc_steps=disc_steps, train_sync_steps=train_sync_steps,
-            train_steps=train_steps, pred_steps=pred_steps)
+            train_steps=train_steps, pred_sync_steps=pred_sync_steps,
+            pred_steps=pred_steps)
 
         self_train_kwargs = utilities._remove_invalid_args(
             self.train, kwargs)

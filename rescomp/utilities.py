@@ -376,7 +376,8 @@ def _remove_invalid_args(func, args_dict):
 
 
 def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0,
-                                  train_steps=None, pred_sync_steps=0, pred_steps=None):
+                                  train_steps=None, pred_sync_steps=0,
+                                  pred_steps=None):
     """ Splits ESN input data for consecutive training and prediction
 
     This function is useful because there is an unintuitive overlap between
@@ -397,12 +398,17 @@ def train_and_predict_input_setup(data, disc_steps=0, train_sync_steps=0,
         - **x_pred** (*np.ndarray*): input data for the prediction
 
     """
-    if train_steps is None: train_steps = data.shape[0] - disc_steps
-    if pred_steps is None: pred_steps = data.shape[0] - train_steps - disc_steps
+    if train_steps is None:
+        x_train = data[disc_steps:]
+    else:
+        x_train = data[disc_steps: disc_steps + train_sync_steps + train_steps]
 
-    x_train = data[disc_steps: disc_steps + train_sync_steps + train_steps]
-    x_pred = data[disc_steps + train_sync_steps + train_steps + pred_sync_steps - 1:
-                  disc_steps + train_sync_steps + train_steps + pred_sync_steps + pred_steps]
+    if pred_steps is None:
+        x_pred = data[disc_steps + train_sync_steps + train_steps - 1:]
+    else:
+        x_pred = data[disc_steps + train_sync_steps + train_steps - 1:
+                      disc_steps + train_sync_steps + train_steps +
+                      pred_sync_steps + pred_steps]
 
     return x_train, x_pred
 

@@ -6,6 +6,7 @@ from .esn import ESN, ESNWrapper, ESNGenLoc
 from .utilities import read_pickle
 from .simulations import simulate_trajectory
 from ._version import __version__
+import warnings
 
 if not utilities._compare_version_file_vs_env(segment_threshold="minor"):
     int_version = utilities._get_internal_version()
@@ -18,8 +19,14 @@ if not utilities._compare_version_file_vs_env(segment_threshold="minor"):
         "folder and running: 'pip install --upgrade -e .'"\
         %(int_version, env_version)
 
-    import warnings
     warnings.filterwarnings("once", category=ImportWarning)
     warnings.warn(warn_string, ImportWarning, stacklevel=2)
-    # meh = warnings.formatwarning(warn_string, ImportWarning, None, None, line="import rescomp")
     warnings.resetwarnings()
+
+package_deprication_warn_string = \
+    "\nThe DLR Gitlab repository this package is from is DEPRICATED. No " \
+    "further development will take place there.\nFor continued development, " \
+    "bug fixes and support, please head over to our official GitHub " \
+    "repository: https://github.com/GLSRC/rescomp\n"
+# warnings.filterwarnings("once", category=ImportWarning)
+warnings.warn(package_deprication_warn_string, stacklevel=2)

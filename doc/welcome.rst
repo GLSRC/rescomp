@@ -1,8 +1,9 @@
-This repository contains the python 3 package *rescomp*, implementing the machine learning technique Reservoir Computing (RC).
+The GitLab repository this package and documentation reside in is **depricated**. No
+further development will take place here. For continued development, bug fixes
+and support, please head over to our official GitHub repository:
+https://github.com/GLSRC/rescomp
 
-Development largely takes place at the DLR group *Komplexe Plasmen* in Oberpfaffenhofen, but contributions from other DLR sites are welcome.
-
-For questions, feedback and ideas, `write us!`_
+This (depricated) repository contains the python 3 package **rescomp** implementing the machine learning technique Reservoir Computing.
 
 Licensing
 ---------------------

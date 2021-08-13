@@ -1,11 +1,11 @@
 ## Reservoir Computing
 
-The GitLab repository this package and README resides in is depricated. No 
+The GitLab repository this package and README resides in is deprecated. No 
 further development will take place here. For continued development, bug fixes 
 and support, please head over to our official GitHub repository: 
 https://github.com/GLSRC/rescomp
 
-This (depricated) repository contains the python 3 package **rescomp** implementing the machine learning technique Reservoir Computing.
+This (deprecated) repository contains the python 3 package **rescomp** implementing the machine learning technique Reservoir Computing.
  
 ### Documentation Website
 

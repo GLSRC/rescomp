@@ -1,7 +1,6 @@
-.. _examples:
-
 Examples
 ---------------------
+.. _examples:
 
 You can find all of these examples in the *bin* folder if you want to run them yourself.
 Their intended order is the given order below.

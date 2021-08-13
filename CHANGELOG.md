@@ -2,9 +2,9 @@
 
 This is the changelog for the rescomp package
 
-### rescomp 0.2.1DEPRICATED - Current Master and Development Branch
+### rescomp 0.2.1DEPRECATED - Current Master and Development Branch
 
-* The GitLab repository this package resides in is depricated. No 
+* The GitLab repository this package resides in is deprecated. No 
 further development will take place here. For continued development, bug fixes 
 and support, please head over to our official GitHub repository: 
 https://github.com/GLSRC/rescomp

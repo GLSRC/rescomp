@@ -6,10 +6,9 @@ ESN
 .. inheritance-diagram:: rescomp.esn
    :parts: 1
 
-
-.. _esnwrapper_class:
 ESNWrapper Class
 ------------------
+.. _esnwrapper_class:
 .. autoclass:: rescomp.esn.ESNWrapper
     :inherited-members:
     :members:

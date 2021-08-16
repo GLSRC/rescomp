@@ -48,7 +48,6 @@ class _ESNCore(utilities._ESNLogging):
         self._last_r = None
         self._last_r_gen = None
 
-        # TODO: Local States Hack
         self._loc_nbhd = None
 
         self._reg_param = None
@@ -138,7 +137,9 @@ class _ESNCore(utilities._ESNLogging):
 
         r_gen = self._r_to_generalized_r(r)
 
-        # TODO: Local States Hack
+        # If we are using local states we only want to use the core dimensions
+        # for the fit of W_out, i.e. the dimensions where the corresponding
+        # locality matrix is 2
         if self._loc_nbhd is None:
             self._w_out = np.linalg.solve(
                 r_gen.T @ r_gen + self._reg_param * np.eye(r_gen.shape[1]),
@@ -146,7 +147,7 @@ class _ESNCore(utilities._ESNLogging):
         else:
             self._w_out = np.linalg.solve(
                 r_gen.T @ r_gen + self._reg_param * np.eye(r_gen.shape[1]),
-                r_gen.T @ y_train[:,self._loc_nbhd == 2]).T
+                r_gen.T @ y_train[:, self._loc_nbhd == 2]).T
 
         return r_gen
 
@@ -186,17 +187,17 @@ class _ESNCore(utilities._ESNLogging):
 
         return r, r_gen
 
-    # TODO: Document Local States Hack
-    # TODO: Document behavior of x=None => use last_r
     def _predict_step(self, x=None):
         """ Predict a single time step
 
         Assumes a synchronized reservoir.
-        Changes self._last_r and self._last_r_gen to stay synchronized to the new
-        system state y
+        Changes self._last_r and self._last_r_gen to stay synchronized to the
+        new system state y
 
         Args:
-            x (np.ndarray): input for the d-dim. system, shape (d,)
+            x (np.ndarray): input for the d-dim. system, shape (d,). If x is
+            None the internal reservoir states will be used to generate x
+            using w_out
 
         Returns:
             np.ndarray: y, the next time step as predicted from last_x, _w_out
@@ -212,8 +213,6 @@ class _ESNCore(utilities._ESNLogging):
 
         y = self._w_out @ self._last_r_gen
 
-        # TODO: Document Local States Hack
-        # pad with NANs
         if self._loc_nbhd is not None:
             temp = np.empty(self._loc_nbhd.shape)
             temp[:] = np.nan
@@ -232,10 +231,6 @@ class ESN(_ESNCore):
 
     """
 
-    # def __init__(self, network_dimension=500, input_dimension=None,
-    #              type_of_network='random', avg_degree=6., spectral_radius=0.1,
-    #              regularization_parameter=1e-5, w_in_sparse=True, w_in_scale=1.,
-    #              act_fct_flag='tanh', bias_scale=0., **kwargs):
     def __init__(self):
 
         super().__init__()
@@ -590,7 +585,6 @@ class ESN(_ESNCore):
             self._squared_tanh_nodes.extend(
                 dimwise_nodes[round(len(dimwise_nodes)*mix_ratio):])
 
-    # TODO: Needs local states docu
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
               w_in_sparse=True, w_in_ordered=False, w_in_no_update=False,
               act_fct_flag='tanh_simple', bias_scale=0, mix_ratio=0.5,
@@ -629,6 +623,9 @@ class ESN(_ESNCore):
             w_out_fit_flag (str): Type of nonlinear transformation applied to
                 the reservoir states r to be used during the fit (and future
                 prediction)
+            loc_nbhd (np.ndarray): The local neighborhood used for the
+                generalized local states approach. For more information, please
+                see the docs.
 
         """
         self._reg_param = reg_param
@@ -662,17 +659,17 @@ class ESN(_ESNCore):
         else:
             self._train_synced(x_train, w_out_fit_flag=w_out_fit_flag)
 
-    #TODO: Document x_pred=None
     def predict(self, x_pred=None, sync_steps=0, pred_steps=None,
                 save_r=False, save_input=False):
         """ Synchronize the reservoir, then predict the system evolution
 
-        Changes self._last_r and self._last_r_gen to stay synchronized to the new
-        system state
+        Changes self._last_r and self._last_r_gen to stay synchronized to the
+        new system state
 
         Args:
             x_pred (np.ndarray): Input data used to synchronize the reservoir,
-                and then use the rest to predict
+                and then used as comparison for the prediction by being returned
+                as y_pred in the output
             sync_steps (int): How many steps to use for synchronization before
                 the prediction starts
             pred_steps (int): How many steps to predict
@@ -777,7 +774,7 @@ class ESN(_ESNCore):
         return self._w_in
 
     def get_w_out(self, ):
-        """ Returns the outpy=ut matrix w_out
+        """ Returns the output matrix w_out
 
         Returns:
             np.ndarray: w_out
@@ -888,35 +885,36 @@ class ESNWrapper(ESN):
 
         return y_pred, y_test
 
-
-    # def predict_multiple(self, ):
-    #     """ Predict system evolution from multiple different starting conditions
-    #     """
-    #     raise Exception("Not yet implemented")
-    #
-    # def calc_binary_network(self):
-    #     """ Returns a binary version of self._network
-    #     """
-    #     raise Exception("Not yet implemented")
-    #
-    # def remove_nodes(self, split):
-    #     """ See the out-commented remove_nodes fct in measures
-    #     """
-    #     raise Exception("Not yet implemented")
-
-
 class ESNGenLoc(utilities._ESNLogging):
+    """ Generalized Local State Implementation of RC
 
-    # TODO for future:
-    #  Training done in parallel for small networks (and or on the cluster)
-    #  For now, all ESNs are have the same parameters, but it should be written
-    #  such that they can have different ones.
-    #  Save the list of instances parameters to file, write it to save each
-    #  network's parameters individually, even if right now they are all the
-    #  same anyway
-    #   even better: just call the .save() function of the ESN objects themselves with different file paths
+    For details, please see the general_local_states_example in bin and/or the
+    package documentation
+
+    Idea behind the Local Neighborhoods matrix implementation:
+    Human readable and plottable locality neighborhood "loc_nbhd_full"
+        0: not part of nbhd,
+        1: part of nbhd,
+        2: core.
+    E.g.:
+        [1, 2, 1, 0]
+        [0, 1, 2, 1]
+        [2, 1, 1, 2]
+    Each row is a "neighborhood" specifying which dimensions are
+    grouped together as input for each ESN instance.
+    As such there can only be one 2 per input dimension (column) as
+    otherwise combining the different neighborhood's predictions after
+    each prediction step is not possible.
+    In theory there can be no 2 in a dimension/column though. In that case
+    the corresponding dimension just doesn't appear in the prediction output.
+
+    The code is written under the assumption that all internal ESNs have
+    the same hyperparameters. This does not necessarily need to be the case
+    though, and a more generalized implementation would allow it.
+    """
 
     def __init__(self):
+        """ Same idea as for the ESN Wrapper Class """
         super().__init__()
 
         self._esn_instances = []
@@ -924,40 +922,17 @@ class ESNGenLoc(utilities._ESNLogging):
         self._nr_nbhds = None
         self._loc_nbhds = None
         self._train_core_only = None
-        # Local Neighborhoods matrix Idea:
-        # Human readable and plottable locality neighborhood "loc_nbhd_full" (0: not part of nbhd, 1:part of nbhd, 2:core). E.g.:
-        #   [1, 2, 1, 0]
-        #   [0, 1, 2, 1]
-        #   [2, 1, 1, 2]
-        # Each row is a "neighborhood" specifying the which dimensions are
-        # grouped together as input for each ESN instance
-        # As such there can only be one 2 per input dimension (column) as
-        # otherwise combining the different neighborhood's predictions after
-        # each prediction step is not possible.
-        # There can be zero cores/2s in a dimension/column though. In that case
-        # the dimension just doesn't appear in the prediction output.
-
-        # # A day after writing this class: Why did I make this a class member?
-        # self._y_pred = None
-
-        # self._loc_measure = None
-        # self._loc_measure_synonyms = utilities._SynonymDict()
-        # self._loc_measure_synonyms.add_synonyms(0, ["EC", "Euclid"])
-        # self._loc_measure_synonyms.add_synonyms(1, ["CC", "Cross Correlation"])
-        # self._loc_measure_synonyms.add_synonyms(2, ["MI", "Mutual Information"])
-        # self._loc_measure_synonyms.add_synonyms(2, ["TE", "Transfer Entropy"])
-
-        # self._rescomp_version = None
 
     def create_network(self, **kwargs):
+        """ Same idea as for the ESN Wrapper Class """
         esn = ESNWrapper()
         esn.create_network(**kwargs)
         self._esn_instances.append(esn)
 
-    # @profile
-    def train(self, x_train, sync_steps, loc_nbhds=None, train_core_only=True, ESN_train_kwargs=None):
+    def train(self, x_train, sync_steps, loc_nbhds=None, train_core_only=True,
+              ESN_train_kwargs=None):
+        """ Same idea as for the ESN Wrapper Class """
 
-        # self._loc_measure = self._loc_measure_synonyms.get_flag(loc_measure)
         self._loc_nbhds = loc_nbhds
 
         self._nr_nbhds = loc_nbhds.shape[0]
@@ -967,10 +942,6 @@ class ESNGenLoc(utilities._ESNLogging):
 
         self.logger.debug("Start locality training with %d neighborhoods" %
                           self._nr_nbhds)
-
-        # loc_x_train_all = [
-        #     np.squeeze(x_train[:, np.argwhere(loc_nbhds[i])], 2)
-        #     for i in range(nr_nbhds)]
 
         self.logger.debug("Deepcopy initial ESN instance for each "
                           "Neighborhood. Reservoir network matrix are shallow "
@@ -989,24 +960,23 @@ class ESNGenLoc(utilities._ESNLogging):
             loc_nbhd = None
         esn.train(loc_x_train, sync_steps, loc_nbhd=loc_nbhd, **ESN_train_kwargs)
 
-        # This sets all the reservoirs to be equal as
-        # it's very memory inefficient, to hard copy that every time
+        # This sets all the reservoirs to be the same object in memory. This is
+        # more efficient, but less general and would need to be reworked if one
+        # wanted to support different reservoir configurations.
+        # The same is true for the input matrices.
         for nbhd_index in range(1, self._nr_nbhds):
             self._esn_instances[nbhd_index]._network = self._esn_instances[0]._network
             # NOTE This next line throws an error if there are neighborhoods with
             #  more or less elements than the 0th neighborhood. I keep it here
             #  for now to reproduce old results and for a slight bit more memory
-            #  efficiency. Also not the w_in_no_update=True in the loop below.
+            #  efficiency.
+            #  Also note the necessary w_in_no_update=True in the loop below.
             self._esn_instances[nbhd_index]._w_in = self._esn_instances[0]._w_in
-
-        # del esn; del self._esn_instances[0]; gc.collect()
 
         for nbhd_index in range(1, self._nr_nbhds):
             self.logger.debug("Start Training of Neighborhood %d/%d"%
                               (nbhd_index + 1, self._nr_nbhds))
-            # nbhd_row = loc_nbhds[nbhd_index]
             loc_x_train = self._get_local_x(x_train, nbhd_index)
-            # loc_x_train = loc_x_train_all[nbhd_index]
             esn = self._esn_instances[nbhd_index]
             if train_core_only:
                 loc_nbhd = self._get_nbhd_cut_off_zeros(nbhd_index)
@@ -1020,27 +990,17 @@ class ESNGenLoc(utilities._ESNLogging):
         nbhd = self._get_nbhd(nbhd_index)
         x_ndim = x.ndim
         if x_ndim is 2:
-            # meh1 = np.argwhere(nbhd)
-            # meh2 = np.nonzero(nbhd)
-            # loc_x = x[:, np.argwhere(nbhd)]
-            # loc_x2 = x[:, np.nonzero(nbhd)]
-            # loc_x = np.squeeze(x[:, np.argwhere(nbhd)], x_ndim)
             loc_x = np.squeeze(x[:, np.nonzero(nbhd)], 1)
         elif x_ndim is 1:
-            # loc_x = np.squeeze(x[np.argwhere(nbhd)], x_ndim)
-            # loc_x2 = x[np.nonzero(nbhd)]
             loc_x = x[np.nonzero(nbhd)]
         else:
             raise Exception("x.ndim must be either 1 or 2")
 
-        # test = np.array_equal(loc_x, loc_x2)
         return loc_x
 
     def _get_nbhd_cut_off_zeros(self, nbhd_index):
         nbhd = self._get_nbhd(nbhd_index)
-        # nbhd_cut_of_zeros = nbhd[np.argwhere(nbhd)]
         nbhd_cut_of_zeros = nbhd[np.nonzero(nbhd)]
-        # loc_x = np.squeeze(x[:, np.argwhere(nbhd)], 2)
         return nbhd_cut_of_zeros
 
     def _get_nbhd(self, nbhd_index):
@@ -1048,10 +1008,12 @@ class ESNGenLoc(utilities._ESNLogging):
         nbhd = self._loc_nbhds[nbhd_index]
         return nbhd
 
-    def predict(self, x_pred, sync_steps, pred_steps=None, ESN_sync_kwargs=None, **kwargs):
+    def predict(self, x_pred, sync_steps, pred_steps=None, ESN_sync_kwargs=None,
+                **kwargs):
+        """ Same idea as for the ESN Wrapper Class """
         # NOTE This function is very inefficiently written, but it doesn't
         #  really matter, as the prediction is very much not the bottleneck
-        #  anyway
+        #  anyway. Still worth improving though.
 
         if ESN_sync_kwargs is None: ESN_sync_kwargs = {}
 
@@ -1077,13 +1039,9 @@ class ESNGenLoc(utilities._ESNLogging):
         # Synchronize
         if x_sync is not None:
             self.synchronize(x_sync)
-            # for nbhd_index in range(self._nr_nbhds):
-            #     loc_x_sync = self._get_local_x(x_sync, nbhd_index)
-            #
-            #     esn = self._esn_instances[nbhd_index]
-            #     esn.synchronize(loc_x_sync, **kwargs)
 
-        # If pred_steps, this function only syncs, and doesn't actually predict anything
+        # If pred_steps is 0, this function only syncs, and doesn't actually
+        # predict anything
         if pred_steps != 0:
             # Predict Step by step
             # NOTE The 2nd line, as well as the range for t is a hack to avoid code
@@ -1109,9 +1067,10 @@ class ESNGenLoc(utilities._ESNLogging):
             return None, None
 
     def synchronize(self, x_sync, **kwargs):
+        """ Same idea as for the ESN Wrapper Class """
         # NOTE This function is very inefficiently written, but it doesn't
-        #  really matter, as the prediction is very much not the bottleneck
-        #  anyway
+        #  really matter, as the synchronization is very much not the bottleneck
+        #  anyway. Still improvement worthy though.
 
         self.logger.debug('Start syncing')
 
@@ -1123,8 +1082,8 @@ class ESNGenLoc(utilities._ESNLogging):
 
     def _predict_step(self, x=None):
         # NOTE I think this for loop can, i.g. not be translated to completely
-        #  vectorized numpy code as i.g. loc_y_pred and loc_nbhd_cut_of_zeros can
-        #  have different sizes for different neighborhood numbers
+        #  vectorized numpy code as i.g. loc_y_pred and loc_nbhd_cut_of_zeros
+        #  can have different sizes for different neighborhood numbers
 
         # If x isn't given, calculate it from the last r states as the x we are
         # looking for is just the y from the last step
@@ -1134,17 +1093,19 @@ class ESNGenLoc(utilities._ESNLogging):
                 esn = self._esn_instances[nbhd_index]
 
                 # NOTE Predicting a step advances the reservoir state by a step,
-                #  which we don't want, hence we need to reset it afterwards.
-                #  This is a very hacky way to do this, but I don't see a nice
-                #  way to do so
-                # last_r = esn._last_r
-                # loc_x = esn._predict_step()
-                # esn._last_r = last_r
-
+                #  which we don't want, hence if we call esn._predict step we'd
+                #  need to reset it afterwards, like this:
+                #  last_r = esn._last_r
+                #  loc_x = esn._predict_step()
+                #  esn._last_r = last_r
+                #  This is a very hacky and bad way to do this, which is why
+                #  we copy the relevant line from the prediction code here
+                #  instead. This is, of course, also bad, but not
+                #  doable otherwise without a rewrite of _ESNCore
                 loc_x = esn._w_out @ esn._r_to_generalized_r(esn._last_r)
 
-                # TODO: Copied from the esn._predict_step() function because
-                #  the padding is needed below. This is bad bad code
+                # NOTE: Copied this from the esn._predict_step() function
+                #  because the padding is needed below. This is bad bad code
                 temp = np.empty(esn._loc_nbhd.shape)
                 temp[:] = np.nan
                 temp[esn._loc_nbhd == 2] = loc_x
@@ -1168,80 +1129,6 @@ class ESNGenLoc(utilities._ESNLogging):
             y[nbhd == 2] = loc_y_pred_step[nbhd_cut_of_zeros == 2]
 
         return y
-
-    # def predict_old(self, x_pred, sync_steps, pred_steps=None, ESN_sync_kwargs=None, **kwargs):
-    #     # NOTE This function is very inefficiently written, but it doesn't
-    #     #  really matter, as the prediction is very much not the bottleneck
-    #     #  anyway
-    #
-    #     if ESN_sync_kwargs is None: ESN_sync_kwargs = {}
-    #
-    #     self.logger.debug('Start local prediction')
-    #
-    #     # NOTE Much copied from ESN class -> Better way than code duplication?
-    #     if pred_steps is None:
-    #         pred_steps = x_pred.shape[0] - sync_steps - 1
-    #
-    #     if len(x_pred) > sync_steps + pred_steps + 1:
-    #         x_pred = x_pred[:sync_steps + pred_steps + 1]
-    #
-    #     if sync_steps == 0:
-    #         x_sync = None
-    #         y_test = x_pred[1:]
-    #     elif sync_steps <= x_pred.shape[0]:
-    #         x_sync = x_pred[:sync_steps]
-    #         y_test = x_pred[sync_steps + 1:]
-    #     else:
-    #         x_sync = x_pred[:-1]
-    #         y_test = None
-    #
-    #     # Synchronize
-    #     if x_sync is not None:
-    #         for nbhd_index in range(self._nr_nbhds):
-    #             loc_x_sync = self._get_local_x(x_sync, nbhd_index)
-    #
-    #             esn = self._esn_instances[nbhd_index]
-    #             esn.synchronize(loc_x_sync, **kwargs)
-    #
-    #     # Predict Step by step
-    #     # NOTE The 2nd line, as well as the range for t is a hack to avoid code
-    #     #  duplication in the prediction loop. It doesn't cause problems as
-    #     #  _y_pred[-1] will be overwritten in the last prediction step anyway.
-    #     #  Still probably error prone though
-    #     self._y_pred = np.zeros((pred_steps, x_pred.shape[1]))
-    #     self._y_pred[-1] = deepcopy(x_pred[sync_steps])
-    #     for t in range(-1, pred_steps - 1):
-    #
-    #         if t % 1000 == 0:
-    #             self.logger.debug('Prediction for %d/%d steps done' %
-    #                               (t, pred_steps))
-    #
-    #         # NOTE I think this for loop can, i.g. not be translated to completely
-    #         #  vectorized numpy code as i.g. loc_y_pred and loc_nbhd_cut_of_zeros can
-    #         #  have different sizes for different neighborhood numbers
-    #         for nbhd_index in range(self._nr_nbhds):
-    #             esn = self._esn_instances[nbhd_index]
-    #
-    #             loc_x_pred_step = self._get_local_x(self._y_pred[t], nbhd_index)
-    #             loc_y_pred_step = esn._predict_step(loc_x_pred_step)
-    #             # loc_y_pred_step_core =
-    #
-    #             # self.y_pred[t + 1][loc_nbhds[nbhd_index] == 2] = \
-    #             #     loc_y_pred_step[loc_nbhd_cut_of_zeros[nbhd_index] == 2]
-    #
-    #             # loc_y_pred = loc_y_pred_all[nbhd_index]
-    #             nbhd = self._get_nbhd(nbhd_index)
-    #             nbhd_cut_of_zeros = self._get_nbhd_cut_off_zeros(nbhd_index)
-    #
-    #             self._y_pred[t + 1][nbhd == 2] = \
-    #                 loc_y_pred_step[nbhd_cut_of_zeros == 2]
-    #
-    #     self.logger.debug('Prediction for %d/%d steps done' %
-    #                       (pred_steps, pred_steps))
-    #
-    #     # sync in parallel, same as for the train from above
-    #     # pred every step at a time
-    #     return self._y_pred, y_test
 
     def train_and_predict(self, x_data, train_sync_steps, train_steps,
                           loc_nbhds=None, pred_sync_steps=0, pred_steps=None,
@@ -1315,6 +1202,10 @@ class ESNGenLoc(utilities._ESNLogging):
         self.set_file_logger(file_log_level, log_file_path)
 
     def get_last_r_states(self):
+        """
+        Returns:
+
+        """
         last_r_states = []
         for esn in self._esn_instances:
             last_r_states.append(esn._last_r)

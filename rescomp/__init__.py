@@ -22,11 +22,3 @@ if not utilities._compare_version_file_vs_env(segment_threshold="minor"):
     warnings.filterwarnings("once", category=ImportWarning)
     warnings.warn(warn_string, ImportWarning, stacklevel=2)
     warnings.resetwarnings()
-
-package_deprecation_warn_string = \
-    "\nThe DLR Gitlab repository this package is from is DEPRECATED. No " \
-    "further development will take place there.\nFor continued development, " \
-    "bug fixes and support, please head over to our official GitHub " \
-    "repository: https://github.com/GLSRC/rescomp\n"
-# warnings.filterwarnings("once", category=ImportWarning)
-warnings.warn(package_deprecation_warn_string, stacklevel=2)

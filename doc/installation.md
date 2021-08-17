@@ -8,7 +8,7 @@ These instructions are for unix systems, but do work with at most minor modifica
 ### Optional (but Strongly Encouraged) Prerequesites
 
 * [git](https://git-scm.com/downloads): Used for downloading the repository and keeping it up to date. 
-* [Anaconda 3](https://www.anaconda.com/distribution/): Using a virtual python environment is **highly** recommended to avoid damaging/unintentionally changing your base python. as this is an alpha distribution and hence not well tested.  
+* [Anaconda 3](https://www.anaconda.com/distribution/): Using a virtual python environment is **highly** recommended to avoid damaging/unintentionally changing your base python.
   Of course you are free to use the environment manager of your choice, but in the following we will assume it to be Anaconda.
 
 ### Installation Instructions
@@ -19,13 +19,13 @@ Open a terminal and enter the folder you wish to copy the GitLab repository to.
 
 Clone the GitLab repository. Here we copy it into the folder "rescomp"  
 
-    git clone https://gitlab.dlr.de/rescom/reservoir-computing.git rescomp
+    git clone https://github.com/GLSRC/rescomp.git rescomp
 
 Enter the cloned GitLab folder
 
     cd rescomp
 
-Set your (name and email for this repository (just use your full name and the DLR email address here)
+Set your name and email for this repository, e.g.:
     
     git config user.name "Lastname, Firstname"
     git config user.email you@example.com
@@ -87,7 +87,6 @@ and then, should pip still not be located in the active environment by "which pi
 
 If you can't install or use the package despite following the above instructions, [write us][maintainer mail adresses]. For a package as new as this one, such problems are to be expected and we will try to help as soon as possible.
 
-
 ### Updating
 
 To keep the rescomp package up to date with the most current version in the repository, enter your local repository folder (the same folder we cloned during the installation) and run
@@ -107,7 +106,4 @@ To uninstall the rescomp package, simply activate the respective environment and
 
     pip uninstall rescomp
 
-
-[maintainer mail adresses]: mailto:Jonas.Aumeier@dlr.de,Sebastian.Baur@dlr.de,Joschka.Herteux@dlr.de,Youssef.Mabrouk@dlr.de?cc=Christoph.Raeth@dlr.de
-[gitlab pages website]: https://rescom.pages.gitlab.dlr.de/rescomp/
-[rescomp gitlab link]: https://gitlab.dlr.de/rescom/reservoir-computing
+[maintainer mail adresses]: mailto:Sebastian.Baur@dlr.de?cc=Christoph.Raeth@dlr.de

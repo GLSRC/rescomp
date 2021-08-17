@@ -1,0 +1,439 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>For Contributors &mdash; rescomp 0.2.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Changelog" href="changelog.html" />
+    <link rel="prev" title="FAQ" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> rescomp
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#optional-but-strongly-encouraged-prerequesites">Optional (but Strongly Encouraged) Prerequesites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installation-instructions">Installation Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#common-installation-problems">Common Installation Problems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#the-installation-seems-to-have-worked-without-error-but-the-package-is-not-found-when-i-try-to-import-it">The installation seems to have worked without error, but the package is not found when I try to import it.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#nothing-works-please-help-me">Nothing works, please help me!</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#updating">Updating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#uninstalling">Uninstalling</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/minimal_example.html">Minimal Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/higher_dim_example.html">Higher Dimensional Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/training_and_prediction_example.html">Training and Prediction Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/general_local_states_example.html">Generalized Local States Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/simulations_example.html">Simulations Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Rescomp Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rescomp_esn.html">ESN</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rescomp_esn.html#esnwrapper-class">ESNWrapper Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rescomp_esn.html#esn-class">ESN Class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rescomp_measures.html">Measures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rescomp_utilities.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rescomp_simulations.html">Simulations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#q-where-do-i-find-good-literature-about-reservoir-computing-do-you-have-some-paper-or-book-to-recommend">Q: Where do I find good literature about reservoir computing ? Do you have some paper or book to recommend?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#q-my-predictions-don-t-agree-with-the-real-data-at-all-what-is-going-on">Q: My predictions don’t agree with the real data at all! What is going on?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#q-for-the-exact-same-set-of-hyperparameters-the-prediction-is-sometimes-amazingly-accurate-and-at-other-times-utterly-wrong-why">Q: For the exact same set of hyperparameters the prediction is sometimes amazingly accurate and at other times utterly wrong. Why?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#q-you-said-above-that-the-network-should-have-about-100x-as-many-nodes-as-the-input-has-dimensions-maybe-more-my-input-is-50-dimensional-and-with-5000-10000-nodes-the-training-and-prediction-is-annoyingly-slow-i-thought-rc-was-supposed-to-be-fast-what-s-going-on">Q: You said above that the network should have about 100x as many nodes as the input has dimensions, maybe more. My input is &gt;50 dimensional and with 5000-10000 nodes the training and prediction is annoyingly slow! I thought RC was supposed to be fast, what’s going on?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#q-in-your-code-i-see-you-discard-some-samples-at-the-beginning-of-training-why-is-it-necessary">Q: In your code, I see you discard some samples at the beginning of training, why is it necessary?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#q-do-i-need-to-denoise-my-data">Q: Do I need to denoise my data?</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">For Contributors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-information">General Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#branche-usage-intentions">Branche Usage Intentions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-your-own-developer-branch">Create your own developer branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adjusting-the-terminal-to-always-show-the-current-branch">Adjusting the terminal to always show the current branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#synchronize-and-merge-your-developer-branch">Synchronize and merge your developer branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cloning-the-repository-via-access-token-authentication">Cloning the Repository via Access Token Authentication:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#code-style">Code Style</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#docstrings">Docstrings:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#for-internal-contributors">For Internal Contributors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">CHANGELOG</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-1-current-master-and-development-branch">rescomp 0.2.1 - Current Master and Development Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-0">rescomp 0.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-1-4">rescomp 0.1.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-1-3">rescomp 0.1.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-1-2">rescomp 0.1.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-1-1">rescomp 0.1.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-1-0">rescomp 0.1.0</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">rescomp</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>For Contributors</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="for-contributors">
+<h1>For Contributors<a class="headerlink" href="#for-contributors" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="general-information">
+<h2>General Information<a class="headerlink" href="#general-information" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>As the package is very much in flux, reading the commits of others is very important! Otherwise you might write code for functions that don’t exist anymore or whose syntax has completely changed.<span class="raw-html-m2r"><br></span>
+As a corrolary, this also means that writing legible, descriptive commit messages is paramount!</p></li>
+<li><p>All the old code, before we made everything installable as a package, is in the folder <em>legacy</em>. The goal should be to slowly add all the functions from the legacy code base to one, coherent python package.</p></li>
+</ul>
+</div>
+<div class="section" id="branche-usage-intentions">
+<h2>Branche Usage Intentions<a class="headerlink" href="#branche-usage-intentions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>master</strong>:</dt><dd><p>Only for finished, documented features whose signature or functionality won’t change much in the future<span class="raw-html-m2r"><br></span>
+Changed only by merging with the development branch. Every change is accompanied by a new package version and updated documentation.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>develop</strong>:</dt><dd><p>This is the development branch which is intendet for working features whose signature or functionality probably won’t change much in the future, but are not ready yet to be deployed to “the public”, possibly because they are incomplete or not yet documented.
+Also for features and changes to insignificant to make a new release number for.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>developer branches</strong>:</dt><dd><p>These are your personal branches you can do what you want with.<span class="raw-html-m2r"><br></span>
+They should branch off of and merge into the develop branch. It is advisable to keep your developer branch as synchronized as possible with the development branch (see below)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="create-your-own-developer-branch">
+<h2>Create your own developer branch<a class="headerlink" href="#create-your-own-developer-branch" title="Permalink to this headline">¶</a></h2>
+<p>First, go into your local rescomp repository. Then, make sure that you are in the master branch, which you can check via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">status</span>
+</pre></div>
+</div>
+<p>Then, you want to make sure that your local repository is synchronized with the code on the GitLab servers, which you can enforce by using</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">pull</span>
+</pre></div>
+</div>
+<p>checkout (i.e. switch to) the developer branch</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">develop</span>
+</pre></div>
+</div>
+<p>create your branch locally</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">branch</span> <span class="n">Your</span><span class="o">-</span><span class="n">GitLab</span><span class="o">-</span><span class="n">Username</span><span class="o">-</span><span class="n">Here</span>
+</pre></div>
+</div>
+<p>and then push the branch to server</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">push</span> <span class="o">--</span><span class="nb">set</span><span class="o">-</span><span class="n">upstream</span> <span class="n">origin</span> <span class="n">Your</span><span class="o">-</span><span class="n">GitLab</span><span class="o">-</span><span class="n">Username</span><span class="o">-</span><span class="n">Here</span>
+</pre></div>
+</div>
+<p>after which you are done.
+You now have a personal copy of the develop branch, which you can modify to you hearts content without getting in the way of other people!<span class="raw-html-m2r"><br></span>
+Now you just need to make sure that when you are working on/with the rescomp package, that you are in fact working in your own branch. This is checkable manually via</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">status</span>
+</pre></div>
+</div>
+<p>but you can also adjust your terminal to always display the current active branch, which is much safer and more convenient.</p>
+</div>
+<div class="section" id="adjusting-the-terminal-to-always-show-the-current-branch">
+<h2>Adjusting the terminal to always show the current branch<a class="headerlink" href="#adjusting-the-terminal-to-always-show-the-current-branch" title="Permalink to this headline">¶</a></h2>
+<p>The precise way to do this depends on your operating system and shell.<span class="raw-html-m2r"><br></span>
+For bash on linux the following tutorial works quite well:
+<a class="reference external" href="https://coderwall.com/p/fasnya/add-git-branch-name-to-bash-prompt">https://coderwall.com/p/fasnya/add-git-branch-name-to-bash-prompt</a></p>
+</div>
+<div class="section" id="synchronize-and-merge-your-developer-branch">
+<h2>Synchronize and merge your developer branch<a class="headerlink" href="#synchronize-and-merge-your-developer-branch" title="Permalink to this headline">¶</a></h2>
+<p>To synchronize your developer branch with the current state of the development branch do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">develop</span>
+<span class="n">git</span> <span class="n">pull</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">Your</span><span class="o">-</span><span class="n">Developer</span><span class="o">-</span><span class="n">Branch</span><span class="o">-</span><span class="n">Name</span>
+<span class="n">git</span> <span class="n">merge</span> <span class="n">develop</span>
+</pre></div>
+</div>
+<p>To merge your new, commit code from your personal developer branch into the development branch, first synchronize them as above:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">develop</span>
+<span class="n">git</span> <span class="n">pull</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">Your</span><span class="o">-</span><span class="n">Developer</span><span class="o">-</span><span class="n">Branch</span><span class="o">-</span><span class="n">Name</span>
+<span class="n">git</span> <span class="n">merge</span> <span class="n">develop</span>
+</pre></div>
+</div>
+<p>and then do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">develop</span>
+<span class="n">git</span> <span class="n">merge</span> <span class="n">Your</span><span class="o">-</span><span class="n">Developer</span><span class="o">-</span><span class="n">Branch</span><span class="o">-</span><span class="n">Name</span>
+<span class="n">git</span> <span class="n">push</span>
+</pre></div>
+</div>
+<p>Do <strong>not</strong> merge your personal <em>developer</em> branches directly into master!<span class="raw-html-m2r"><br></span>
+Only the <em>development</em> branch should be merged into the master branch directly.</p>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p>We now have tests which you can and should use to check if your changes break something unintended in the package.<span class="raw-html-m2r"><br></span>
+To run them, just enter the repository folder and use the command</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">unittest</span> <span class="o">-</span><span class="n">v</span>
+</pre></div>
+</div>
+<p>Currently, the tests are rather sparse, so all contributions to the testing suite are highly encouraged</p>
+</div>
+<div class="section" id="cloning-the-repository-via-access-token-authentication">
+<h2>Cloning the Repository via Access Token Authentication:<a class="headerlink" href="#cloning-the-repository-via-access-token-authentication" title="Permalink to this headline">¶</a></h2>
+<p>Under your profile’s GitLab ‘User Setting &gt; Access Token’ you can create an access token to allow individual machines access without your GitLab password.
+This removes the need to type your password every time you push/pull or, worse, the workaround to save your password somewhere on the machine itself.</p>
+<p>After your access token is created, you can clone the repository by using the command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">oauth2</span><span class="p">:</span><span class="n">YOUR</span><span class="o">-</span><span class="n">ACCESS</span><span class="o">-</span><span class="n">TOKEN</span><span class="nd">@gitlab</span><span class="o">.</span><span class="n">de</span><span class="o">/</span><span class="n">rescom</span><span class="o">/</span><span class="n">reservoir</span><span class="o">-</span><span class="n">computing</span><span class="o">.</span><span class="n">git</span> <span class="n">rescomp</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="code-style">
+<h2>Code Style<a class="headerlink" href="#code-style" title="Permalink to this headline">¶</a></h2>
+<p>In general, this repository follows the PEP8 Style Conventions <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">pep8 style guide</a>.<span class="raw-html-m2r"><br></span>
+Mostly this means all names should be lowercase with underscores, besides class names which should follow the CapWords convention. Also all names should be descriptive and represent what they are actually doing, wherever possible.</p>
+<div class="section" id="docstrings">
+<h3>Docstrings:<a class="headerlink" href="#docstrings" title="Permalink to this headline">¶</a></h3>
+<p>Please use the Google style docstring format to write your docstring. Only by using consistent docstring styles, can the html documentation be created automatically!<span class="raw-html-m2r"><br></span>
+For examples of Google style docstrings just look at the already existing docstring or visit:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.sphinx-doc.org/en/1.6/ext/example_google.html">google style example</a></p></li>
+<li><p><a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html">why google style docstrings</a></p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="for-internal-contributors">
+<h2>For Internal Contributors<a class="headerlink" href="#for-internal-contributors" title="Permalink to this headline">¶</a></h2>
+<p>When you install the package on the Rechenknecht, instead of using the environment file “environment_rescomp.yml” specified above, use the much more detailed one for the Rechenknecht “environment_rescomp_full_rk.yml”. The command to create the environment would then be</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">env</span> <span class="n">create</span> <span class="o">--</span><span class="n">name</span> <span class="n">rc_env</span> <span class="o">--</span><span class="n">file</span> <span class="n">environment_rescomp_full_rk</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>Doing so should ensure absolute reproducability between all results calculated on the Rechenknecht.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="faq.html" class="btn btn-neutral float-left" title="FAQ" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

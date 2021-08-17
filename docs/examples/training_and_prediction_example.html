@@ -1,0 +1,838 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Training and Prediction Example &mdash; rescomp 0.2.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Generalized Local States Example" href="general_local_states_example.html" />
+    <link rel="prev" title="Higher Dimensional Example" href="higher_dim_example.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> rescomp
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Welcome</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#optional-but-strongly-encouraged-prerequesites">Optional (but Strongly Encouraged) Prerequesites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installation-instructions">Installation Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#common-installation-problems">Common Installation Problems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#the-installation-seems-to-have-worked-without-error-but-the-package-is-not-found-when-i-try-to-import-it">The installation seems to have worked without error, but the package is not found when I try to import it.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#nothing-works-please-help-me">Nothing works, please help me!</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#updating">Updating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#uninstalling">Uninstalling</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="minimal_example.html">Minimal Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="higher_dim_example.html">Higher Dimensional Example</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Training and Prediction Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="general_local_states_example.html">Generalized Local States Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulations_example.html">Simulations Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Rescomp Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rescomp_esn.html">ESN</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rescomp_esn.html#esnwrapper-class">ESNWrapper Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rescomp_esn.html#esn-class">ESN Class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rescomp_measures.html">Measures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rescomp_utilities.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rescomp_simulations.html">Simulations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#q-where-do-i-find-good-literature-about-reservoir-computing-do-you-have-some-paper-or-book-to-recommend">Q: Where do I find good literature about reservoir computing ? Do you have some paper or book to recommend?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#q-my-predictions-don-t-agree-with-the-real-data-at-all-what-is-going-on">Q: My predictions don’t agree with the real data at all! What is going on?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#q-for-the-exact-same-set-of-hyperparameters-the-prediction-is-sometimes-amazingly-accurate-and-at-other-times-utterly-wrong-why">Q: For the exact same set of hyperparameters the prediction is sometimes amazingly accurate and at other times utterly wrong. Why?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#q-you-said-above-that-the-network-should-have-about-100x-as-many-nodes-as-the-input-has-dimensions-maybe-more-my-input-is-50-dimensional-and-with-5000-10000-nodes-the-training-and-prediction-is-annoyingly-slow-i-thought-rc-was-supposed-to-be-fast-what-s-going-on">Q: You said above that the network should have about 100x as many nodes as the input has dimensions, maybe more. My input is &gt;50 dimensional and with 5000-10000 nodes the training and prediction is annoyingly slow! I thought RC was supposed to be fast, what’s going on?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#q-in-your-code-i-see-you-discard-some-samples-at-the-beginning-of-training-why-is-it-necessary">Q: In your code, I see you discard some samples at the beginning of training, why is it necessary?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#q-do-i-need-to-denoise-my-data">Q: Do I need to denoise my data?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../for_contributors.html">For Contributors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../for_contributors.html#general-information">General Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../for_contributors.html#branche-usage-intentions">Branche Usage Intentions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../for_contributors.html#create-your-own-developer-branch">Create your own developer branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../for_contributors.html#adjusting-the-terminal-to-always-show-the-current-branch">Adjusting the terminal to always show the current branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../for_contributors.html#synchronize-and-merge-your-developer-branch">Synchronize and merge your developer branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../for_contributors.html#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../for_contributors.html#cloning-the-repository-via-access-token-authentication">Cloning the Repository via Access Token Authentication:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../for_contributors.html#code-style">Code Style</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../for_contributors.html#docstrings">Docstrings:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../for_contributors.html#for-internal-contributors">For Internal Contributors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">CHANGELOG</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-1-current-master-and-development-branch">rescomp 0.2.1 - Current Master and Development Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-0">rescomp 0.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-1-4">rescomp 0.1.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-1-3">rescomp 0.1.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-1-2">rescomp 0.1.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-1-1">rescomp 0.1.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-1-0">rescomp 0.1.0</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rescomp</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../examples.html">Examples</a> &raquo;</li>
+        
+      <li>Training and Prediction Example</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Training-and-Prediction-Example">
+<h1>Training and Prediction Example<a class="headerlink" href="#Training-and-Prediction-Example" title="Permalink to this headline">¶</a></h1>
+<div class="line-block">
+<div class="line">Training and prediction explained in more detail.</div>
+<div class="line">Demonstrates how to predict the evolution of a system state that does not directly follow the training data.</div>
+</div>
+<p>Import packages, create an ESN object</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">rescomp</span>
+
+<span class="n">esn</span> <span class="o">=</span> <span class="n">rescomp</span><span class="o">.</span><span class="n">ESNWrapper</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>simulate some data</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">simulation_time_steps</span> <span class="o">=</span> <span class="mi">20000</span>
+<span class="n">starting_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">14.03020521</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.88693127</span><span class="p">,</span> <span class="mf">25.53545</span><span class="p">])</span>
+<span class="n">sim_data</span> <span class="o">=</span> <span class="n">rescomp</span><span class="o">.</span><span class="n">simulate_trajectory</span><span class="p">(</span>
+    <span class="n">sys_flag</span><span class="o">=</span><span class="s1">&#39;lorenz&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">2e-2</span><span class="p">,</span> <span class="n">time_steps</span><span class="o">=</span><span class="n">simulation_time_steps</span><span class="p">,</span>
+    <span class="n">starting_point</span><span class="o">=</span><span class="n">starting_point</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>and create the internal network</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">esn</span><span class="o">.</span><span class="n">create_network</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>For this example, let’s use the same number of time steps for the training as in the <a class="reference internal" href="minimal_example.html"><span class="doc">minimal example</span></a> before</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">train_sync_steps</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">train_steps</span> <span class="o">=</span> <span class="mi">4000</span>
+</pre></div>
+</div>
+</div>
+<p>Let’s cut the input data accordingly</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">x_train</span> <span class="o">=</span> <span class="n">sim_data</span><span class="p">[:</span> <span class="n">train_sync_steps</span> <span class="o">+</span> <span class="n">train_steps</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>And plug it in the train() method</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">esn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">x_train</span><span class="o">=</span><span class="n">sim_data</span><span class="p">,</span> <span class="n">sync_steps</span><span class="o">=</span><span class="n">train_sync_steps</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now that the reservoir is trained, we want to predict the system evolution not directly after the training data (after 4400 time steps of simulated data) but instead sometime later. Let’s say we want to predict the evolution after 10000 time steps instead.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">shift</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">x_pred</span> <span class="o">=</span> <span class="n">sim_data</span><span class="p">[</span><span class="n">shift</span><span class="p">:]</span>
+</pre></div>
+</div>
+</div>
+<p>Due to this disconnect, we must synchronize the internal reservoir states with the system again before we can use it to predict anything. Let’s again synchronize for 400 steps and predict for 500</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pred_sync_steps</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">pred_steps</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">y_pred</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">esn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_pred</span><span class="o">=</span><span class="n">x_pred</span><span class="p">,</span> <span class="n">sync_steps</span><span class="o">=</span><span class="n">pred_sync_steps</span><span class="p">,</span>
+                             <span class="n">pred_steps</span><span class="o">=</span><span class="n">pred_steps</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Plot the prediction</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">fig1</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_test</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+         <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+         <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;time steps&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;X-Coordinates of Simulation and Prediction&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_training_and_prediction_example_18_0.png" src="../_images/examples_training_and_prediction_example_18_0.png" />
+</div>
+</div>
+<div class="line-block">
+<div class="line">Note that the prediction in the plot above does, of course, not start at time step 0 of the simulated data.</div>
+<div class="line">To make clear what range of time steps we are actually looking at in the plots, let’s shift the time-steps-axis accordingly.</div>
+</div>
+<p>First, note that the prediction starts AFTER the synchronization, i.e. from the initial point</p>
+<blockquote>
+<div><p>x_pred[pred_sync_steps + 1]</p>
+</div></blockquote>
+<p>which we can prove via:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">x_pred</span><span class="p">[</span><span class="n">pred_sync_steps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">y_test</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+True
+</pre></div></div>
+</div>
+<p>This shift by 1 must always be the case as the predictions <em>y</em> are the reservoir output after one prediction step, which necessarily increments the time by one step:</p>
+<blockquote>
+<div><p>x[t] -&gt; RC prediction step -&gt; y[t]</p>
+</div></blockquote>
+<p>i.e. the input x[t] is used to calculate the output y[t] and hence, when comparing them to the underlying simulated data, the x-inputs and y-outputs are always shifted by this one time step:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">x: |0,1,2,3,4,…]</div>
+<div class="line">y: |-,0,1,2,3,4,…]</div>
+</div>
+</div></blockquote>
+<p>The first time step of the prediction y_pred corresponds to time step nr. <em>shift + pred_sync_steps + 1</em> of the simulated data:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">“shift”: the 10000 time steps we shifted the prediction input x_pred by in cell [7]</div>
+<div class="line">“+ pred_sync_steps”: the time steps used to synchronize the reservoir before the prediction starts</div>
+<div class="line">“+ 1”: the one time step resulting from the above explained shift of x and y by 1</div>
+</div>
+</div></blockquote>
+<p>Prove that this is true:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">sim_data</span><span class="p">[</span><span class="n">shift</span> <span class="o">+</span> <span class="n">pred_sync_steps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">y_test</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+True
+</pre></div></div>
+</div>
+<p>We can now define the correct time step range for the plot, starting at</p>
+<blockquote>
+<div><p>shift + pred_sync_steps + 1</p>
+</div></blockquote>
+<p>and ending at</p>
+<blockquote>
+<div><p>shift + pred_sync_steps + pred_steps + 1</p>
+</div></blockquote>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">time_step_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">shift</span> <span class="o">+</span> <span class="n">pred_sync_steps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                            <span class="n">shift</span> <span class="o">+</span> <span class="n">pred_sync_steps</span> <span class="o">+</span> <span class="n">pred_steps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now, let’s plot the prediction again, this time with the correct time steps on the axis</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">fig1</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_step_range</span><span class="p">,</span> <span class="n">y_test</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+         <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_step_range</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+         <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;time steps&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;X-Coordinates of Simulation and Prediction, &quot;</span>
+              <span class="s2">&quot;Correctly Specified Time Steps&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_training_and_prediction_example_26_0.png" src="../_images/examples_training_and_prediction_example_26_0.png" />
+</div>
+</div>
+<p>Let’s do another prediction, this time after 15000 time steps:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">shift2</span> <span class="o">=</span> <span class="mi">15000</span>
+<span class="n">x_pred2</span> <span class="o">=</span> <span class="n">sim_data</span><span class="p">[</span><span class="n">shift2</span><span class="p">:]</span>
+<span class="n">y_pred2</span><span class="p">,</span> <span class="n">y_test2</span> <span class="o">=</span> <span class="n">esn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_pred</span><span class="o">=</span><span class="n">x_pred2</span><span class="p">,</span> <span class="n">sync_steps</span><span class="o">=</span><span class="n">pred_sync_steps</span><span class="p">,</span>
+                               <span class="n">pred_steps</span><span class="o">=</span><span class="n">pred_steps</span><span class="p">)</span>
+
+<span class="n">time_step_range2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">shift2</span> <span class="o">+</span> <span class="n">pred_sync_steps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                            <span class="n">shift2</span> <span class="o">+</span> <span class="n">pred_sync_steps</span> <span class="o">+</span> <span class="n">pred_steps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Note that we do not need to re-<em>train</em> our reservoir if we want to predict the same system from a different starting point again. We do need to <em>synchronize</em> it every time though.</p>
+<p>Plot the second prediction, again with the appropriately shifted time-step-axis.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig2</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_step_range2</span><span class="p">,</span> <span class="n">y_test2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+         <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_step_range2</span><span class="p">,</span> <span class="n">y_pred2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+         <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span>
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;time steps&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;X-Coordinates of Simulation and Prediction, &quot;</span>
+              <span class="s2">&quot;Correctly Specified Time Steps&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_training_and_prediction_example_31_0.png" src="../_images/examples_training_and_prediction_example_31_0.png" />
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="general_local_states_example.html" class="btn btn-neutral float-right" title="Generalized Local States Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="higher_dim_example.html" class="btn btn-neutral float-left" title="Higher Dimensional Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

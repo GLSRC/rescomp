@@ -1,0 +1,3 @@
+{
+    "path": "../../bin/training_and_prediction_example.ipynb"
+}

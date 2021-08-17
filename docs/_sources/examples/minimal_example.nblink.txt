@@ -1,0 +1,3 @@
+{
+    "path": "../../bin/minimal_example.ipynb"
+}

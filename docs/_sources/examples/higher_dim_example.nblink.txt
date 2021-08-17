@@ -1,0 +1,3 @@
+{
+    "path": "../../bin/higher_dim_example.ipynb"
+}

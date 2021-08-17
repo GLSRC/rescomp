@@ -120,6 +120,7 @@
 <li class="toctree-l1"><a class="reference internal" href="code.html">Rescomp Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="rescomp_esn.html">ESN</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="rescomp_esn.html#esnwrapper-class">ESNWrapper Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rescomp_esn.html#esngenloc-class">ESNGenLoc Class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rescomp_esn.html#esn-class">ESN Class</a></li>
 </ul>
 </li>
@@ -223,6 +224,8 @@
       <li><a href="rescomp_esn.html#rescomp.esn.ESN.create_network">create_network() (rescomp.esn.ESN method)</a>
 
       <ul>
+        <li><a href="rescomp_esn.html#rescomp.esn.ESNGenLoc.create_network">(rescomp.esn.ESNGenLoc method)</a>
+</li>
         <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.create_network">(rescomp.esn.ESNWrapper method)</a>
 </li>
       </ul></li>
@@ -252,6 +255,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rescomp_esn.html#rescomp.esn.ESNGenLoc">ESNGenLoc (class in rescomp.esn)</a>
+</li>
       <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper">ESNWrapper (class in rescomp.esn)</a>
 </li>
   </ul></td>
@@ -266,20 +271,22 @@
         <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.get_instance_version">(rescomp.esn.ESNWrapper method)</a>
 </li>
       </ul></li>
+      <li><a href="rescomp_esn.html#rescomp.esn.ESNGenLoc.get_last_r_states">get_last_r_states() (rescomp.esn.ESNGenLoc method)</a>
+</li>
       <li><a href="rescomp_esn.html#rescomp.esn.ESN.get_network">get_network() (rescomp.esn.ESN method)</a>
 
       <ul>
         <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.get_network">(rescomp.esn.ESNWrapper method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="rescomp_esn.html#rescomp.esn.ESN.get_network_parameters">get_network_parameters() (rescomp.esn.ESN method)</a>
 
       <ul>
         <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.get_network_parameters">(rescomp.esn.ESNWrapper method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="rescomp_esn.html#rescomp.esn.ESN.get_w_in">get_w_in() (rescomp.esn.ESN method)</a>
 
       <ul>
@@ -301,6 +308,8 @@
       <li><a href="rescomp_esn.html#rescomp.esn.ESN.predict">predict() (rescomp.esn.ESN method)</a>
 
       <ul>
+        <li><a href="rescomp_esn.html#rescomp.esn.ESNGenLoc.predict">(rescomp.esn.ESNGenLoc method)</a>
+</li>
         <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.predict">(rescomp.esn.ESNWrapper method)</a>
 </li>
       </ul></li>
@@ -335,12 +344,16 @@
       <li><a href="rescomp_esn.html#rescomp.esn.ESN.set_console_logger">set_console_logger() (rescomp.esn.ESN method)</a>
 
       <ul>
+        <li><a href="rescomp_esn.html#rescomp.esn.ESNGenLoc.set_console_logger">(rescomp.esn.ESNGenLoc method)</a>
+</li>
         <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.set_console_logger">(rescomp.esn.ESNWrapper method)</a>
 </li>
       </ul></li>
       <li><a href="rescomp_esn.html#rescomp.esn.ESN.set_file_logger">set_file_logger() (rescomp.esn.ESN method)</a>
 
       <ul>
+        <li><a href="rescomp_esn.html#rescomp.esn.ESNGenLoc.set_file_logger">(rescomp.esn.ESNGenLoc method)</a>
+</li>
         <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.set_file_logger">(rescomp.esn.ESNWrapper method)</a>
 </li>
       </ul></li>
@@ -351,6 +364,8 @@
       <li><a href="rescomp_esn.html#rescomp.esn.ESN.synchronize">synchronize() (rescomp.esn.ESN method)</a>
 
       <ul>
+        <li><a href="rescomp_esn.html#rescomp.esn.ESNGenLoc.synchronize">(rescomp.esn.ESNGenLoc method)</a>
+</li>
         <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.synchronize">(rescomp.esn.ESNWrapper method)</a>
 </li>
       </ul></li>
@@ -363,19 +378,27 @@
       <li><a href="rescomp_esn.html#rescomp.esn.ESN.to_pickle">to_pickle() (rescomp.esn.ESN method)</a>
 
       <ul>
+        <li><a href="rescomp_esn.html#rescomp.esn.ESNGenLoc.to_pickle">(rescomp.esn.ESNGenLoc method)</a>
+</li>
         <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.to_pickle">(rescomp.esn.ESNWrapper method)</a>
 </li>
       </ul></li>
       <li><a href="rescomp_esn.html#rescomp.esn.ESN.train">train() (rescomp.esn.ESN method)</a>
 
       <ul>
+        <li><a href="rescomp_esn.html#rescomp.esn.ESNGenLoc.train">(rescomp.esn.ESNGenLoc method)</a>
+</li>
         <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.train">(rescomp.esn.ESNWrapper method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.train_and_predict">train_and_predict() (rescomp.esn.ESNWrapper method)</a>
+      <li><a href="rescomp_esn.html#rescomp.esn.ESNGenLoc.train_and_predict">train_and_predict() (rescomp.esn.ESNGenLoc method)</a>
+
+      <ul>
+        <li><a href="rescomp_esn.html#rescomp.esn.ESNWrapper.train_and_predict">(rescomp.esn.ESNWrapper method)</a>
 </li>
+      </ul></li>
       <li><a href="rescomp_utilities.html#rescomp.utilities.train_and_predict_input_setup">train_and_predict_input_setup() (in module rescomp.utilities)</a>
 </li>
   </ul></td>

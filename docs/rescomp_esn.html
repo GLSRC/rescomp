@@ -121,6 +121,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="code.html">Rescomp Modules</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">ESN</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#esnwrapper-class">ESNWrapper Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#esngenloc-class">ESNGenLoc Class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#esn-class">ESN Class</a></li>
 </ul>
 </li>
@@ -233,10 +234,11 @@
 <div class="section" id="module-rescomp.esn">
 <span id="esn"></span><h1>ESN<a class="headerlink" href="#module-rescomp.esn" title="Permalink to this headline">¶</a></h1>
 <p>Implements the Echo State Network (ESN) used in Reservoir Computing</p>
-<div class="graphviz"><img src="_images/inheritance-ca80e06af0b6616f6632fc82686309a0cfa85922.png" alt="Inheritance diagram of rescomp.esn" usemap="#inheritancebc4aca3063" class="inheritance graphviz" /></div>
+<div class="graphviz"><img src="_images/inheritance-77631b78131d2b40e67d9a0a2bdc663394d72673.png" alt="Inheritance diagram of rescomp.esn" usemap="#inheritancebc4aca3063" class="inheritance graphviz" /></div>
 <map id="inheritancebc4aca3063" name="inheritancebc4aca3063">
 <area shape="rect" id="node1" href="#rescomp.esn.ESN" target="_top" title="Implements basic RC functionality" alt="" coords="17,55,89,80"/>
 <area shape="rect" id="node3" href="#rescomp.esn.ESNWrapper" target="_top" title="Convenience Wrapper for the ESN class" alt="" coords="149,55,249,80"/>
+<area shape="rect" id="node2" href="#rescomp.esn.ESNGenLoc" target="_top" title="Generalized Local State Implementation of RC" alt="" coords="5,5,101,31"/>
 </map><div class="section" id="esnwrapper-class">
 <h2>ESNWrapper Class<a class="headerlink" href="#esnwrapper-class" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="id1"></span><dl class="class">
@@ -581,6 +583,159 @@ if pred_steps is not None</p></li>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="esngenloc-class">
+<h2>ESNGenLoc Class<a class="headerlink" href="#esngenloc-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="rescomp.esn.ESNGenLoc">
+<em class="property">class </em><code class="sig-prename descclassname">rescomp.esn.</code><code class="sig-name descname">ESNGenLoc</code><a class="headerlink" href="#rescomp.esn.ESNGenLoc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generalized Local State Implementation of RC</p>
+<p>For details on the how and why behind this implementation, please see the
+general_local_states_example in bin and/or the package documentation.</p>
+<p>Idea behind the Local Neighborhoods matrix implementation:
+Human readable and plottable locality neighborhoods where each entry
+specifies the nature of a corresponding dimension.
+A simple example might look like this:</p>
+<blockquote>
+<div><p>[1, 2, 1, 0]</p>
+<p>[0, 1, 2, 1]</p>
+<p>[2, 1, 1, 2]</p>
+</div></blockquote>
+<p>where 0 means “not part of the neighborhood”, 1 means “part of the
+neighborhood, but not a core” and 2 means “core dimension”
+Each row is a “neighborhood” specifying which dimensions are
+grouped together as input for each ESN instance.
+As such there can only be one 2 per input dimension (column) as
+otherwise combining the different neighborhood’s predictions after
+each prediction step is not possible.
+In theory there can be no 2 in a dimension/column though. In that case
+the corresponding dimension just doesn’t appear in the prediction output.</p>
+<p>The code is written under the assumption that all internal ESNs have
+the same hyperparameters. This does not necessarily need to be the case
+though, and a more generalized implementation would allow it.</p>
+<p><strong>Methods:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNGenLoc.create_network" title="rescomp.esn.ESNGenLoc.create_network"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_network</span></code></a>(**kwargs)</p></td>
+<td><p>Same idea as for the ESN Wrapper Class</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNGenLoc.get_last_r_states" title="rescomp.esn.ESNGenLoc.get_last_r_states"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_last_r_states</span></code></a>()</p></td>
+<td><p>Returns:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNGenLoc.predict" title="rescomp.esn.ESNGenLoc.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(x_pred, sync_steps[, pred_steps, …])</p></td>
+<td><p>Same idea as for the ESN Wrapper Class</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNGenLoc.set_console_logger" title="rescomp.esn.ESNGenLoc.set_console_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_console_logger</span></code></a>(log_level)</p></td>
+<td><p>Set loglevel for the console output</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNGenLoc.set_file_logger" title="rescomp.esn.ESNGenLoc.set_file_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_file_logger</span></code></a>(log_level, log_file_path)</p></td>
+<td><p>Set’s the logging file path</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNGenLoc.synchronize" title="rescomp.esn.ESNGenLoc.synchronize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">synchronize</span></code></a>(x_sync, **kwargs)</p></td>
+<td><p>Same idea as for the ESN Wrapper Class</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNGenLoc.to_pickle" title="rescomp.esn.ESNGenLoc.to_pickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pickle</span></code></a>(path[, compression, protocol])</p></td>
+<td><p>Pickle (serialize) object to file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.esn.ESNGenLoc.train" title="rescomp.esn.ESNGenLoc.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(x_train, sync_steps[, loc_nbhds, …])</p></td>
+<td><p>Same idea as for the ESN Wrapper Class</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.esn.ESNGenLoc.train_and_predict" title="rescomp.esn.ESNGenLoc.train_and_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_and_predict</span></code></a>(x_data, train_sync_steps, …)</p></td>
+<td><p>Same idea as for the ESN Wrapper Class</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="rescomp.esn.ESNGenLoc.create_network">
+<code class="sig-name descname">create_network</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.esn.ESNGenLoc.create_network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same idea as for the ESN Wrapper Class</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rescomp.esn.ESNGenLoc.get_last_r_states">
+<code class="sig-name descname">get_last_r_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.esn.ESNGenLoc.get_last_r_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rescomp.esn.ESNGenLoc.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">x_pred</em>, <em class="sig-param">sync_steps</em>, <em class="sig-param">pred_steps=None</em>, <em class="sig-param">ESN_sync_kwargs=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.esn.ESNGenLoc.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same idea as for the ESN Wrapper Class</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rescomp.esn.ESNGenLoc.set_console_logger">
+<code class="sig-name descname">set_console_logger</code><span class="sig-paren">(</span><em class="sig-param">log_level</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.esn.ESNGenLoc.set_console_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set loglevel for the console output</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>(</strong><strong>)</strong> (<em>log_level</em>) – console loglevel as specified in:
+<a class="reference external" href="https://docs.python.org/3/library/logging.html#logging-levels">https://docs.python.org/3/library/logging.html#logging-levels</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rescomp.esn.ESNGenLoc.set_file_logger">
+<code class="sig-name descname">set_file_logger</code><span class="sig-paren">(</span><em class="sig-param">log_level</em>, <em class="sig-param">log_file_path</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.esn.ESNGenLoc.set_file_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set’s the logging file path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>)</strong> (<em>log_level</em>) – file loglevel as specified in:
+<a class="reference external" href="https://docs.python.org/3/library/logging.html#logging-levels">https://docs.python.org/3/library/logging.html#logging-levels</a></p></li>
+<li><p><strong>log_file_path</strong> (<em>str</em>) – path, including file type, to store the
+logfile in. E.g: “folder_structure/log_file.txt”</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rescomp.esn.ESNGenLoc.synchronize">
+<code class="sig-name descname">synchronize</code><span class="sig-paren">(</span><em class="sig-param">x_sync</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.esn.ESNGenLoc.synchronize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same idea as for the ESN Wrapper Class</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rescomp.esn.ESNGenLoc.to_pickle">
+<code class="sig-name descname">to_pickle</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">compression='infer'</em>, <em class="sig-param">protocol=4</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.esn.ESNGenLoc.to_pickle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pickle (serialize) object to file.</p>
+<p>Disables logging as logging handlers can not be pickled.
+Uses pandas functions internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – File path where the pickled object will be stored.</p></li>
+<li><p><strong>compression</strong> (<em>{'infer'</em><em>, </em><em>'gzip'</em><em>, </em><em>'bz2'</em><em>, </em><em>'zip'</em><em>, </em><em>'xz'</em><em>, </em><em>None}</em>) – A string representing the compression to use in the output file.
+By default, infers from the file extension in specified path.</p></li>
+<li><p><strong>protocol</strong> (<em>int</em>) – Int which indicates which protocol should be used by
+the pickler. The possible values are 0, 1, 2, 3, 4. A negative
+value for the protocol parameter is equivalent to setting its
+value to HIGHEST_PROTOCOL.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rescomp.esn.ESNGenLoc.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">x_train</em>, <em class="sig-param">sync_steps</em>, <em class="sig-param">loc_nbhds=None</em>, <em class="sig-param">train_core_only=True</em>, <em class="sig-param">ESN_train_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.esn.ESNGenLoc.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same idea as for the ESN Wrapper Class</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rescomp.esn.ESNGenLoc.train_and_predict">
+<code class="sig-name descname">train_and_predict</code><span class="sig-paren">(</span><em class="sig-param">x_data</em>, <em class="sig-param">train_sync_steps</em>, <em class="sig-param">train_steps</em>, <em class="sig-param">loc_nbhds=None</em>, <em class="sig-param">pred_sync_steps=0</em>, <em class="sig-param">pred_steps=None</em>, <em class="sig-param">disc_steps=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.esn.ESNGenLoc.train_and_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same idea as for the ESN Wrapper Class</p>
 </dd></dl>
 
 </dd></dl>

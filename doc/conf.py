@@ -32,7 +32,7 @@ version = __version__
 # -- General configuration ---------------------------------------------------
 
 # The master toctree document.
-master_doc = 'welcome'
+master_doc = 'index'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -67,10 +67,10 @@ autodoc_default_options = {
 # # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
 #
-# # Add any paths that contain custom static files (such as style sheets) here,
-# # relative to this directory. They are copied after the builtin static files,
-# # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
+# Add any paths that contain custom static files (such as style sheets) here,
+# relative to this directory. They are copied after the builtin static files,
+# so a file named "default.css" will overwrite the builtin "default.css".
+html_static_path = ['_static']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -87,7 +87,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '**.ipynb']
 #     'stickysidebar': True,
 # }
 
-
 extensions.append("sphinx_rtd_theme")
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {
@@ -96,6 +95,12 @@ html_theme_options = {
     'collapse_navigation': False,
     'includehidden': True,
 }
+
+# # Add any paths that contain custom static files (such as style sheets) here,
+# # relative to this directory. They are copied after the builtin static files,
+# # so a file named "default.css" will overwrite the builtin "default.css".
+# html_static_path = ['_static']
+
 # Override default css to get a larger page width for ReadTheDoc build. See:
 # https://stackoverflow.com/questions/23211695/modifying-content-width-of-the-sphinx-theme-read-the-docs
 html_css_files = [
@@ -111,11 +116,5 @@ html_css_files = [
 html_show_sourcelink = False
 
 # html_sidebars = {'**': ['globaltoc.html', 'relations.html', 'searchbox.html']}
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
-
 
 # -- Extension configuration -------------------------------------------------

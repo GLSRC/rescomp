@@ -32,9 +32,10 @@ Table of Contents
     Installation <installation.md>
     Examples <examples.rst>
     Rescomp Modules <code.rst>
-    FAQ <faq.md>
-    For Contributors <for_contributors.md>
     CHANGELOG <changelog.rst>
+
+..    FAQ <faq.md>
+..    For Contributors <for_contributors.md>
 
 .. _`LICENSE`: https://github.com/GLSRC/rescomp/blob/main/LICENSE
 .. _`write us`: mailto:Sebastian.Baur@dlr.de?cc=Christoph.Raeth@dlr.de

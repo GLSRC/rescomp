@@ -14,6 +14,14 @@ ESNWrapper Class
     :members:
 
 
+ESNGenLoc Class
+------------------
+.. autoclass:: rescomp.esn.ESNGenLoc
+    :inherited-members:
+    :members:
+
+
+
 ESN Class
 ------------------
 .. autoclass:: rescomp.esn.ESN

@@ -885,21 +885,22 @@ class ESNWrapper(ESN):
 
         return y_pred, y_test
 
+
 class ESNGenLoc(utilities._ESNLogging):
     """ Generalized Local State Implementation of RC
 
-    For details, please see the general_local_states_example in bin and/or the
-    package documentation
+    For details on the how and why behind this implementation, please see the
+    general_local_states_example in bin and/or the package documentation.
 
     Idea behind the Local Neighborhoods matrix implementation:
-    Human readable and plottable locality neighborhood "loc_nbhd_full"
-        0: not part of nbhd,
-        1: part of nbhd,
-        2: core.
-    E.g.:
-        [1, 2, 1, 0]
-        [0, 1, 2, 1]
+    Human readable and plottable locality neighborhoods where each entry
+    specifies the nature of a corresponding dimension.
+    A simple example might look like this:
+        [1, 2, 1, 0] \n
+        [0, 1, 2, 1] \n
         [2, 1, 1, 2]
+    where 0 means "not part of the neighborhood", 1 means "part of the
+    neighborhood, but not a core" and 2 means "core dimension"
     Each row is a "neighborhood" specifying which dimensions are
     grouped together as input for each ESN instance.
     As such there can only be one 2 per input dimension (column) as

@@ -356,7 +356,7 @@ _sys_flag_synonyms.add_synonyms(11, "thomas")
 _sys_flag_synonyms.add_synonyms(12, "roessler_sprott")
 _sys_flag_synonyms.add_synonyms(13, "kuramoto_sivashinsky")
 _sys_flag_synonyms.add_synonyms(14, "kuramoto_sivashinsky_old")
-
+_sys_flag_synonyms.add_synonyms(15, "kuramoto_sivashinsky_custom")
 
 def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
                         starting_point=None, **kwargs):
@@ -428,14 +428,14 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
 
     sys_flag_syn = _sys_flag_synonyms.get_flag(sys_flag)
 
-    if starting_point is None and (sys_flag_syn == 13 or sys_flag_syn == 14):
-        starting_point = None
-    elif starting_point is None:
+    #TODO: this is bad, as it's removed from the actual function call below.
+    if starting_point is None and sys_flag_syn <= 12:
         starting_point = np.array([1, 2, 3])
 
     if sys_flag_syn == 0:
         f = lambda x: _mod_lorenz(x, **kwargs)
     elif sys_flag_syn == 1:
+        # TODO: should be a warning in the logger.
         print('YOU ARE USING AN UNUSUAL KIND OF LORENZ EQUATION! USE WITH CARE')
         f = lambda x: _mod_lorenz_wrong(x, **kwargs)
     elif sys_flag_syn == 2:
@@ -444,6 +444,9 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
         f = lambda x: _roessler(x, **kwargs)
     elif sys_flag_syn == 4:
         # Starting point is ignored here atm
+        if starting_point is not None:
+            #TODO: should be a warning in the logger.
+            print("Starting point is ignored for the Lorenz96 equation")
         f = lambda x: _lorenz_96(x, **kwargs)
     elif sys_flag_syn == 5:
         f = lambda x: _ueda(x)
@@ -462,20 +465,19 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
     elif sys_flag_syn == 12:
         f = lambda x: _roessler_sprott(x, **kwargs)
     elif sys_flag_syn == 13:
-        # if not np.array_equal(starting_point, np.array([1, 2, 3])):
-        #     print("WARNING starting point is ignored for this simulation fct!")
         return _kuramoto_sivashinsky(dt=dt, time_steps=time_steps - 1, starting_point=starting_point, **kwargs)
     elif sys_flag_syn == 14:
         if not starting_point is None:
+            # TODO: should be a warning in the logger.
             print("WARNING starting point is ignored for this simulation fct!")
         return _kuramoto_sivashinsky_old(dt=dt, time_steps=time_steps - 1, **kwargs)
+    elif sys_flag_syn == 15:
+        return _kuramoto_sivashinsky_custom(dt=dt, time_steps=time_steps - 1, starting_point=starting_point, **kwargs)
     else:
         raise Exception('sys_flag not recoginized')
 
     traj_size = ((time_steps, starting_point.shape[0]))
     traj = np.zeros(traj_size)
-    # if print_switch:
-    #     print('record_trajector received and used: starting_point: ', starting_point)
     y = starting_point
 
     for t in range(traj_size[0]):
@@ -538,7 +540,7 @@ def _kuramoto_sivashinsky_old(dimensions, system_size, dt, time_steps):
 
     uu = [np.array(u)]  # List of Real space solutions, later converted to a np.array
 
-    g = -0.5j * k  # TODO: Meaning?
+    g = -0.5j * k
 
     # See paper for details
     for n in range(1, nmax + 1):
@@ -559,8 +561,8 @@ def _kuramoto_sivashinsky_old(dimensions, system_size, dt, time_steps):
 
     return uu
 
-# reproduce_ETDRK4_Kassam2005_KS_simulation
-def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_point):
+
+def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_point, **kwargs):
     """ This function simulates the Kuramoto–Sivashinsky PDE
 
     Even though it doesn't use the RK4 algorithm, it is bundled with the other
@@ -584,8 +586,11 @@ def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_poin
         (np.ndarray): simulated trajectory of shape (time_steps, dimensions)
 
     """
+    # Rename variables to the names used in the paper
     n = dimensions  # No. of grid points in real space (and hence dimensionality of the output)
     size = system_size  # system size
+    h = dt  # time step
+    nmax = time_steps  # No. of time steps to simulate
 
     # Define initial conditions and Fourier Transform them
     if starting_point is None:
@@ -593,26 +598,18 @@ def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_poin
         x = size * np.transpose(np.conj(np.arange(1, n + 1))) / n
         u = np.cos(2 * np.pi * x / size) * (1 + np.sin(2 * np.pi * x / size))
     else:
-        # x = starting_point
         u = starting_point
-
     v = np.fft.fft(u)
 
-    h = dt  # time step
-    nmax = time_steps  # No. of time steps to simulate
-
     # Wave numbers
-    k = np.transpose(
-        np.conj(np.concatenate((np.arange(0, n / 2), np.array([0]),
-                                np.arange(-n / 2 + 1, 0))))) * 2 * np.pi / size
+    k = np.transpose(np.conj(np.concatenate((
+                np.arange(0, n / 2), np.array([0]), np.arange(-n / 2 + 1, 0))
+                ))) * 2 * np.pi / size
 
-    # Just copied from the paper, it works
     L = k ** 2 - k ** 4
     E = np.exp(h * L)
     E_2 = np.exp(h * L / 2)
-    M = int(np.ceil(size/(2 * np.pi)))
-    # M = int(size/(2 * np.pi))
-    # M = (size * np.pi) // 2
+    M = 64  # changed because the previous optimizations were negligable and could result in errors for small size systems
     r = np.exp(1j * np.pi * (np.arange(1, M + 1) - 0.5) / M)
     LR = h * np.transpose(np.repeat([L], M, axis=0)) + np.repeat([r], n, axis=0)
     Q = h * np.real(np.mean((np.exp(LR / 2) - 1) / LR, axis=1))
@@ -625,10 +622,10 @@ def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_poin
         np.mean((-4 - 3 * LR - LR ** 2 + np.exp(LR) * (4 - LR)) / LR ** 3,
                 axis=1))
 
-    uu = [np.array(
-        u)]  # List of Real space solutions, later converted to a np.array
+    # List of Real space solutions, later converted to a np.array
+    uu = [np.array(u)]
 
-    g = -0.5j * k  # TODO: Meaning?
+    g = -0.5j * k
 
     # See paper for details
     for n in range(1, nmax + 1):
@@ -641,7 +638,151 @@ def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_poin
         Nc = g * np.fft.fft(np.real(np.fft.ifft(c)) ** 2)
 
         v = E * v + Nv * f1 + 2 * (Na + Nb) * f2 + Nc * f3
+
         u = np.real(np.fft.ifft(v))
+        uu.append(np.array(u))
+
+    uu = np.array(uu)
+    # print("PDE simulation finished")
+
+    return uu
+
+
+def _kuramoto_sivashinsky_custom(dimensions, system_size, dt, time_steps, starting_point,
+                                 precision=None, fft_type=None, **kwargs):
+    """ This function simulates the Kuramoto–Sivashinsky PDE with custom precision and fft backend"""
+
+    if precision is None:
+        change_precision = False
+    elif precision == 128:
+        change_precision = True
+        f_dtype = 'float128'
+        c_dtype = 'complex256'
+    elif precision == 64:
+        change_precision = True
+        f_dtype = 'float64'
+        c_dtype = 'complex128'
+    elif precision == 32:
+        change_precision = True
+        f_dtype = 'float32'
+        c_dtype = 'complex64'
+    elif precision == 16:
+        change_precision = True
+        f_dtype = 'float16'
+        c_dtype = 'complex32'
+    else:
+        raise Exception("specified precision not recognized")
+
+    if fft_type is None or fft_type == 'numpy':
+        custom_fft = np.fft.fft
+        custom_ifft = np.fft.ifft
+    elif fft_type == 'scipy':
+        import scipy
+        try:
+            import scipy.fft
+            custom_fft = scipy.fft.fft
+            custom_ifft = scipy.fft.ifft
+        except ModuleNotFoundError:
+            # Depricated, but needed for older versions of scipy
+            import scipy.fftpack
+            custom_fft = scipy.fftpack.fft
+            custom_ifft = scipy.fftpack.ifft
+    elif fft_type == 'pyfftw_np':
+        import pyfftw
+        custom_fft = pyfftw.interfaces.numpy_fft.fft
+        custom_ifft = pyfftw.interfaces.numpy_fft.ifft
+    elif fft_type == 'pyfftw_sc':
+        import pyfftw
+        custom_fft = pyfftw.interfaces.scipy_fft.fft
+        custom_ifft = pyfftw.interfaces.scipy_fft.ifft
+    elif fft_type == 'pyfftw_fftw':
+        import pyfftw
+        a = pyfftw.empty_aligned(dimensions, dtype='complex128')
+        b = pyfftw.empty_aligned(dimensions, dtype='complex128')
+        c = pyfftw.empty_aligned(dimensions, dtype='complex128')
+        fft_object = pyfftw.FFTW(a, b)
+        ifft_object = pyfftw.FFTW(b, c, direction='FFTW_BACKWARD')
+        custom_fft = fft_object
+        custom_ifft = ifft_object
+    else:
+        raise Exception('fft_type not recognized')
+
+    # Rename variables to the names used in the paper
+    n = dimensions  # No. of grid points in real space (and hence dimensionality of the output)
+    size = system_size  # system size
+    h = dt  # time step
+    nmax = time_steps  # No. of time steps to simulate
+
+    # Define initial conditions and Fourier Transform them
+    if starting_point is None:
+        # Use the starting point from the Kassam_2005 paper
+        x = size * np.transpose(np.conj(np.arange(1, n + 1))) / n
+        u = np.cos(2 * np.pi * x / size) * (1 + np.sin(2 * np.pi * x / size))
+    else:
+        u = starting_point
+    if change_precision: u = u.astype(np.single)
+    v = custom_fft(u)
+
+    # Wave numbers
+    k = np.transpose(np.conj(np.concatenate((
+                np.arange(0, n / 2), np.array([0]), np.arange(-n / 2 + 1, 0))
+        ))) * 2 * np.pi / size
+    if change_precision: k = k.astype(f_dtype)
+
+    L = k ** 2 - k ** 4
+    E = np.exp(h * L)
+    if change_precision: E = E.astype(f_dtype)
+    E_2 = np.exp(h * L / 2)
+    if change_precision: E_2 = E_2.astype(f_dtype)
+    M = 64
+    r = np.exp(1j * np.pi * (np.arange(1, M + 1) - 0.5) / M)
+    if change_precision: r = r.astype(c_dtype)
+    LR = h * np.transpose(np.repeat([L], M, axis=0)) + np.repeat([r], n, axis=0)
+    if change_precision: LR = LR.astype(c_dtype)
+    Q = h * np.real(np.mean((np.exp(LR / 2) - 1) / LR, axis=1))
+    if change_precision: Q = Q.astype(c_dtype)
+    f1 = h * np.real(
+        np.mean((-4 - LR + np.exp(LR) * (4 - 3 * LR + LR ** 2)) / LR ** 3,
+                axis=1))
+    if change_precision: f1 = f1.astype(c_dtype)
+    f2 = h * np.real(
+        np.mean((2 + LR + np.exp(LR) * (-2 + LR)) / LR ** 3, axis=1))
+    if change_precision: f2 = f2.astype(c_dtype)
+    f3 = h * np.real(
+        np.mean((-4 - 3 * LR - LR ** 2 + np.exp(LR) * (4 - LR)) / LR ** 3,
+                axis=1))
+    if change_precision: f3 = f3.astype(c_dtype)
+
+    # List of Real space solutions, later converted to a np.array
+    uu = [np.array(u)]
+
+    g = -0.5j * k
+    if change_precision: g = g.astype(c_dtype)
+
+    # See paper for details
+    for n in range(1, nmax + 1):
+        Nv = g * custom_fft(np.real(custom_ifft(v)) ** 2)
+        if change_precision: Nv = Nv.astype(c_dtype)
+        a = E_2 * v + Q * Nv
+        if change_precision: a = a.astype(c_dtype)
+        Na = g * custom_fft(np.real(custom_ifft(a)) ** 2)
+        if change_precision: Na = Na.astype(c_dtype)
+        b = E_2 * v + Q * Na
+        if change_precision: b = b.astype(c_dtype)
+        Nb = g * custom_fft(np.real(custom_ifft(b)) ** 2)
+        if change_precision: Nb = Nb.astype(c_dtype)
+        c = E_2 * a + Q * (2 * Nb - Nv)
+        if change_precision: c = c.astype(c_dtype)
+        Nc = g * custom_fft(np.real(custom_ifft(c)) ** 2)
+        if change_precision: Nc = Nc.astype(c_dtype)
+
+        v = E * v + Nv * f1 + 2 * (Na + Nb) * f2 + Nc * f3
+        # v = E * v
+        # v += Nv * f1
+        # v += 2 * (Na + Nb) * f2
+        # v += Nc * f3
+        if change_precision: v = v.astype(c_dtype)
+        u = np.real(custom_ifft(v))
         uu.append(np.array(u))
 
     uu = np.array(uu)

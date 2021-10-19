@@ -561,8 +561,7 @@ def _kuramoto_sivashinsky_old(dimensions, system_size, dt, time_steps):
 
     return uu
 
-
-def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_point, **kwargs):
+def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_point, eps = 0, **kwargs):
     """ This function simulates the Kuramoto–Sivashinsky PDE
 
     Even though it doesn't use the RK4 algorithm, it is bundled with the other
@@ -581,6 +580,7 @@ def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_poin
         time_steps (int): nr. of time steps to simulate
         starting_point (np.ndarray): starting point for the simulation of shape
             (dimensions, )
+        eps (float): If non-zero, vary the parameter infront of the y_xx term: (1+eps)*y_xx
 
     Returns:
         (np.ndarray): simulated trajectory of shape (time_steps, dimensions)
@@ -606,7 +606,7 @@ def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_poin
                 np.arange(0, n / 2), np.array([0]), np.arange(-n / 2 + 1, 0))
                 ))) * 2 * np.pi / size
 
-    L = k ** 2 - k ** 4
+    L = (1 + eps) * k ** 2 - k ** 4
     E = np.exp(h * L)
     E_2 = np.exp(h * L / 2)
     M = 64  # changed because the previous optimizations were negligable and could result in errors for small size systems
@@ -789,3 +789,116 @@ def _kuramoto_sivashinsky_custom(dimensions, system_size, dt, time_steps, starti
     # print("PDE simulation finished")
 
     return uu
+
+def _kuramoto_sivashinsky_Bhatt(dimensions, system_size, dt, time_steps, starting_point, alpha = 1, beta = 1):
+    '''
+    This function simulates the Kuramoto–Sivashinsky PDE according to H. Bhatt et. al. 2019
+    Arxiv: http://arxiv.org/abs/1911.12183
+
+    The KS-Equation: u_t + u*u_x + alpha * u_xx + beta * u_xxxx = 0
+
+    :param dimensions:
+    :param system_size:
+    :param dt:
+    :param time_steps:
+    :param starting_point:
+    :param alpha:
+    :param beta:
+    :return:
+    '''
+
+    # Define the variable names as in the paper
+    N = dimensions
+    M = time_steps - 1
+    h = system_size/(dimensions-1)
+    k = dt
+
+    a = alpha
+    b = beta
+
+    # constants:
+    c1 = -3.0 + 1.7320508075688772935j
+    w1 = -6.0 - 10.39230484541326376j
+    w11 = -3.4641016151377545871j
+    w21 = 0.5 - 0.8660254037844386467j
+    w31 = 1.0 - 0.57735026918962576452j
+    c1_t = -6.0 + 3.4641016151377545871j
+    w1_t = -12.0 - 20.784609690826527522j
+    Omega1_t = -3.4641016151377545870j
+    Omega2_t = 1.0 - 1.7320508075688772935j
+
+    def create_banded_matrix(dim, band):
+        '''
+        :param dim: matrix will be of size dim x dim
+        :param band: 1-D np.array: Must have uneven size to have equal number of entries on each side of diag
+        :return: banded matrix
+        '''
+        band = np.array(band)
+        band_size = band.size
+        dx = int((band_size - 1)/2)
+        matrix = np.zeros((dim, dim))
+        for i in range(dim):
+            left = i-dx
+            right = i+dx
+            # print(left, right)
+            if left < 0:
+                matrix[i, left:] = band[:dx]
+                matrix[i, :right+1] = band[dx: ]
+            elif right > dim - 1:
+                matrix[i, :(right + 1)%dim] = band[dx+1: ]
+                matrix[i, left:] = band[: dx+1]
+            else:
+                matrix[i, left : right+1] = band
+        return matrix
+
+    L1 = create_banded_matrix(dim = N, band = [1, 4, 1])
+    M1 = create_banded_matrix(dim = N, band = [-1, 0, 1])*3/h
+    L2 = create_banded_matrix(dim = N, band = [1, 10, 1])
+    M2 = create_banded_matrix(dim = N, band = [1, -2, 1])*12/(h**2)
+    L1_inv = np.linalg.inv(L1)
+
+    def F(U): # non-linear operator
+        return -0.5*L1_inv.dot(M1.dot(U**2))
+
+    # calculate Linear operator L:
+    L_2_inv = np.linalg.inv(L2)
+    L_2_inv_sq = np.linalg.matrix_power(L_2_inv, 2)
+    bracket = a*L2.dot(M2) + b*np.linalg.matrix_power(M2, 2)
+    L = L_2_inv_sq.dot(bracket)
+
+    sim_data = np.zeros((time_steps, dimensions))
+    sim_data[0, :] = starting_point
+    for i in range(1, M+1):
+        u_prev = sim_data[i-1, :]
+
+        Fn = F(u_prev)
+
+        # Step 1:
+        l_t = k*L - c1_t*np.identity(N)
+        r = w1_t*u_prev + k*Omega1_t*Fn
+        Ra = np.linalg.solve(l_t, r) # solves l_t*Ra = r
+        an = u_prev + 2*np.real(Ra)
+        Fna = F(an)
+
+        # Step 2:
+        r = w1_t*u_prev + k*(Omega1_t - Omega2_t)*Fn + k*Omega2_t*Fna
+        Rb = np.linalg.solve(l_t, r)
+        bn = u_prev + 2*np.real(Rb)
+        Fnb = F(bn)
+
+        # Step 3:
+        l = k*L - c1*np.identity(N)
+        r = w1*u_prev + k*(w11 - 2*w21)*Fn + 2*k*w21*Fnb
+        Rc = np.linalg.solve(l, r)
+        cn = u_prev + 2*np.real(Rc)
+        Fnc = F(cn)
+
+        # Step 4:
+        r = w1*u_prev + k*(w11 - 3*w21 + w31)*Fn + k*(2*w21 - w31)*(Fna + Fnb) - k*(w21 - w31)*Fnc
+        Ru = np.linalg.solve(l, r)
+
+        # calculate the next step
+        u_next = u_prev + 2*np.real(Ru)
+        sim_data[i, :] = u_next
+
+    return sim_data

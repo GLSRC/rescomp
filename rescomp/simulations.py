@@ -866,8 +866,15 @@ def _kuramoto_sivashinsky_Bhatt(dimensions, system_size, dt, time_steps, startin
     bracket = a*L2.dot(M2) + b*np.linalg.matrix_power(M2, 2)
     L = L_2_inv_sq.dot(bracket)
 
+    if starting_point is None:
+        # Use the starting point from the Kassam_2005 paper
+        x = system_size * np.transpose(np.conj(np.arange(1, N + 1))) / N
+        u_prev = np.cos(2 * np.pi * x / system_size) * (1 + np.sin(2 * np.pi * x / system_size))
+    else:
+        u_prev = starting_point
+
     sim_data = np.zeros((time_steps, dimensions))
-    sim_data[0, :] = starting_point
+    sim_data[0, :] = u_prev
     for i in range(1, M+1):
         u_prev = sim_data[i-1, :]
 

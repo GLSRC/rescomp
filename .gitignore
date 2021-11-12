@@ -14,3 +14,8 @@ doc/_build/
 
 # IDE specific files
 .idea/
+bin/.ipynb_checkpoints/Hybrid_RC_Testing_Lorenz_Plotly-checkpoint.ipynb
+bin/.ipynb_checkpoints/Lyapunov Exponents-checkpoint.ipynb
+bin/.ipynb_checkpoints/RC_statistical_model_comparison_param_sweep-checkpoint.ipynb
+bin/.ipynb_checkpoints/RC_statistical_model_comparison_TEMPLATE-checkpoint.ipynb
+bin/Lyapunov Exponents.ipynb

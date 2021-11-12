@@ -585,6 +585,24 @@ class ESN(_ESNCore):
             self._squared_tanh_nodes.extend(
                 dimwise_nodes[round(len(dimwise_nodes)*mix_ratio):])
 
+    def create_input_matrix(self, x_dim, w_in_scale=1.0, w_in_sparse=True, w_in_ordered=False):
+        ''' create the input matrix _w_in. Can be used to create the _w_in before "train", otherwise it is called in "train"
+        Args:
+            x_dim (int): dimension of the input data
+            w_in_scale (float): maximum absolute value of the (random) w_in
+                elements
+            w_in_sparse (bool): If true, creates w_in such that one element in
+                each row is non-zero (Lu,Hunt, Ott 2018)
+            w_in_orderd (bool): If true and w_in_sparse is true, creates w_in
+                such that elements are ordered by dimension and number of
+                elements for each dimension is equal (as far as possible)
+        '''
+        self._w_in_scale = w_in_scale
+        self._w_in_sparse = w_in_sparse
+        self._w_in_ordered = w_in_ordered
+        self._x_dim = x_dim
+        self._create_w_in()
+
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
               w_in_sparse=True, w_in_ordered=False, w_in_no_update=False,
               act_fct_flag='tanh_simple', bias_scale=0, mix_ratio=0.5,
@@ -626,18 +644,16 @@ class ESN(_ESNCore):
             loc_nbhd (np.ndarray): The local neighborhood used for the
                 generalized local states approach. For more information, please
                 see the docs.
-
         """
         self._reg_param = reg_param
         self._loc_nbhd = loc_nbhd
+
+        x_dim = x_train.shape[1]
         if self._w_in is not None and w_in_no_update:
-            pass
+            if not self._x_dim == x_dim:
+                raise Exception(f'the x_dim specified in create_input_matrix does not match the data x_dim: {self._x_dim} vs {x_dim}')
         else:
-            self._w_in_scale = w_in_scale
-            self._w_in_sparse = w_in_sparse
-            self._w_in_ordered = w_in_ordered
-            self._x_dim = x_train.shape[1]
-            self._create_w_in()
+            self.create_input_matrix(x_dim, w_in_scale=w_in_scale, w_in_sparse=w_in_sparse, w_in_ordered=w_in_ordered)
 
         self._set_activation_function(act_fct_flag=act_fct_flag,
                                       bias_scale=bias_scale)

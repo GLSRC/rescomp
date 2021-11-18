@@ -14,3 +14,11 @@ doc/_build/
 
 # IDE specific files
 .idea/
+
+# Temporary swap files
+*.swp
+
+# Files for testing with pyenv and tox
+.python-version
+venv/
+

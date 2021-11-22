@@ -200,7 +200,7 @@ def error_over_time(pred_time_series, meas_time_series, distance_measure = "L2",
     elif normalization == "historic":
         norm = np.linalg.norm(meas) * np.sqrt(meas.shape[0])
     elif normalization == "root_of_avg_of_spacedist_squared": # as in: 2018 Pathak et.al."Hybrid forecasting..."
-        norm = np.sqrt(np.mean(np.linalg.norm(meas)**2))
+        norm = np.sqrt(np.mean(np.linalg.norm(meas, axis=1)**2))
     elif utilities._is_number(normalization):
         norm = normalization
     else:

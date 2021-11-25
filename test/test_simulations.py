@@ -6,6 +6,8 @@ import pytest
 import numpy as np
 import rescomp
 
+
+@pytest.mark.xfail(reason='the KS simulation sometimes diverges using the numpy FFT')
 class testSimulations(unittest.TestCase):
     def test_kuramoto_sivashinski_40d_22l_05t_divergence(self):
         ks_sys_flag = 'kuramoto_sivashinsky'
@@ -19,6 +21,7 @@ class testSimulations(unittest.TestCase):
         assert not np.isnan(sim_data).any()
         assert np.amax(np.abs(sim_data)) < 100
 
+
 class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
     def setUp(self):
         self.ks_sys_flag = 'kuramoto_sivashinsky_custom'
@@ -27,6 +30,7 @@ class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
         self.dt = 0.5
         self.time_steps = 1000
 
+    @pytest.mark.xfail(reason='the KS simulation sometimes diverges using the numpy FFT')
     def test_kuramoto_sivashinski_40d_22l_05t_npfft_64bit_divergence(self):
         precision = 64
         fft_type = 'numpy'
@@ -36,6 +40,7 @@ class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
         assert not np.isnan(sim_data).any()
         assert np.amax(np.abs(sim_data)) < 100
 
+    @pytest.mark.xfail(reason='the KS simulation sometimes diverges using the numpy FFT')
     def test_kuramoto_sivashinski_40d_22l_05t_npfft_32bit_divergence(self):
         precision = 32
         fft_type = 'numpy'

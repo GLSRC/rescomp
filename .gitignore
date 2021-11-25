@@ -21,4 +21,4 @@ doc/_build/
 # Files for testing with pyenv and tox
 .python-version
 venv/
-
+.tox/

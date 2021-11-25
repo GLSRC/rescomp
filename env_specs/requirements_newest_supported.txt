@@ -1,0 +1,20 @@
+# requirement.txt for rescomp testing. Specifies the newest package versions we support.
+# Note that the order of packages shouldn't matter, but I'm not 100% sure on that.
+
+# Basics:
+numpy <= 1.21.4
+
+# dask <= 2021.11.1
+# matplotlib <= 3.5.0
+networkx <= 2.6.3
+pandas <= 1.3.4
+
+# Depends on the above:
+scipy <= 1.7.2
+# skccm==0.2.dev0
+scikit-learn <= 1.0.1
+
+# Testing
+tox <= 3.24.4
+pytest <= 6.2.5
+

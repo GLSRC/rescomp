@@ -1,0 +1,20 @@
+# requirement.txt for rescomp testing. This downloads all the newest versions of all packages from pypi that we depend upon, regardless of us having tested them or not.
+# Note that the order of packages shouldn't matter, but I'm not 100% sure on that.
+
+# Basics:
+numpy
+
+# dask
+# matplotlib
+networkx
+pandas
+
+# Depends on the above:
+scipy
+# skccm
+scikit-learn
+
+# Testing
+tox
+pytest
+

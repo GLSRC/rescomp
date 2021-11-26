@@ -17,3 +17,11 @@ doc/_build/
 
 # jupyter checkpoint files:
 bin/.ipynb_checkpoints/
+
+# Temporary swap files
+*.swp
+
+# Files for testing with pyenv and tox
+.python-version
+venv/
+.tox/

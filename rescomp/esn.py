@@ -119,19 +119,31 @@ class _ESNCore(utilities._ESNLogging):
         else:
             raise Exception("self._w_out_fit_flag incorrectly specified")
 
-    def _fit_w_out(self, y_train, r):
+    def _fit_w_out(self, x_train, r):
         """ Fit the output matrix self._w_out after training
 
         Uses linear regression and Tikhonov regularization.
 
         Args:
-            y_train (np.ndarray): Desired prediction from the reservoir states
+            x_train (np.ndarray): get y_train via x_train[1:], y_train = Desired prediction from the reservoir states
             r (np.ndarray): reservoir states
         Returns:
             np.ndarray: r_gen, generalized nonlinear transformed r
 
         """
+        # Note: in an older version y_train was obtained from x_train in _train_synced, and then
+        # parsed directly to _fit_w_out.
+        # This is changed in order to allow for an easy override of _fit_w_out in variations of
+        # the ESN class (e.g. ESNHybrid), that include other non-rc predictions (e.g. x_new = model(x_old))
+        # into an "extended r_gen" = concat(r_gen, model(x)), that is finally fitted to y_train.
 
+        # Note: This is slightly different than the old ESN as y_train was as
+        # long as x_train, but shifted by one time step. Hence to get the same
+        # results as for the old ESN one has to specify an x_train one time step
+        # longer than before. Nonetheless, it's still true that r[t] is
+        # calculated from x[t] and used to calculate y[t] (all the same t)
+
+        y_train = x_train[1:]
         self.logger.debug('Fit _w_out according to method %s' %
                           str(self._w_out_fit_flag))
 
@@ -176,14 +188,7 @@ class _ESNCore(utilities._ESNLogging):
         # The last value of r can't be used for the training, see comment below
         r = self.synchronize(x_train[:-1], save_r=True)
 
-        # Note: This is slightly different than the old ESN as y_train was as
-        # long as x_train, but shifted by one time step. Hence to get the same
-        # results as for the old ESN one has to specify an x_train one time step
-        # longer than before. Nonetheless, it's still true that r[t] is
-        # calculated from x[t] and used to calculate y[t] (all the same t)
-        y_train = x_train[1:]
-
-        r_gen = self._fit_w_out(y_train, r)
+        r_gen = self._fit_w_out(x_train, r)
 
         return r, r_gen
 

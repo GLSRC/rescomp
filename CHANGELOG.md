@@ -2,6 +2,11 @@
 
 This is the changelog for the rescomp package
 
+### rescomp 0.2.3
+* Added esn.create_input_matrix() to allow the creation of an input matrix independent from any training.
+* Adjusted the arguments of _ESNCore._fit_w_out() to allow for more flexible extension classes built upon _ESNCore 
+and/or ESN
+
 ### rescomp 0.2.2
 
 * Updated required packages to correctly reflect the oldest supported packages.

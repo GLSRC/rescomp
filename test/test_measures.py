@@ -113,7 +113,7 @@ class testMeasures(unittest.TestCase):
         pred = np.random.random((length, dim))
         meas = np.random.random((length, dim))
         error = measures.error_over_time(pred, meas, distance_measure="L2", normalization=norm)
-        error_manually = np.linalg.norm(pred - meas, axis = 1)/np.sqrt(np.mean(np.linalg.norm(meas)**2))
+        error_manually = np.linalg.norm(pred - meas, axis = 1)/np.sqrt(np.mean(np.linalg.norm(meas, axis=1)**2))
         np.testing.assert_almost_equal(error, error_manually, decimal = 15)
 
     def test_valid_time_index(self):

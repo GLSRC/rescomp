@@ -48,7 +48,7 @@ def _roessler_sprott(x, a=0.2, b=0.2, c=5.7):
         raise Exception('check shape of x, should have 3 components')
 
 
-def _normal_lorenz(x, sigma=10, rho=28, beta=8/3):
+def _normal_lorenz(x, sigma=10, rho=28, beta=8 / 3):
     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
 
     Args:
@@ -70,7 +70,7 @@ def _normal_lorenz(x, sigma=10, rho=28, beta=8/3):
         raise Exception('check shape of x, should have 3 components')
 
 
-def _mod_lorenz(x, sigma=10, rho=28, beta=8/3):
+def _mod_lorenz(x, sigma=10, rho=28, beta=8 / 3):
     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
 
     with dz/dt += x(t) to break symmetry
@@ -131,15 +131,16 @@ def _chua(x):
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
 
     """
-    alpha=9.
-    beta=100./7.
-    a=8./7.
-    b=5./7.
+    alpha = 9.
+    beta = 100. / 7.
+    a = 8. / 7.
+    b = 5. / 7.
 
     np.array(x)
     if x.shape == (3,):
-        return np.array([alpha*(x[1]-x[0]+b*x[0]+0.5*(a-b)*(np.abs(x[0]+1)
-                        -np.abs(x[0]-1))),x[0]-x[1]+x[2], -beta*x[1]])
+        return np.array([alpha * (x[1] - x[0] + b * x[0] + 0.5 * (a - b) * (np.abs(x[0] + 1)
+                                                                            - np.abs(x[0] - 1))), x[0] - x[1] + x[2],
+                         -beta * x[1]])
     else:
         raise Exception('check shape of x, should have 3 components')
 
@@ -175,13 +176,13 @@ def _ueda(x):
     delta = 0.05
     beta = 0.
     alpha = 1.
-    gamma=7.5
-    omega=1.
+    gamma = 7.5
+    omega = 1.
     np.array(x)
     if x.shape == (3,):
         return np.array([x[1],
-                -delta*x[1] - beta*x[0] - alpha*x[0]**3 + gamma*np.cos(x[2]),
-                omega])
+                         -delta * x[1] - beta * x[0] - alpha * x[0] ** 3 + gamma * np.cos(x[2]),
+                         omega])
     else:
         raise Exception('check shape of x, should have 3 components')
 
@@ -196,10 +197,10 @@ def _complex_butterfly(x):
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
 
     """
-    a=0.55
+    a = 0.55
     np.array(x)
     if x.shape == (3,):
-        return np.array([a*(x[1]-x[0]), -x[2]*np.sign(x[0]), np.abs(x[0]) - 1])
+        return np.array([a * (x[1] - x[0]), -x[2] * np.sign(x[0]), np.abs(x[0]) - 1])
     else:
         raise Exception('check shape of x, should have 3 components')
 
@@ -219,7 +220,7 @@ def _chen(x):
     c = 28.
     np.array(x)
     if x.shape == (3,):
-        return np.array([a * (x[1] - x[0]), (c-a)*x[0] -x[0]*x[2]+c*x[1], x[0] * x[1] - b * x[2]])
+        return np.array([a * (x[1] - x[0]), (c - a) * x[0] - x[0] * x[2] + c * x[1], x[0] * x[1] - b * x[2]])
     else:
         raise Exception('check shape of x, should have 3 components')
 
@@ -236,11 +237,11 @@ def _rucklidge(x):
     """
     kappa = 2.
     lam = 6.7
-    
+
     np.array(x)
     if x.shape == (3,):
-        return np.array([-kappa*x[0] + lam*x[1] - x[1]*x[2],
-                         x[0], -x[2] + x[1]**2])
+        return np.array([-kappa * x[0] + lam * x[1] - x[1] * x[2],
+                         x[0], -x[2] + x[1] ** 2])
     else:
         raise Exception('check shape of x, should have 3 components')
 
@@ -257,12 +258,12 @@ def _rabinovich(x):
     """
     alpha = 1.1
     gamma = 0.87
-    
+
     np.array(x)
     if x.shape == (3,):
-        return np.array([x[1]*(x[2]-1+x[0]**2)+gamma*x[0],
-                         x[0]*(3*x[2]+1-x[0]**2)+gamma*x[1],
-                         -2*x[2]*(alpha + x[1]*x[0])])
+        return np.array([x[1] * (x[2] - 1 + x[0] ** 2) + gamma * x[0],
+                         x[0] * (3 * x[2] + 1 - x[0] ** 2) + gamma * x[1],
+                         -2 * x[2] * (alpha + x[1] * x[0])])
     else:
         raise Exception('check shape of x, should have 3 components')
 
@@ -277,15 +278,15 @@ def _thomas(x):
         (np.ndarray): (dx/dt, dy/dt, dz/dt) corresponding to input x
 
     """
-    b=0.18
+    b = 0.18
     np.array(x)
     if x.shape == (3,):
-        return np.array([-b*x[0]+np.sin(x[1]), -b*x[1]+np.sin(x[2]), -b*x[2]+np.sin(x[0])])
+        return np.array([-b * x[0] + np.sin(x[1]), -b * x[1] + np.sin(x[2]), -b * x[2] + np.sin(x[0])])
     else:
         raise Exception('check shape of x, should have 3 components')
 
 
-#TODO: Rewrite using numpy vectorization to make faster
+# TODO: Rewrite using numpy vectorization to make faster
 def _lorenz_96(x, force=8):
     """ Calculates (dx/dt, dy/dt, dz/dt) with given (x,y,z) for RK4
 
@@ -304,7 +305,8 @@ def _lorenz_96(x, force=8):
     # Periodic Boundary Conditions for the 3 edge cases i=1,2,system_dimension
     derivative[0] = (x[1] - x[system_dimension - 2]) * x[system_dimension - 1] - x[0]
     derivative[1] = (x[2] - x[system_dimension - 1]) * x[0] - x[1]
-    derivative[system_dimension - 1] = (x[0] - x[system_dimension - 3]) * x[system_dimension - 2] - x[system_dimension - 1]
+    derivative[system_dimension - 1] = (x[0] - x[system_dimension - 3]) * x[system_dimension - 2] - \
+                                       x[system_dimension - 1]
 
     # then the general case
     for i in range(2, system_dimension - 1):
@@ -357,6 +359,7 @@ _sys_flag_synonyms.add_synonyms(12, "roessler_sprott")
 _sys_flag_synonyms.add_synonyms(13, "kuramoto_sivashinsky")
 _sys_flag_synonyms.add_synonyms(14, "kuramoto_sivashinsky_old")
 _sys_flag_synonyms.add_synonyms(15, "kuramoto_sivashinsky_custom")
+
 
 def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
                         starting_point=None, **kwargs):
@@ -428,7 +431,7 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
 
     sys_flag_syn = _sys_flag_synonyms.get_flag(sys_flag)
 
-    #TODO: this is bad, as it's removed from the actual function call below.
+    # TODO: this is bad, as it's removed from the actual function call below.
     if starting_point is None and sys_flag_syn <= 12:
         starting_point = np.array([1, 2, 3])
 
@@ -445,7 +448,7 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
     elif sys_flag_syn == 4:
         # Starting point is ignored here atm
         if starting_point is not None:
-            #TODO: should be a warning in the logger.
+            # TODO: should be a warning in the logger.
             print("Starting point is ignored for the Lorenz96 equation")
         f = lambda x: _lorenz_96(x, **kwargs)
     elif sys_flag_syn == 5:
@@ -520,7 +523,7 @@ def _kuramoto_sivashinsky_old(dimensions, system_size, dt, time_steps):
     v = np.fft.fft(u)
 
     h = dt  # time step
-    nmax = time_steps # No. of time steps to simulate
+    nmax = time_steps  # No. of time steps to simulate
     # Wave numbers
     k = np.transpose(
         np.conj(np.concatenate((np.arange(0, n / 2), np.array([0]), np.arange(-n / 2 + 1, 0))))) * 2 * np.pi / size
@@ -561,7 +564,8 @@ def _kuramoto_sivashinsky_old(dimensions, system_size, dt, time_steps):
 
     return uu
 
-def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_point, eps = 0, **kwargs):
+
+def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_point, eps=0, **kwargs):
     """ This function simulates the Kuramoto–Sivashinsky PDE
 
     Even though it doesn't use the RK4 algorithm, it is bundled with the other
@@ -603,8 +607,8 @@ def _kuramoto_sivashinsky(dimensions, system_size, dt, time_steps, starting_poin
 
     # Wave numbers
     k = np.transpose(np.conj(np.concatenate((
-                np.arange(0, n / 2), np.array([0]), np.arange(-n / 2 + 1, 0))
-                ))) * 2 * np.pi / size
+        np.arange(0, n / 2), np.array([0]), np.arange(-n / 2 + 1, 0))
+    ))) * 2 * np.pi / size
 
     L = (1 + eps) * k ** 2 - k ** 4
     E = np.exp(h * L)
@@ -725,8 +729,8 @@ def _kuramoto_sivashinsky_custom(dimensions, system_size, dt, time_steps, starti
 
     # Wave numbers
     k = np.transpose(np.conj(np.concatenate((
-                np.arange(0, n / 2), np.array([0]), np.arange(-n / 2 + 1, 0))
-        ))) * 2 * np.pi / size
+        np.arange(0, n / 2), np.array([0]), np.arange(-n / 2 + 1, 0))
+    ))) * 2 * np.pi / size
     if change_precision: k = k.astype(f_dtype)
 
     L = k ** 2 - k ** 4
@@ -790,7 +794,8 @@ def _kuramoto_sivashinsky_custom(dimensions, system_size, dt, time_steps, starti
 
     return uu
 
-def _kuramoto_sivashinsky_Bhatt(dimensions, system_size, dt, time_steps, starting_point, alpha = 1, beta = 1):
+
+def _kuramoto_sivashinsky_Bhatt(dimensions, system_size, dt, time_steps, starting_point, alpha=1, beta=1):
     '''
     This function simulates the Kuramoto–Sivashinsky PDE according to H. Bhatt et. al. 2019
     Arxiv: http://arxiv.org/abs/1911.12183
@@ -810,7 +815,7 @@ def _kuramoto_sivashinsky_Bhatt(dimensions, system_size, dt, time_steps, startin
     # Define the variable names as in the paper
     N = dimensions
     M = time_steps - 1
-    h = system_size/(dimensions-1)
+    h = system_size / (dimensions - 1)
     k = dt
 
     a = alpha
@@ -835,70 +840,70 @@ def _kuramoto_sivashinsky_Bhatt(dimensions, system_size, dt, time_steps, startin
         '''
         band = np.array(band)
         band_size = band.size
-        dx = int((band_size - 1)/2)
+        dx = int((band_size - 1) / 2)
         matrix = np.zeros((dim, dim))
         for i in range(dim):
-            left = i-dx
-            right = i+dx
+            left = i - dx
+            right = i + dx
             # print(left, right)
             if left < 0:
                 matrix[i, left:] = band[:dx]
-                matrix[i, :right+1] = band[dx: ]
+                matrix[i, :right + 1] = band[dx:]
             elif right > dim - 1:
-                matrix[i, :(right + 1)%dim] = band[dx+1: ]
-                matrix[i, left:] = band[: dx+1]
+                matrix[i, :(right + 1) % dim] = band[dx + 1:]
+                matrix[i, left:] = band[: dx + 1]
             else:
-                matrix[i, left : right+1] = band
+                matrix[i, left: right + 1] = band
         return matrix
 
-    L1 = create_banded_matrix(dim = N, band = [1, 4, 1])
-    M1 = create_banded_matrix(dim = N, band = [-1, 0, 1])*3/h
-    L2 = create_banded_matrix(dim = N, band = [1, 10, 1])
-    M2 = create_banded_matrix(dim = N, band = [1, -2, 1])*12/(h**2)
+    L1 = create_banded_matrix(dim=N, band=[1, 4, 1])
+    M1 = create_banded_matrix(dim=N, band=[-1, 0, 1]) * 3 / h
+    L2 = create_banded_matrix(dim=N, band=[1, 10, 1])
+    M2 = create_banded_matrix(dim=N, band=[1, -2, 1]) * 12 / (h ** 2)
     L1_inv = np.linalg.inv(L1)
 
-    def F(U): # non-linear operator
-        return -0.5*L1_inv.dot(M1.dot(U**2))
+    def F(U):  # non-linear operator
+        return -0.5 * L1_inv.dot(M1.dot(U ** 2))
 
     # calculate Linear operator L:
     L_2_inv = np.linalg.inv(L2)
     L_2_inv_sq = np.linalg.matrix_power(L_2_inv, 2)
-    bracket = a*L2.dot(M2) + b*np.linalg.matrix_power(M2, 2)
+    bracket = a * L2.dot(M2) + b * np.linalg.matrix_power(M2, 2)
     L = L_2_inv_sq.dot(bracket)
 
     sim_data = np.zeros((time_steps, dimensions))
     sim_data[0, :] = starting_point
-    for i in range(1, M+1):
-        u_prev = sim_data[i-1, :]
+    for i in range(1, M + 1):
+        u_prev = sim_data[i - 1, :]
 
         Fn = F(u_prev)
 
         # Step 1:
-        l_t = k*L - c1_t*np.identity(N)
-        r = w1_t*u_prev + k*Omega1_t*Fn
-        Ra = np.linalg.solve(l_t, r) # solves l_t*Ra = r
-        an = u_prev + 2*np.real(Ra)
+        l_t = k * L - c1_t * np.identity(N)
+        r = w1_t * u_prev + k * Omega1_t * Fn
+        Ra = np.linalg.solve(l_t, r)  # solves l_t*Ra = r
+        an = u_prev + 2 * np.real(Ra)
         Fna = F(an)
 
         # Step 2:
-        r = w1_t*u_prev + k*(Omega1_t - Omega2_t)*Fn + k*Omega2_t*Fna
+        r = w1_t * u_prev + k * (Omega1_t - Omega2_t) * Fn + k * Omega2_t * Fna
         Rb = np.linalg.solve(l_t, r)
-        bn = u_prev + 2*np.real(Rb)
+        bn = u_prev + 2 * np.real(Rb)
         Fnb = F(bn)
 
         # Step 3:
-        l = k*L - c1*np.identity(N)
-        r = w1*u_prev + k*(w11 - 2*w21)*Fn + 2*k*w21*Fnb
+        l = k * L - c1 * np.identity(N)
+        r = w1 * u_prev + k * (w11 - 2 * w21) * Fn + 2 * k * w21 * Fnb
         Rc = np.linalg.solve(l, r)
-        cn = u_prev + 2*np.real(Rc)
+        cn = u_prev + 2 * np.real(Rc)
         Fnc = F(cn)
 
         # Step 4:
-        r = w1*u_prev + k*(w11 - 3*w21 + w31)*Fn + k*(2*w21 - w31)*(Fna + Fnb) - k*(w21 - w31)*Fnc
+        r = w1 * u_prev + k * (w11 - 3 * w21 + w31) * Fn + k * (2 * w21 - w31) * (Fna + Fnb) - k * (w21 - w31) * Fnc
         Ru = np.linalg.solve(l, r)
 
         # calculate the next step
-        u_next = u_prev + 2*np.real(Ru)
+        u_next = u_prev + 2 * np.real(Ru)
         sim_data[i, :] = u_next
 
     return sim_data

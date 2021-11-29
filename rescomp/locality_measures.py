@@ -10,8 +10,8 @@ import sklearn.cluster
 # TODO: add synonym dict for cluster method
 # TODO this should use the LocESN internal functions
 # TODO: Comments, docstring, ...
-def find_local_neighborhoods(locality_matrix, neighbors, cores=1, cluster_method="hacky_loc_neighbors", cluster_linkage="average"):
-
+def find_local_neighborhoods(locality_matrix, neighbors, cores=1, cluster_method="hacky_loc_neighbors",
+                             cluster_linkage="average"):
     input_dim = locality_matrix.shape[1]
 
     if input_dim % cores == 0:
@@ -93,7 +93,7 @@ def find_local_neighborhoods(locality_matrix, neighbors, cores=1, cluster_method
         #     linkage=cluster_linkage, compute_full_tree=True,
         #     distance_threshold=None)
         model = sklearn.cluster.AgglomerativeClustering(
-            affinity='precomputed',n_clusters=nr_nbhds,
+            affinity='precomputed', n_clusters=nr_nbhds,
             linkage=cluster_linkage, compute_full_tree=True)
 
         model = model.fit(distance_matrix)
@@ -131,6 +131,8 @@ def find_local_neighborhoods(locality_matrix, neighbors, cores=1, cluster_method
 
 
 pass  # TODO: Needed?
+
+
 # def generate_locality_mst(locality_matrix):
 #     # the 0.1 is added as an edge weight of 0 is counted as no connection in the scipy mst algorithm
 #     anti_locality_matrix = 1 - locality_matrix + 0.1
@@ -141,12 +143,11 @@ pass  # TODO: Needed?
 def shan_entropy(c):
     c_normalized = c / float(np.sum(c))
     c_normalized = c_normalized[np.nonzero(c_normalized)]
-    H = -sum(c_normalized* np.log2(c_normalized))
+    H = -sum(c_normalized * np.log2(c_normalized))
     return H
 
 
 def nmi_ts(x, y, bins=None):
-
     # # number of bins Sqrt(n/5) recommended from https://stats.stackexchange.com/questions/179674/number-of-bins-when-computing-mutual-information
     # alex + christoph used Sqrt(n/4) though, so that's what I'm using here too
     # if bins == None: bins = int(np.sqrt(min(len(x), len(y))/4))
@@ -187,7 +188,7 @@ def nmi_ts(x, y, bins=None):
     h_xy = shan_entropy(c_xy)
     mi = h_x + h_y - h_xy
     # nmi = mi
-    nmi = mi/np.sqrt(h_x * h_y)
+    nmi = mi / np.sqrt(h_x * h_y)
 
     return nmi
 

@@ -51,7 +51,7 @@ class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
         assert np.amax(np.abs(sim_data)) < 100
 
     def test_kuramoto_sivashinski_40d_22l_05t_scfft_64bit_divergence(self):
-        scipy = pytest.importorskip("scipy")
+        pytest.importorskip("scipy")
         precision = 64
         fft_type = 'scipy'
         sim_data = rescomp.simulate_trajectory(
@@ -61,7 +61,7 @@ class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
         assert np.amax(np.abs(sim_data)) < 100
 
     def test_kuramoto_sivashinski_40d_22l_05t_scfft_32bit_divergence(self):
-        scipy = pytest.importorskip("scipy")
+        pytest.importorskip("scipy")
         precision = 32
         fft_type = 'scipy'
         sim_data = rescomp.simulate_trajectory(
@@ -71,7 +71,7 @@ class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
         assert np.amax(np.abs(sim_data)) < 100
 
     def test_kuramoto_sivashinski_40d_22l_05t_pyfftw_np_64bit_divergence(self):
-        pyfftw = pytest.importorskip("pyfftw")
+        pytest.importorskip("pyfftw")
         precision = 64
         fft_type = 'pyfftw_np'
         sim_data = rescomp.simulate_trajectory(
@@ -81,7 +81,7 @@ class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
         assert np.amax(np.abs(sim_data)) < 100
 
     def test_kuramoto_sivashinski_40d_22l_05t_pyfftw_np_32bit_divergence(self):
-        pyfftw = pytest.importorskip("pyfftw")
+        pytest.importorskip("pyfftw")
         precision = 32
         fft_type = 'pyfftw_np'
         sim_data = rescomp.simulate_trajectory(
@@ -91,7 +91,7 @@ class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
         assert np.amax(np.abs(sim_data)) < 100
 
     def test_kuramoto_sivashinski_40d_22l_05t_pyfftw_sc_64bit_divergence(self):
-        pyfftw = pytest.importorskip("pyfftw")
+        pytest.importorskip("pyfftw")
         precision = 64
         fft_type = 'pyfftw_sc'
         sim_data = rescomp.simulate_trajectory(
@@ -101,7 +101,7 @@ class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
         assert np.amax(np.abs(sim_data)) < 100
 
     def test_kuramoto_sivashinski_40d_22l_05t_pyfftw_sc_32bit_divergence(self):
-        pyfftw = pytest.importorskip("pyfftw")
+        pytest.importorskip("pyfftw")
         precision = 32
         fft_type = 'pyfftw_sc'
         sim_data = rescomp.simulate_trajectory(
@@ -111,7 +111,7 @@ class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
         assert np.amax(np.abs(sim_data)) < 100
 
     def test_kuramoto_sivashinski_40d_22l_05t_pyfftw_fftw_64bit_divergence(self):
-        pyfftw = pytest.importorskip("pyfftw")
+        pytest.importorskip("pyfftw")
         precision = 64
         fft_type = 'pyfftw_fftw'
         sim_data = rescomp.simulate_trajectory(
@@ -121,7 +121,7 @@ class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
         assert np.amax(np.abs(sim_data)) < 100
 
     def test_kuramoto_sivashinski_40d_22l_05t_pyfftw_fftw_32bit_divergence(self):
-        pyfftw = pytest.importorskip("pyfftw")
+        pytest.importorskip("pyfftw")
         precision = 32
         fft_type = 'pyfftw_fftw'
         sim_data = rescomp.simulate_trajectory(
@@ -129,6 +129,7 @@ class testKuramotSivashinskiVariants40d22l05t(unittest.TestCase):
             dt=self.dt, time_steps=self.time_steps, precision=precision, fft_type=fft_type)
         assert not np.isnan(sim_data).any()
         assert np.amax(np.abs(sim_data)) < 100
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

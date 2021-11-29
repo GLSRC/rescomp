@@ -13,6 +13,7 @@ from ._version import __version__
 _rescomp_loggers = {}
 _rescomp_logger_counter = 0
 
+
 class _ESNLogging:
     """ Custom logging class, logging both to stdout as well as to file
 
@@ -52,7 +53,6 @@ class _ESNLogging:
         self._create_logger()
         self.set_console_logger(log_level="warning")
         # self.set_file_logger()
-
 
     def set_console_logger(self, log_level):
         """ Set loglevel for the console output
@@ -175,9 +175,6 @@ class _ESNLogging:
             # _rescomp_loggers["a"] = "b"
             _rescomp_logger_counter += 1
 
-
-
-
     # def _update_logger(self):
     #     self.logger.addHandler(self._console_handler)
 
@@ -276,7 +273,7 @@ class _SynonymDict:
 
         return flag
 
-    #TODO: Add to tests:
+    # TODO: Add to tests:
     #
     # act_fct_flag_synonyms = rescomp.utilities.SynonymDict()
     # act_fct_flag_synonyms.add_synonyms(0, ["tanh simple", "simple"])
@@ -312,7 +309,7 @@ def read_pickle(path, compression="infer"):
         esn.logger.warning(
             "The rescomp package version used to create the loaded object is "
             "%s, while the package currently installed on the system is "
-            "version %s)"%(loaded_version, __version__))
+            "version %s)" % (loaded_version, __version__))
 
     return esn
 
@@ -492,7 +489,7 @@ def _compare_version_file_vs_env(segment_threshold="minor"):
     elif segment_threshold == "micro":
         pass
     else:
-        raise Exception("segment_threshold %s not recognized"%segment_threshold)
+        raise Exception("segment_threshold %s not recognized" % segment_threshold)
 
     return int_version == env_version
 
@@ -515,7 +512,3 @@ def _is_number(s):
             return True
         except ValueError:
             return False
-
-
-
-

@@ -53,7 +53,7 @@ def rmse_over_time(pred_time_series, meas_time_series, normalization=None):
     nrmse_list = []
 
     for i in range(0, meas.shape[0]):
-        local_nrmse = rmse(pred[i: i+1], meas[i: i+1], normalization)
+        local_nrmse = rmse(pred[i: i + 1], meas[i: i + 1], normalization)
         nrmse_list.append(local_nrmse)
 
     return np.array(nrmse_list)
@@ -104,7 +104,7 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
     pred = pred_time_series
     meas = meas_time_series
 
-    error = np.linalg.norm(pred - meas)/ np.sqrt(meas.shape[0])
+    error = np.linalg.norm(pred - meas) / np.sqrt(meas.shape[0])
 
     if normalization is None:
         error = error
@@ -131,6 +131,7 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
     #             / np.sqrt(meas.shape[0])
 
     return error
+
 
 #
 # def error_over_time(pred_time_series, meas_time_series, distance_measure="L2", normalization=None):
@@ -260,9 +261,9 @@ def divergence_time(pred_time_series, meas_time_series, epsilon):
     meas = meas_time_series
 
     delta = np.abs(meas - pred)
-    
+
     div_bool = (delta > epsilon).any(axis=1)
-    div_time = np.argmax(np.append(div_bool,True))
+    div_time = np.argmax(np.append(div_bool, True))
 
     return div_time
 
@@ -289,21 +290,20 @@ def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
     Returns: dimension: slope of the log.log plot assumes:
         N_r(radius) ~ radius**dimension
     """
-    
+
     nr_points = float(time_series.shape[0])
     radii = np.logspace(np.log10(r_min), np.log10(r_max), nr_steps)
 
     tree = scipy.spatial.cKDTree(time_series)
     N_r = np.array(tree.count_neighbors(tree, radii), dtype=float) / nr_points
     N_r = np.vstack((radii, N_r))
-    
+
     if nr_steps > 2:
         # linear fit based on loglog scale, to get slope/dimension:
         slope, intercept = np.polyfit(np.log(N_r[0]), np.log(N_r[1]), deg=1)[0:2]
         dimension = slope
-    elif nr_steps is 2:
-        slope = (np.log(N_r[1,1])-np.log(N_r[1,0]))/(np.log(N_r[0,1])-
-                                                        np.log(N_r[0,0]))
+    elif nr_steps == 2:
+        slope = (np.log(N_r[1, 1]) - np.log(N_r[1, 0])) / (np.log(N_r[0, 1]) - np.log(N_r[0, 0]))
         dimension = slope
 
     ###plotting
@@ -320,7 +320,7 @@ def dimension(time_series, r_min=1.5, r_max=5., nr_steps=2,
 
 
 def dimension_parameters(time_series, nr_steps=100, literature_value=None,
-                         plot=False, r_minmin=None,r_maxmax=None, 
+                         plot=False, r_minmin=None, r_maxmax=None,
                          shortness_weight=0.5, literature_weight=1.):
     """ Estimates parameters r_min and r_max for calculation of correlation
     dimension using the algorithm by Grassberger and Procaccia and uses them 
@@ -355,73 +355,70 @@ def dimension_parameters(time_series, nr_steps=100, literature_value=None,
             - **dimension** (*float*): Estimation for dimension using 
               the parameters best_r_min and best_r_max
     """
-        
+
     if r_maxmax is None:
-        expansion=[]
+        expansion = []
         for d in range(time_series.shape[1]):
-            expansion.append(np.max(time_series[:,d]-np.min(time_series[:,d])))
-        
-        r_maxmax=np.max(expansion)
-    
+            expansion.append(np.max(time_series[:, d] - np.min(time_series[:, d])))
+
+        r_maxmax = np.max(expansion)
+
     if r_minmin is None:
-        r_minmin=0.001*r_maxmax
-        
+        r_minmin = 0.001 * r_maxmax
+
     literature_cost = 0
-    
+
     nr_points = float(time_series.shape[0])
     radii = np.logspace(np.log10(r_minmin), np.log10(r_maxmax), nr_steps)
 
     tree = scipy.spatial.cKDTree(time_series)
     N_r = np.array(tree.count_neighbors(tree, radii), dtype=float) / nr_points
     N_r = np.vstack((radii, N_r))
-    
-    loss=None
-    
-    for start_index in range(nr_steps-1):
-        for end_index in range(start_index+1,nr_steps):
-            #print(str(start_index)+', '+ str(end_index))
-            current_N_r=N_r[:,start_index:end_index]
-            current_r_min=radii[start_index]
-            current_r_max=radii[end_index]
-    
+
+    loss = None
+
+    for start_index in range(nr_steps - 1):
+        for end_index in range(start_index + 1, nr_steps):
+            # print(str(start_index)+', '+ str(end_index))
+            current_N_r = N_r[:, start_index:end_index]
+            current_r_min = radii[start_index]
+            current_r_max = radii[end_index]
+
             # linear fit based on loglog scale, to get slope/dimension:
-            slope, intercept = np.polyfit(np.log(current_N_r[0]), 
+            slope, intercept = np.polyfit(np.log(current_N_r[0]),
                                           np.log(current_N_r[1]), deg=1)[0:2]
-            
+
             dimension = slope
-            
-            estimated_line = intercept + slope*np.log(current_N_r[0])
+
+            estimated_line = intercept + slope * np.log(current_N_r[0])
             error = rmse(np.log(current_N_r[1]), estimated_line,
                          normalization="historic")
-            shortness_cost = nr_steps/(end_index-start_index)**3
-            
+            shortness_cost = nr_steps / (end_index - start_index) ** 3
+
             if literature_value is not None:
-                literature_cost = np.sqrt(literature_value-dimension)
-            
-                
-            new_loss = error + shortness_weight*shortness_cost + \
-                        literature_weight*literature_cost*5.
-            
+                literature_cost = np.sqrt(literature_value - dimension)
+
+            new_loss = error + shortness_weight * shortness_cost + literature_weight * literature_cost * 5.
+
             if loss is None:
-                
+
                 loss = new_loss
                 best_r_min = current_r_min
                 best_r_max = current_r_max
-                
+
                 best_slope = slope
                 best_intercept = intercept
-                
+
             elif new_loss < loss:
                 loss = new_loss
-                
+
                 best_r_min = current_r_min
                 best_r_max = current_r_max
-                
+
                 best_slope = slope
                 best_intercept = intercept
-                
-    dimension = best_slope
 
+    dimension = best_slope
 
     # ###plotting
     # if plot:

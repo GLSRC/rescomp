@@ -2,6 +2,9 @@
 
 This is the changelog for the rescomp package
 
+### rescomp 0.2.4
+* Added measures.error_over_time() and measures.valid_time_index() as additional error/data validation functions
+
 ### rescomp 0.2.3
 * Added esn.create_input_matrix() to allow the creation of an input matrix independent from any training.
 * Adjusted the arguments of _ESNCore._fit_w_out() to allow for more flexible extension classes built upon _ESNCore 

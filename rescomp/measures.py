@@ -132,7 +132,8 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
 
     return error
 
-def error_over_time(pred_time_series, meas_time_series, distance_measure = "L2", normalization = None):
+
+def error_over_time(pred_time_series, meas_time_series, distance_measure="L2", normalization=None):
     """ Calculates a general error between two time series
 
     The time series must be of equal length and dimension
@@ -209,6 +210,7 @@ def error_over_time(pred_time_series, meas_time_series, distance_measure = "L2",
 
     return distance/norm
 
+
 def valid_time_index(error_series, epsilon):
     ''' return the index of the error_series where for the first time error>epsilon
     Args:
@@ -224,6 +226,7 @@ def valid_time_index(error_series, epsilon):
         return bool_array.size - 1
     else:
         return np.argmax(bool_array)
+
 
 def demerge_time(pred_time_series, meas_time_series, epsilon):
     """ Synonym for the divergence_time fct. """

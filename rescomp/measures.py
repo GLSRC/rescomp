@@ -132,100 +132,100 @@ def rmse(pred_time_series, meas_time_series, normalization=None):
 
     return error
 
-
-def error_over_time(pred_time_series, meas_time_series, distance_measure="L2", normalization=None):
-    """ Calculates a general error between two time series
-
-    The time series must be of equal length and dimension
-
-    Args:
-        pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
-        meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
-        distance_measure (str or function): The distance measure over space dimensions d used between pred and meas.
-            Possible are:
-            - If str:
-                - "L2": L2 (euclidian) norm
-                - "RMSE": RMSE norm. If selected, this function behaves the same as the "rmse_over_time" function
-            - If function:
-                - custom function that works like: distance = function(delta), the function has to operate on the
-                    second dimension
-
-        normalization (str_or_None_or_float): The normalization method to use. Possible are:
-
-            - None: Calculates the pure, standard RMSE
-            - "mean": Calulates RMSE divided by the measured time series mean
-            - "std_over_time": Calulates RMSE divided by the measured time
-              series' standard deviation in time of dimension. See the NRSME
-              definition of Vlachas, Pathak et al. (2019) for details
-            - float: Calulates the RMSE, then divides it by the given float
-            - "2norm": Uses the vector 2-norm of the meas_time_series to
-              normalize the RMSE for each time step
-            - "maxmin": Divides the RMSE by (max(meas) - min(meas))
-            - "historic": Old, weird way to normalize the NRMSE, kept here
-              purely for backwards compatibility. Don't use if you are not 100%
-              sure that's what you want.
-    Returns:
-        (np.ndarray): error array, shape (T,):
-    """
-
-    pred = pred_time_series
-    meas = meas_time_series
-
-    if len(pred.shape) == 1:
-        pred = np.expand_dims(pred, axis = 1)
-    if len(meas.shape) == 1:
-        meas = np.expand_dims(meas, axis = 1)
-
-    delta = pred-meas
-
-    if type(distance_measure) == str:
-        if distance_measure == "L2":
-            distance = np.linalg.norm(delta, axis = 1)
-        elif distance_measure == "rmse":
-            distance = np.linalg.norm(delta, axis = 1) # / np.sqrt(meas.shape[1])
-        else:
-            raise Exception("Type of distance_measure not implemented")
-        # more norms can be added here
-    else:
-        distance = distance_measure(delta)
-
-    if normalization is None:
-        norm = 1
-    elif normalization == "mean":
-        norm = np.mean(meas)
-    elif normalization == "std_over_time":
-        norm = np.mean(np.std(meas, axis=0))
-    elif normalization == "2norm":
-        norm = np.linalg.norm(meas)
-    elif normalization == "maxmin":
-        norm = (np.max(meas) - np.min(meas))
-    elif normalization == "historic":
-        norm = np.linalg.norm(meas) * np.sqrt(meas.shape[0])
-    elif normalization == "root_of_avg_of_spacedist_squared": # as in: 2018 Pathak et.al."Hybrid forecasting..."
-        norm = np.sqrt(np.mean(np.linalg.norm(meas, axis=1)**2))
-    elif utilities._is_number(normalization):
-        norm = normalization
-    else:
-        raise Exception("Type of normalization not implemented")
-
-    return distance/norm
-
-
-def valid_time_index(error_series, epsilon):
-    ''' return the index of the error_series where for the first time error>epsilon
-    Args:
-        error_series (np.ndarray): array with error for each timestep, shape (T,)
-        epsilon (float): Must be equal or greater than 0. The threshhold
-    Returns:
-        (int): index where error is larger than epsilon
-    '''
-    if epsilon < 0:
-        raise Exception("epsilon must be equal or greater than 0")
-    bool_array = error_series > epsilon
-    if np.all(bool_array == False):
-        return bool_array.size - 1
-    else:
-        return np.argmax(bool_array)
+#
+# def error_over_time(pred_time_series, meas_time_series, distance_measure="L2", normalization=None):
+#     """ Calculates a general error between two time series
+#
+#     The time series must be of equal length and dimension
+#
+#     Args:
+#         pred_time_series (np.ndarray): predicted/simulated data, shape (T, d)
+#         meas_time_series (np.ndarray): observed/measured/real data, shape (T, d)
+#         distance_measure (str or function): The distance measure over space dimensions d used between pred and meas.
+#             Possible are:
+#             - If str:
+#                 - "L2": L2 (euclidian) norm
+#                 - "RMSE": RMSE norm. If selected, this function behaves the same as the "rmse_over_time" function
+#             - If function:
+#                 - custom function that works like: distance = function(delta), the function has to operate on the
+#                     second dimension
+#
+#         normalization (str_or_None_or_float): The normalization method to use. Possible are:
+#
+#             - None: Calculates the pure, standard RMSE
+#             - "mean": Calulates RMSE divided by the measured time series mean
+#             - "std_over_time": Calulates RMSE divided by the measured time
+#               series' standard deviation in time of dimension. See the NRSME
+#               definition of Vlachas, Pathak et al. (2019) for details
+#             - float: Calulates the RMSE, then divides it by the given float
+#             - "2norm": Uses the vector 2-norm of the meas_time_series to
+#               normalize the RMSE for each time step
+#             - "maxmin": Divides the RMSE by (max(meas) - min(meas))
+#             - "historic": Old, weird way to normalize the NRMSE, kept here
+#               purely for backwards compatibility. Don't use if you are not 100%
+#               sure that's what you want.
+#     Returns:
+#         (np.ndarray): error array, shape (T,):
+#     """
+#
+#     pred = pred_time_series
+#     meas = meas_time_series
+#
+#     if len(pred.shape) == 1:
+#         pred = np.expand_dims(pred, axis = 1)
+#     if len(meas.shape) == 1:
+#         meas = np.expand_dims(meas, axis = 1)
+#
+#     delta = pred-meas
+#
+#     if type(distance_measure) == str:
+#         if distance_measure == "L2":
+#             distance = np.linalg.norm(delta, axis = 1)
+#         elif distance_measure == "rmse":
+#             distance = np.linalg.norm(delta, axis = 1) # / np.sqrt(meas.shape[1])
+#         else:
+#             raise Exception("Type of distance_measure not implemented")
+#         # more norms can be added here
+#     else:
+#         distance = distance_measure(delta)
+#
+#     if normalization is None:
+#         norm = 1
+#     elif normalization == "mean":
+#         norm = np.mean(meas)
+#     elif normalization == "std_over_time":
+#         norm = np.mean(np.std(meas, axis=0))
+#     elif normalization == "2norm":
+#         norm = np.linalg.norm(meas)
+#     elif normalization == "maxmin":
+#         norm = (np.max(meas) - np.min(meas))
+#     elif normalization == "historic":
+#         norm = np.linalg.norm(meas) * np.sqrt(meas.shape[0])
+#     elif normalization == "root_of_avg_of_spacedist_squared": # as in: 2018 Pathak et.al."Hybrid forecasting..."
+#         norm = np.sqrt(np.mean(np.linalg.norm(meas, axis=1)**2))
+#     elif utilities._is_number(normalization):
+#         norm = normalization
+#     else:
+#         raise Exception("Type of normalization not implemented")
+#
+#     return distance/norm
+#
+#
+# def valid_time_index(error_series, epsilon):
+#     ''' return the index of the error_series where for the first time error>epsilon
+#     Args:
+#         error_series (np.ndarray): array with error for each timestep, shape (T,)
+#         epsilon (float): Must be equal or greater than 0. The threshhold
+#     Returns:
+#         (int): index where error is larger than epsilon
+#     '''
+#     if epsilon < 0:
+#         raise Exception("epsilon must be equal or greater than 0")
+#     bool_array = error_series > epsilon
+#     if np.all(bool_array == False):
+#         return bool_array.size - 1
+#     else:
+#         return np.argmax(bool_array)
 
 
 def demerge_time(pred_time_series, meas_time_series, epsilon):

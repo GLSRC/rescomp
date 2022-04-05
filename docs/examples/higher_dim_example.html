@@ -1,47 +1,46 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Higher Dimensional Example &mdash; rescomp 0.2.1 documentation</title>
-  
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
-
-  
+  <title>Higher Dimensional Example &mdash; rescomp 0.3.1 documentation</title>
   
 
   
   
-
+  
   
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Training and Prediction Example" href="training_and_prediction_example.html" />
@@ -69,7 +68,7 @@
             
             
               <div class="version">
-                0.2.1
+                0.3.1
               </div>
             
           
@@ -86,7 +85,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -131,7 +129,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">CHANGELOG</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-1-current-master-and-development-branch">rescomp 0.2.1 - Current Master and Development Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-3-1">rescomp 0.3.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-3-0">rescomp 0.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-4">rescomp 0.2.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-3">rescomp 0.2.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-2">rescomp 0.2.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-1">rescomp 0.2.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-0">rescomp 0.2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-1-4">rescomp 0.1.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-1-3">rescomp 0.1.3</a></li>
@@ -145,7 +148,6 @@
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -180,13 +182,11 @@
 
 
 
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="../index.html">Docs</a> &raquo;</li>
         
           <li><a href="../examples.html">Examples</a> &raquo;</li>
         
@@ -195,7 +195,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-          
+            
         
       </li>
     
@@ -417,7 +417,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -477,20 +477,19 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Higher-Dimensional-Example">
+<section id="Higher-Dimensional-Example">
 <h1>Higher Dimensional Example<a class="headerlink" href="#Higher-Dimensional-Example" title="Permalink to this headline">¶</a></h1>
 <p>While the previous example demonstrated the basic usage of the rescomp package, one very important part still needs to be discussed: The hyperparameters of RC.</p>
 <div class="line-block">
-<div class="line">To do so, here we look at a much higher dimensional system than before, the Kuramoto Sivashinsky (KS) system. The KS system is a famous chaotic system that can be scaled to an arbitrarily large number of dimensions.</div>
-<div class="line">Here we scale it to be 40 dimensional.</div>
+<div class="line">To do so, here we look at a much higher dimensional system than before, the Lorenz-96 (L96) system, another chaotic system that, in constrast to the Lorenz-63 system, can be scaled to an arbitrarily large number of dimensions.</div>
+<div class="line">Here we scale it to be 64 dimensional.</div>
 </div>
 <p>As always we import the needed packages, create an ESNWrapper object</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">rescomp</span>
 
@@ -503,33 +502,46 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">simulation_time_steps</span> <span class="o">=</span> <span class="mi">100000</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">simulation_time_steps</span> <span class="o">=</span> <span class="mi">100000</span>
+<span class="n">lor_dim</span> <span class="o">=</span> <span class="mi">40</span>
+<span class="n">lor_dt</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">lor_force</span> <span class="o">=</span> <span class="mi">5</span>
 
+<span class="n">starting_point</span> <span class="o">=</span> <span class="n">lor_force</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">lor_dim</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">lor_dim</span><span class="p">)</span>
 <span class="n">sim_data</span> <span class="o">=</span> <span class="n">rescomp</span><span class="o">.</span><span class="n">simulate_trajectory</span><span class="p">(</span>
-    <span class="n">sys_flag</span><span class="o">=</span><span class="s1">&#39;kuramoto_sivashinsky&#39;</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">system_size</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">time_steps</span><span class="o">=</span><span class="n">simulation_time_steps</span><span class="p">)</span>
+        <span class="n">sys_flag</span><span class="o">=</span><span class="s1">&#39;lorenz_96&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">lor_dt</span><span class="p">,</span> <span class="n">time_steps</span><span class="o">=</span><span class="n">simulation_time_steps</span><span class="p">,</span>
+        <span class="n">starting_point</span><span class="o">=</span><span class="n">starting_point</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">lor_force</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>As before, we want to train the system with data sampled from the chaotic attractor we want to predict. As a result, we have to throw the first 10000 simulated data points away, as they are not on said attractor, but instead correspond to transient system dynamics of the KS system.</p>
+<p>As before, we want to train the system with data sampled from the chaotic attractor we want to predict. As a result, we have to throw the first 10000 simulated data points away, as they are not on said attractor, but instead correspond to transient system dynamics of the L96 system.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">sim_data</span><span class="p">[</span><span class="mi">10000</span><span class="p">:]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">signal</span> <span class="o">=</span> <span class="n">sim_data</span><span class="p">[</span><span class="mi">10000</span><span class="p">:]</span>
 </pre></div>
 </div>
 </div>
-<p>Now we again want to create the reservoir/network, but this time the default parameters are not sufficient for RC to learn the system dynamics. For the KS system the following parameters work:</p>
+<p>An additional artifact of simulated systems like this, is that they are of course perfectly noiseless. For higher dimensional systems, this can result in RC “overfitting” the data, resulting in mostly accurate short term predictions at the cost of many diverging completely after some time.</p>
+<p>Somewhat counterintuitively, adding a small amount of artificial noise to the training data can not only ensure the long term stability of the prediction, but also decrease the short term prediction error.</p>
+<p>Note that this procedure depends on the system in question, and is of course not an issue when training with any real world data.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">n_dim</span> <span class="o">=</span> <span class="mi">5000</span>  <span class="c1"># network dimension</span>
-<span class="n">n_rad</span> <span class="o">=</span> <span class="mf">0.6</span>  <span class="c1"># spectral radius</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span> <span class="o">+</span> <span class="n">noise</span>
+</pre></div>
+</div>
+</div>
+<p>Now we again want to create the reservoir/network, but this time the default parameters are not sufficient for RC to learn the system dynamics. For the L96 system the following parameters work:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_dim</span> <span class="o">=</span> <span class="mi">5000</span>  <span class="c1"># network dimension</span>
+<span class="n">n_rad</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># spectral radius</span>
 <span class="n">n_avg_deg</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># average network degree</span>
 </pre></div>
 </div>
@@ -537,47 +549,43 @@ div.rendered_html tbody tr:hover {
 <div class="line-block">
 <div class="line">The more complicated and higher dimensional the system is, the larger the network n_dim needs to be.</div>
 <div class="line">The spectral radius n_rad should be smaller than 1 and must be larger than 0.</div>
-<div class="line">The average network degree n_avg_deg can, in theory, be everything in (0, n_dim]. Typically values larger than n_dim/10 are not optimal.</div>
+<div class="line">The average network degree n_avg_deg can, in theory, be everything in (0, n_dim]. Typically sparse networks perform better than dense ones though.</div>
 </div>
 <p>These hyperparameters (and the ones below) have been found by trial and error for this system.</p>
 <p>So far no reliable heuristics exist for what the correct hyperparameter ranges for an arbitrary system might be. See the FAQ for more details.</p>
 <p>The numpy random seed, set to generate the same network everytime, is an important hyperparameter too as different random networks can vary hugely in their prediction performance even if all other hyperparameters are the same.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <p>Finally, create the network with those parameters.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">esn</span><span class="o">.</span><span class="n">create_network</span><span class="p">(</span><span class="n">n_dim</span><span class="o">=</span><span class="n">n_dim</span><span class="p">,</span> <span class="n">n_rad</span><span class="o">=</span><span class="n">n_rad</span><span class="p">,</span> <span class="n">n_avg_deg</span><span class="o">=</span><span class="n">n_avg_deg</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>The train()/train_and_predict() methods too, have a set of hyperparameters one needs to optimize. The most important of which are the regularization parameter which is typically somewhere between 1e-2 and 1e-6</p>
-<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">reg_param</span> <span class="o">=</span> <span class="mf">1e-6</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">esn</span><span class="o">.</span><span class="n">create_network</span><span class="p">(</span><span class="n">n_dim</span><span class="o">=</span><span class="n">n_dim</span><span class="p">,</span> <span class="n">n_rad</span><span class="o">=</span><span class="n">n_rad</span><span class="p">,</span> <span class="n">n_avg_deg</span><span class="o">=</span><span class="n">n_avg_deg</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The train()/train_and_predict() methods too, have a set of hyperparameters one needs to optimize. The most important of which are the regularization parameter which is typically somewhere between 1e-4 and 1e-8</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reg_param</span> <span class="o">=</span> <span class="mf">1e-6</span>
 </pre></div>
 </div>
 </div>
 <p>and the scale of the random elements in the input matrix w_in which is usually set to between 0.1 and 1.0</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">w_in_scale</span> <span class="o">=</span> <span class="mf">0.5</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">w_in_scale</span> <span class="o">=</span> <span class="mf">0.5</span>
 </pre></div>
 </div>
 </div>
@@ -586,40 +594,36 @@ div.rendered_html tbody tr:hover {
 <div class="line"><a class="reference external" href="https://aip.scitation.org/doi/10.1063/5.0028993">Herteux, J.; Räth, C. Breaking Symmetries of the Reservoir Equations in Echo State Networks. Chaos 2020, 30.</a></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">w_out_fit_flag</span> <span class="o">=</span> <span class="s2">&quot;linear_and_square_r&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">w_out_fit_flag</span> <span class="o">=</span> <span class="s2">&quot;linear_and_square_r&quot;</span>
 </pre></div>
 </div>
 </div>
 <p>Define the number of training/prediction time steps</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">train_sync_steps</span> <span class="o">=</span> <span class="mi">1000</span>
-<span class="n">train_steps</span> <span class="o">=</span> <span class="mi">50000</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_sync_steps</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">train_steps</span> <span class="o">=</span> <span class="mi">80000</span>
 <span class="n">pred_steps</span> <span class="o">=</span> <span class="mi">500</span>
 </pre></div>
 </div>
 </div>
 <p>and train+predict the system using the above hyperparameters.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">esn</span><span class="o">.</span><span class="n">train_and_predict</span><span class="p">(</span>
-    <span class="n">sim_data</span><span class="p">,</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">esn</span><span class="o">.</span><span class="n">train_and_predict</span><span class="p">(</span>
+    <span class="n">signal</span><span class="p">,</span>
     <span class="n">train_sync_steps</span><span class="o">=</span><span class="n">train_sync_steps</span><span class="p">,</span>
     <span class="n">train_steps</span><span class="o">=</span><span class="n">train_steps</span><span class="p">,</span>
     <span class="n">pred_steps</span><span class="o">=</span><span class="n">pred_steps</span><span class="p">,</span>
     <span class="n">reg_param</span><span class="o">=</span><span class="n">reg_param</span><span class="p">,</span>
     <span class="n">w_in_scale</span><span class="o">=</span><span class="n">w_in_scale</span><span class="p">,</span>
-    <span class="c1"># w_in_sparse=w_in_sparse,</span>
     <span class="n">w_out_fit_flag</span><span class="o">=</span><span class="n">w_out_fit_flag</span>
 <span class="p">)</span>
 </pre></div>
@@ -627,11 +631,10 @@ div.rendered_html tbody tr:hover {
 </div>
 <p>Plot the results</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
                             <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 
 <span class="n">vmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
@@ -657,39 +660,39 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/examples_higher_dim_example_25_0.png" src="../_images/examples_higher_dim_example_25_0.png" />
+<img alt="../_images/examples_higher_dim_example_27_0.png" src="../_images/examples_higher_dim_example_27_0.png" />
 </div>
 </div>
-</div>
+</section>
 
 
            </div>
            
           </div>
           <footer>
+  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="training_and_prediction_example.html" class="btn btn-neutral float-right" title="Training and Prediction Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="minimal_example.html" class="btn btn-neutral float-left" title="Minimal Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+        <a href="training_and_prediction_example.html" class="btn btn-neutral float-right" title="Training and Prediction Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="minimal_example.html" class="btn btn-neutral float-left" title="Minimal Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk.
+        &copy; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
+
         </div>
       </div>
 
@@ -697,6 +700,7 @@ div.rendered_html tbody tr:hover {
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {

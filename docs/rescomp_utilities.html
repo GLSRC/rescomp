@@ -1,47 +1,44 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Utilities &mdash; rescomp 0.2.1 documentation</title>
-  
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
-  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
-
-  
+  <title>Utilities &mdash; rescomp 0.3.1 documentation</title>
   
 
   
   
-
+  
   
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Simulations" href="rescomp_simulations.html" />
@@ -69,7 +66,7 @@
             
             
               <div class="version">
-                0.2.1
+                0.3.1
               </div>
             
           
@@ -86,7 +83,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -131,7 +127,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">CHANGELOG</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-1-current-master-and-development-branch">rescomp 0.2.1 - Current Master and Development Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-3-1">rescomp 0.3.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-3-0">rescomp 0.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-4">rescomp 0.2.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-3">rescomp 0.2.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-2">rescomp 0.2.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-1">rescomp 0.2.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-0">rescomp 0.2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-1-4">rescomp 0.1.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-1-3">rescomp 0.1.3</a></li>
@@ -145,7 +146,6 @@
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -180,13 +180,11 @@
 
 
 
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
           <li><a href="code.html">Code</a> &raquo;</li>
         
@@ -195,7 +193,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-          
+            
         
       </li>
     
@@ -231,7 +229,7 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="module-rescomp.utilities">
+<section id="module-rescomp.utilities">
 <span id="utilities"></span><h1>Utilities<a class="headerlink" href="#module-rescomp.utilities" title="Permalink to this headline">¶</a></h1>
 <p>Various utility functions for RC and the ESN classes generally</p>
 <p><strong>Functions:</strong></p>
@@ -244,14 +242,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#rescomp.utilities.read_pickle" title="rescomp.utilities.read_pickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_pickle</span></code></a>(path[, compression])</p></td>
 <td><p>Load pickled (esn) object from file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.utilities.train_and_predict_input_setup" title="rescomp.utilities.train_and_predict_input_setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_and_predict_input_setup</span></code></a>(data[, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#rescomp.utilities.train_and_predict_input_setup" title="rescomp.utilities.train_and_predict_input_setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_and_predict_input_setup</span></code></a>(data[, ...])</p></td>
 <td><p>Splits ESN input data for consecutive training and prediction</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="function">
-<dt id="rescomp.utilities.read_pickle">
-<code class="sig-prename descclassname">rescomp.utilities.</code><code class="sig-name descname">read_pickle</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">compression='infer'</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.utilities.read_pickle" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="rescomp.utilities.read_pickle">
+<span class="sig-prename descclassname"><span class="pre">rescomp.utilities.</span></span><span class="sig-name descname"><span class="pre">read_pickle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infer'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.utilities.read_pickle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load pickled (esn) object from file.</p>
 <p>Uses pandas functions internally.</p>
 <dl class="field-list simple">
@@ -274,9 +272,9 @@ Set to None for no decompression.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="rescomp.utilities.train_and_predict_input_setup">
-<code class="sig-prename descclassname">rescomp.utilities.</code><code class="sig-name descname">train_and_predict_input_setup</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">disc_steps=0</em>, <em class="sig-param">train_sync_steps=0</em>, <em class="sig-param">train_steps=None</em>, <em class="sig-param">pred_sync_steps=0</em>, <em class="sig-param">pred_steps=None</em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.utilities.train_and_predict_input_setup" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="rescomp.utilities.train_and_predict_input_setup">
+<span class="sig-prename descclassname"><span class="pre">rescomp.utilities.</span></span><span class="sig-name descname"><span class="pre">train_and_predict_input_setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disc_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_sync_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_sync_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#rescomp.utilities.train_and_predict_input_setup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits ESN input data for consecutive training and prediction</p>
 <p>This function is useful because there is an unintuitive overlap between
 x_train and x_pred of 1 time step which makes it easy to make mistakes</p>
@@ -305,36 +303,36 @@ x_train and x_pred of 1 time step which makes it easy to make mistakes</p>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>
            
           </div>
           <footer>
+  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="rescomp_simulations.html" class="btn btn-neutral float-right" title="Simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="rescomp_measures.html" class="btn btn-neutral float-left" title="Measures" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+        <a href="rescomp_simulations.html" class="btn btn-neutral float-right" title="Simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rescomp_measures.html" class="btn btn-neutral float-left" title="Measures" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk.
+        &copy; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
+
         </div>
       </div>
 
@@ -342,6 +340,7 @@ x_train and x_pred of 1 time step which makes it easy to make mistakes</p>
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {

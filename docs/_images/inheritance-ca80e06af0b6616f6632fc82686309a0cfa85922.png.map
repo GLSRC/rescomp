@@ -1,5 +1,0 @@
-<map id="inheritancebc4aca3063" name="inheritancebc4aca3063">
-<area shape="rect" id="node1" href="#rescomp.esn.ESN" target="_top" title="Implements basic RC functionality" alt="" coords="17,55,89,80"/>
-<area shape="rect" id="node3" href="#rescomp.esn.ESNWrapper" target="_top" title="Convenience Wrapper for the ESN class" alt="" coords="149,55,249,80"/>
-<area shape="rect" id="node2" title="Generalized Local State Implementation of RC" alt="" coords="5,5,101,31"/>
-</map>

@@ -1,47 +1,46 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Simulations Example &mdash; rescomp 0.2.1 documentation</title>
-  
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
-
-  
+  <title>Simulations Example &mdash; rescomp 0.3.1 documentation</title>
   
 
   
   
-
+  
   
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Code" href="../code.html" />
@@ -69,7 +68,7 @@
             
             
               <div class="version">
-                0.2.1
+                0.3.1
               </div>
             
           
@@ -86,7 +85,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -131,7 +129,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">CHANGELOG</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-1-current-master-and-development-branch">rescomp 0.2.1 - Current Master and Development Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-3-1">rescomp 0.3.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-3-0">rescomp 0.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-4">rescomp 0.2.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-3">rescomp 0.2.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-2">rescomp 0.2.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-1">rescomp 0.2.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-0">rescomp 0.2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-1-4">rescomp 0.1.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-1-3">rescomp 0.1.3</a></li>
@@ -145,7 +148,6 @@
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -180,13 +182,11 @@
 
 
 
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="../index.html">Docs</a> &raquo;</li>
         
           <li><a href="../examples.html">Examples</a> &raquo;</li>
         
@@ -195,7 +195,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-          
+            
         
       </li>
     
@@ -417,7 +417,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -477,7 +477,7 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Simulations-Example">
+<section id="Simulations-Example">
 <h1>Simulations Example<a class="headerlink" href="#Simulations-Example" title="Permalink to this headline">¶</a></h1>
 <p>Short usage example for the rescomp.simulations module. We only simulate/plot a small number of different systems here. All the other implemented systems are called analogously.</p>
 <p>Import the packages</p>
@@ -485,8 +485,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">rescomp</span>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rescomp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">mpl_toolkits</span> <span class="kn">import</span> <span class="n">mplot3d</span>
@@ -498,8 +497,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">simulation_time_steps</span> <span class="o">=</span> <span class="mi">1000</span>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">simulation_time_steps</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="n">starting_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">14.03020521</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.88693127</span><span class="p">,</span> <span class="mf">25.53545</span><span class="p">])</span>
 
 <span class="n">sim_data</span> <span class="o">=</span> <span class="n">rescomp</span><span class="o">.</span><span class="n">simulate_trajectory</span><span class="p">(</span>
@@ -513,8 +511,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sim_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">sim_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">sim_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
@@ -542,8 +539,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">sigma</span><span class="o">=</span><span class="mi">20</span>  <span class="c1"># default: sigma=10</span>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">sigma</span><span class="o">=</span><span class="mi">20</span>  <span class="c1"># default: sigma=10</span>
 <span class="n">rho</span><span class="o">=</span><span class="mi">14</span>  <span class="c1"># default: rho=28</span>
 <span class="n">beta</span><span class="o">=</span><span class="mi">8</span><span class="o">/</span><span class="mi">3</span>  <span class="c1"># default: beta=8/3</span>
 
@@ -558,8 +554,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sim_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">sim_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">sim_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
@@ -584,8 +579,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">simulation_time_steps</span> <span class="o">=</span> <span class="mi">5000</span>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">simulation_time_steps</span> <span class="o">=</span> <span class="mi">5000</span>
 <span class="n">starting_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 
 <span class="n">sim_data</span> <span class="o">=</span> <span class="n">rescomp</span><span class="o">.</span><span class="n">simulate_trajectory</span><span class="p">(</span>
@@ -599,8 +593,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sim_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">sim_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">sim_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
@@ -620,36 +613,36 @@ div.rendered_html tbody tr:hover {
 <img alt="../_images/examples_simulations_example_14_0.png" src="../_images/examples_simulations_example_14_0.png" />
 </div>
 </div>
-</div>
+</section>
 
 
            </div>
            
           </div>
           <footer>
+  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../code.html" class="btn btn-neutral float-right" title="Code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="general_local_states_example.html" class="btn btn-neutral float-left" title="Generalized Local States Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+        <a href="../code.html" class="btn btn-neutral float-right" title="Code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="general_local_states_example.html" class="btn btn-neutral float-left" title="Generalized Local States Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk.
+        &copy; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
+
         </div>
       </div>
 
@@ -657,6 +650,7 @@ div.rendered_html tbody tr:hover {
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {

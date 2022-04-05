@@ -1,47 +1,46 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Generalized Local States Example &mdash; rescomp 0.2.1 documentation</title>
-  
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
-
-  
+  <title>Generalized Local States Example &mdash; rescomp 0.3.1 documentation</title>
   
 
   
   
-
+  
   
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Simulations Example" href="simulations_example.html" />
@@ -69,7 +68,7 @@
             
             
               <div class="version">
-                0.2.1
+                0.3.1
               </div>
             
           
@@ -86,7 +85,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -131,7 +129,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">CHANGELOG</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-1-current-master-and-development-branch">rescomp 0.2.1 - Current Master and Development Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-3-1">rescomp 0.3.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-3-0">rescomp 0.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-4">rescomp 0.2.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-3">rescomp 0.2.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-2">rescomp 0.2.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-1">rescomp 0.2.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-2-0">rescomp 0.2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-1-4">rescomp 0.1.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../changelog.html#rescomp-0-1-3">rescomp 0.1.3</a></li>
@@ -145,7 +148,6 @@
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -180,13 +182,11 @@
 
 
 
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="../index.html">Docs</a> &raquo;</li>
         
           <li><a href="../examples.html">Examples</a> &raquo;</li>
         
@@ -195,7 +195,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-          
+            
         
       </li>
     
@@ -417,7 +417,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -477,7 +477,7 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Generalized-Local-States-Example">
+<section id="Generalized-Local-States-Example">
 <h1>Generalized Local States Example<a class="headerlink" href="#Generalized-Local-States-Example" title="Permalink to this headline">¶</a></h1>
 <p>This example depicts the basic use of generalized local states in the context of RC as implemented in rescomp.esn.ESNGenLoc()</p>
 <div class="line-block">
@@ -488,8 +488,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">rescomp</span>
 <span class="kn">from</span> <span class="nn">rescomp.simulations</span> <span class="kn">import</span> <span class="n">simulate_trajectory</span>
@@ -501,10 +500,9 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">ks_dim</span> <span class="o">=</span> <span class="mi">40</span>  <span class="c1"># 40 or 64</span>
-<span class="n">ks_size</span> <span class="o">=</span> <span class="mi">22</span>  <span class="c1"># 22</span>
-<span class="n">ks_dt</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># 0.05</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lor_dim</span> <span class="o">=</span> <span class="mi">40</span>
+<span class="n">lor_dt</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">lor_force</span> <span class="o">=</span> <span class="mi">5</span>
 
 <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">disc_ts</span> <span class="o">=</span> <span class="mi">10000</span>
@@ -521,11 +519,12 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">ks_signal</span> <span class="o">=</span> <span class="n">simulate_trajectory</span><span class="p">(</span>
-    <span class="n">sys_flag</span><span class="o">=</span><span class="s2">&quot;kuramoto_sivashinsky&quot;</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="n">ks_dim</span><span class="p">,</span>
-    <span class="n">system_size</span><span class="o">=</span><span class="n">ks_size</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">ks_dt</span><span class="p">,</span> <span class="n">time_steps</span><span class="o">=</span><span class="n">tot_ts</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">starting_point</span> <span class="o">=</span> <span class="n">lor_force</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">lor_dim</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">lor_dim</span><span class="p">)</span>
+<span class="n">sim_data</span> <span class="o">=</span> <span class="n">rescomp</span><span class="o">.</span><span class="n">simulate_trajectory</span><span class="p">(</span>
+        <span class="n">sys_flag</span><span class="o">=</span><span class="s1">&#39;lorenz_96&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">lor_dt</span><span class="p">,</span> <span class="n">time_steps</span><span class="o">=</span><span class="n">tot_ts</span><span class="p">,</span>
+        <span class="n">starting_point</span><span class="o">=</span><span class="n">starting_point</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">lor_force</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -534,16 +533,15 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">ks_title</span> <span class="o">=</span> <span class="s2">&quot;KS, N=</span><span class="si">%d</span><span class="s2">, L=</span><span class="si">%d</span><span class="s2">, dt=</span><span class="si">%f</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">ks_dim</span><span class="p">,</span> <span class="n">ks_size</span><span class="p">,</span> <span class="n">ks_dt</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lor_title</span> <span class="o">=</span> <span class="s2">&quot;L96, N=</span><span class="si">%d</span><span class="s2">, f=</span><span class="si">%d</span><span class="s2">, dt=</span><span class="si">%f</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">lor_dim</span><span class="p">,</span> <span class="n">lor_force</span><span class="p">,</span> <span class="n">lor_dt</span><span class="p">)</span>
 
-<span class="n">ks_axis_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">pred_ts</span><span class="p">,</span> <span class="n">tot_ts</span><span class="p">]</span>
+<span class="n">lor_axis_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">pred_ts</span><span class="p">,</span> <span class="n">tot_ts</span><span class="p">]</span>
 
-<span class="n">ks_xlabel</span> <span class="o">=</span> <span class="s2">&quot;Timestep&quot;</span>
-<span class="n">ks_ylabel</span> <span class="o">=</span> <span class="s2">&quot;Dimension&quot;</span>
+<span class="n">lor_xlabel</span> <span class="o">=</span> <span class="s2">&quot;Timestep&quot;</span>
+<span class="n">lor_ylabel</span> <span class="o">=</span> <span class="s2">&quot;Dimension&quot;</span>
 
-<span class="n">signal_raw</span> <span class="o">=</span> <span class="n">ks_signal</span>
-<span class="n">y_test</span> <span class="o">=</span> <span class="n">ks_signal</span><span class="p">[</span><span class="n">ks_axis_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">ks_axis_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+<span class="n">signal_raw</span> <span class="o">=</span> <span class="n">sim_data</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">signal_raw</span><span class="p">[</span><span class="n">lor_axis_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">lor_axis_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 
@@ -552,9 +550,9 @@ div.rendered_html tbody tr:hover {
 
 <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">y_test</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">ks_title</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">ks_xlabel</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ks_ylabel</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">lor_title</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">lor_xlabel</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">lor_ylabel</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -579,8 +577,7 @@ Text(0, 0.5, &#39;Dimension&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">noise_scale</span> <span class="o">=</span> <span class="mf">1e-2</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">noise_scale</span> <span class="o">=</span> <span class="mf">1e-2</span>
 
 <span class="n">ts_until_train_end</span> <span class="o">=</span> <span class="n">disc_ts</span> <span class="o">+</span> <span class="n">sync_ts</span> <span class="o">+</span> <span class="n">train_ts</span>
 <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">noise_scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="n">ts_until_train_end</span><span class="p">,</span> <span class="n">signal_raw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
@@ -596,7 +593,7 @@ Text(0, 0.5, &#39;Dimension&#39;)
 <li><p>NMI: (Normalized) Mutual Information Neihborhood. Locality is calculated via via the normalized mutual information between dimensions.</p></li>
 </ul>
 <div class="line-block">
-<div class="line">We also set the number of neighbors to 18, simply because it works well for this iteration of the KS system used as data here.</div>
+<div class="line">We also set the number of neighbors to 18, simply because it works well for this iteration of the L96 system used as data here.</div>
 <div class="line">A larger number of neighbors results in a possibly better prediction at the cost of requiring larger reservoirs and longer training times. Making the neighborhood too small though, will cut out important dimensions, possibly reducing prediction accuracy or making training completely impossible.</div>
 <div class="line">If you don’t know your neighborhood size a priori just treat the neighborhood size as another hyperparameter to optimize somewhere in the range of 10 to 50 and you will probably be fine.</div>
 </div>
@@ -605,8 +602,7 @@ Text(0, 0.5, &#39;Dimension&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">sn_loc_matrix</span> <span class="o">=</span> <span class="n">rescomp</span><span class="o">.</span><span class="n">locality_measures</span><span class="o">.</span><span class="n">sn_loc</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sn_loc_matrix</span> <span class="o">=</span> <span class="n">rescomp</span><span class="o">.</span><span class="n">locality_measures</span><span class="o">.</span><span class="n">sn_loc</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
 <span class="n">cc_loc_matrix</span> <span class="o">=</span> <span class="n">rescomp</span><span class="o">.</span><span class="n">locality_measures</span><span class="o">.</span><span class="n">cc_loc</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
 <span class="n">nmi_loc_matrix</span> <span class="o">=</span> <span class="n">rescomp</span><span class="o">.</span><span class="n">locality_measures</span><span class="o">.</span><span class="n">nmi_loc</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
 
@@ -626,8 +622,7 @@ Text(0, 0.5, &#39;Dimension&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
 
 <span class="k">def</span> <span class="nf">force_colorbar_legend</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">label_values</span><span class="p">):</span>
     <span class="n">label_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">im</span><span class="o">.</span><span class="n">cmap</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">label_values</span><span class="p">]</span>
@@ -641,13 +636,12 @@ Text(0, 0.5, &#39;Dimension&#39;)
 </div>
 </div>
 <p>Plot the three neighborhoods we calculated above.</p>
-<p>For ‘simple’ systems defined by a purely local interaction which is known a priori, as is the case for the KS system we simulated above, the SN neighborhood is essentially the ‘correct’ neighborhood. That the CC and MI neighborhoods are able to reproduce the SN neighborhood to such a degree is a strong indication that they actually “understood” the relation between the dimensions in this case.</p>
+<p>For ‘simple’ systems defined by a purely local interaction which is known a priori, as is the case for the L96 system we simulated above, the SN neighborhood is essentially the ‘correct’ neighborhood. That the CC and MI neighborhoods are able to mostly reproduce the SN neighborhood to such a degree is a strong indication that they actually “understood” the relation between the dimensions in this case.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">titles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SN Neighborhoods&quot;</span><span class="p">,</span> <span class="s2">&quot;CC Neighborhoods&quot;</span><span class="p">,</span> <span class="s2">&quot;MI Neighborhoods&quot;</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">titles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SN Neighborhoods&quot;</span><span class="p">,</span> <span class="s2">&quot;CC Neighborhoods&quot;</span><span class="p">,</span> <span class="s2">&quot;MI Neighborhoods&quot;</span><span class="p">]</span>
 <span class="n">nbhds</span> <span class="o">=</span> <span class="p">[</span><span class="n">sn_nbhds</span><span class="p">,</span> <span class="n">cc_nbhds</span><span class="p">,</span> <span class="n">nmi_nbhds</span><span class="p">]</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
@@ -664,8 +658,7 @@ Text(0, 0.5, &#39;Dimension&#39;)
     <span class="n">label_values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
     <span class="n">force_colorbar_legend</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">label_values</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -695,21 +688,19 @@ Text(0, 0.5, &#39;Dimension&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># loc_nbhds = sn_nbhds</span>
-<span class="c1"># loc_nbhds = cc_nbhds</span>
-<span class="n">loc_nbhds</span> <span class="o">=</span> <span class="n">nmi_nbhds</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># loc_nbhds = sn_nbhds # Works quite well</span>
+<span class="c1"># loc_nbhds = cc_nbhds # Doesn&#39;t work all that well due to the &quot;nearest neighbors&quot; not being included</span>
+<span class="n">loc_nbhds</span> <span class="o">=</span> <span class="n">nmi_nbhds</span> <span class="c1"># Works quite well as it&#39;s pretty close to the &quot;correct&quot; neighborhood</span>
 </pre></div>
 </div>
 </div>
 <p>Create the ESN setup, in this case given by the ESNGenLoc() class. Then train and predict with it, as we have done in the other examples.</p>
-<p>As training and prediction will take quite a while, we also set the console logger to “debug”, which will print out the calculation process to the terminal.</p>
+<p>As training and prediction will take quite a while (30-60 minutes), we also set the console logger to “debug”, which will print out the calculation process to the terminal.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">n_dim</span> <span class="o">=</span> <span class="mi">5000</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_dim</span> <span class="o">=</span> <span class="mi">5000</span>
 <span class="n">w_out_fit_flag</span> <span class="o">=</span> <span class="s2">&quot;linear_and_square_r&quot;</span>
 <span class="n">avg_degree</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">regularization</span> <span class="o">=</span> <span class="mf">1e-6</span>
@@ -736,8 +727,7 @@ Text(0, 0.5, &#39;Dimension&#39;)
     <span class="n">train_core_only</span><span class="o">=</span><span class="n">train_core_only</span><span class="p">,</span>
     <span class="n">w_out_fit_flag</span><span class="o">=</span><span class="n">w_out_fit_flag</span>
     <span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -745,52 +735,52 @@ Text(0, 0.5, &#39;Dimension&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-08-17 08:31:09 [DEBUG  ] Start locality training with 40 neighborhoods
-08-17 08:31:09 [DEBUG  ] Deepcopy initial ESN instance for each Neighborhood. Reservoir network matrix are shallow copies though.
-08-17 08:31:09 [DEBUG  ] Start Training of Neighborhood 1/40
-08-17 08:35:26 [DEBUG  ] Start Training of Neighborhood 2/40
-08-17 08:38:30 [DEBUG  ] Start Training of Neighborhood 3/40
-08-17 08:41:09 [DEBUG  ] Start Training of Neighborhood 4/40
-08-17 08:43:37 [DEBUG  ] Start Training of Neighborhood 5/40
-08-17 08:46:00 [DEBUG  ] Start Training of Neighborhood 6/40
-08-17 08:48:33 [DEBUG  ] Start Training of Neighborhood 7/40
-08-17 08:51:02 [DEBUG  ] Start Training of Neighborhood 8/40
-08-17 08:53:45 [DEBUG  ] Start Training of Neighborhood 9/40
-08-17 08:56:26 [DEBUG  ] Start Training of Neighborhood 10/40
-08-17 08:59:28 [DEBUG  ] Start Training of Neighborhood 11/40
-08-17 09:02:17 [DEBUG  ] Start Training of Neighborhood 12/40
-08-17 09:04:40 [DEBUG  ] Start Training of Neighborhood 13/40
-08-17 09:07:33 [DEBUG  ] Start Training of Neighborhood 14/40
-08-17 09:10:37 [DEBUG  ] Start Training of Neighborhood 15/40
-08-17 09:14:13 [DEBUG  ] Start Training of Neighborhood 16/40
-08-17 09:16:51 [DEBUG  ] Start Training of Neighborhood 17/40
-08-17 09:19:58 [DEBUG  ] Start Training of Neighborhood 18/40
-08-17 09:22:55 [DEBUG  ] Start Training of Neighborhood 19/40
-08-17 09:27:04 [DEBUG  ] Start Training of Neighborhood 20/40
-08-17 09:30:06 [DEBUG  ] Start Training of Neighborhood 21/40
-08-17 09:33:18 [DEBUG  ] Start Training of Neighborhood 22/40
-08-17 09:36:11 [DEBUG  ] Start Training of Neighborhood 23/40
-08-17 09:39:51 [DEBUG  ] Start Training of Neighborhood 24/40
-08-17 09:43:14 [DEBUG  ] Start Training of Neighborhood 25/40
-08-17 09:47:03 [DEBUG  ] Start Training of Neighborhood 26/40
-08-17 09:50:27 [DEBUG  ] Start Training of Neighborhood 27/40
-08-17 09:53:59 [DEBUG  ] Start Training of Neighborhood 28/40
-08-17 09:57:47 [DEBUG  ] Start Training of Neighborhood 29/40
-08-17 10:01:41 [DEBUG  ] Start Training of Neighborhood 30/40
-08-17 10:05:43 [DEBUG  ] Start Training of Neighborhood 31/40
-08-17 10:09:25 [DEBUG  ] Start Training of Neighborhood 32/40
-08-17 10:13:05 [DEBUG  ] Start Training of Neighborhood 33/40
-08-17 10:16:15 [DEBUG  ] Start Training of Neighborhood 34/40
-08-17 10:19:45 [DEBUG  ] Start Training of Neighborhood 35/40
-08-17 10:23:14 [DEBUG  ] Start Training of Neighborhood 36/40
-08-17 10:26:48 [DEBUG  ] Start Training of Neighborhood 37/40
-08-17 10:29:35 [DEBUG  ] Start Training of Neighborhood 38/40
-08-17 10:32:32 [DEBUG  ] Start Training of Neighborhood 39/40
-08-17 10:36:12 [DEBUG  ] Start Training of Neighborhood 40/40
-08-17 10:39:45 [DEBUG  ] Start local prediction
-08-17 10:39:45 [DEBUG  ] Start syncing
-08-17 10:40:00 [DEBUG  ] Prediction for 0/500 steps done
-08-17 10:40:06 [DEBUG  ] Prediction for 500/500 steps done
+04-05 20:54:23 [DEBUG  ] Start locality training with 40 neighborhoods
+04-05 20:54:23 [DEBUG  ] Deepcopy initial ESN instance for each Neighborhood. Reservoir network matrix are shallow copies though.
+04-05 20:54:23 [DEBUG  ] Start Training of Neighborhood 1/40
+04-05 20:55:25 [DEBUG  ] Start Training of Neighborhood 2/40
+04-05 20:56:32 [DEBUG  ] Start Training of Neighborhood 3/40
+04-05 20:57:37 [DEBUG  ] Start Training of Neighborhood 4/40
+04-05 20:58:42 [DEBUG  ] Start Training of Neighborhood 5/40
+04-05 20:59:48 [DEBUG  ] Start Training of Neighborhood 6/40
+04-05 21:00:54 [DEBUG  ] Start Training of Neighborhood 7/40
+04-05 21:01:59 [DEBUG  ] Start Training of Neighborhood 8/40
+04-05 21:03:06 [DEBUG  ] Start Training of Neighborhood 9/40
+04-05 21:04:24 [DEBUG  ] Start Training of Neighborhood 10/40
+04-05 21:05:30 [DEBUG  ] Start Training of Neighborhood 11/40
+04-05 21:06:35 [DEBUG  ] Start Training of Neighborhood 12/40
+04-05 21:07:40 [DEBUG  ] Start Training of Neighborhood 13/40
+04-05 21:08:46 [DEBUG  ] Start Training of Neighborhood 14/40
+04-05 21:09:52 [DEBUG  ] Start Training of Neighborhood 15/40
+04-05 21:11:08 [DEBUG  ] Start Training of Neighborhood 16/40
+04-05 21:12:14 [DEBUG  ] Start Training of Neighborhood 17/40
+04-05 21:13:20 [DEBUG  ] Start Training of Neighborhood 18/40
+04-05 21:14:37 [DEBUG  ] Start Training of Neighborhood 19/40
+04-05 21:15:42 [DEBUG  ] Start Training of Neighborhood 20/40
+04-05 21:16:46 [DEBUG  ] Start Training of Neighborhood 21/40
+04-05 21:18:04 [DEBUG  ] Start Training of Neighborhood 22/40
+04-05 21:19:09 [DEBUG  ] Start Training of Neighborhood 23/40
+04-05 21:20:15 [DEBUG  ] Start Training of Neighborhood 24/40
+04-05 21:21:21 [DEBUG  ] Start Training of Neighborhood 25/40
+04-05 21:22:40 [DEBUG  ] Start Training of Neighborhood 26/40
+04-05 21:23:45 [DEBUG  ] Start Training of Neighborhood 27/40
+04-05 21:24:51 [DEBUG  ] Start Training of Neighborhood 28/40
+04-05 21:26:08 [DEBUG  ] Start Training of Neighborhood 29/40
+04-05 21:27:14 [DEBUG  ] Start Training of Neighborhood 30/40
+04-05 21:28:19 [DEBUG  ] Start Training of Neighborhood 31/40
+04-05 21:29:24 [DEBUG  ] Start Training of Neighborhood 32/40
+04-05 21:30:41 [DEBUG  ] Start Training of Neighborhood 33/40
+04-05 21:31:47 [DEBUG  ] Start Training of Neighborhood 34/40
+04-05 21:32:52 [DEBUG  ] Start Training of Neighborhood 35/40
+04-05 21:34:09 [DEBUG  ] Start Training of Neighborhood 36/40
+04-05 21:35:14 [DEBUG  ] Start Training of Neighborhood 37/40
+04-05 21:36:20 [DEBUG  ] Start Training of Neighborhood 38/40
+04-05 21:37:26 [DEBUG  ] Start Training of Neighborhood 39/40
+04-05 21:38:42 [DEBUG  ] Start Training of Neighborhood 40/40
+04-05 21:39:48 [DEBUG  ] Start local prediction
+04-05 21:39:48 [DEBUG  ] Start syncing
+04-05 21:40:01 [DEBUG  ] Prediction for 0/500 steps done
+04-05 21:40:04 [DEBUG  ] Prediction for 500/500 steps done
 </pre></div></div>
 </div>
 <p>Plot the prediction results.</p>
@@ -798,8 +788,7 @@ Text(0, 0.5, &#39;Dimension&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
                             <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 
 <span class="n">vmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
@@ -828,36 +817,36 @@ Text(0, 0.5, &#39;Dimension&#39;)
 <img alt="../_images/examples_general_local_states_example_21_0.png" src="../_images/examples_general_local_states_example_21_0.png" />
 </div>
 </div>
-</div>
+</section>
 
 
            </div>
            
           </div>
           <footer>
+  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="simulations_example.html" class="btn btn-neutral float-right" title="Simulations Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="training_and_prediction_example.html" class="btn btn-neutral float-left" title="Training and Prediction Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+        <a href="simulations_example.html" class="btn btn-neutral float-right" title="Simulations Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="training_and_prediction_example.html" class="btn btn-neutral float-left" title="Training and Prediction Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk.
+        &copy; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
+
         </div>
       </div>
 
@@ -865,6 +854,7 @@ Text(0, 0.5, &#39;Dimension&#39;)
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {

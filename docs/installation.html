@@ -1,47 +1,44 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Installation &mdash; rescomp 0.2.1 documentation</title>
-  
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
-  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
-
-  
+  <title>Installation &mdash; rescomp 0.3.1 documentation</title>
   
 
   
   
-
+  
   
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Examples" href="examples.html" />
@@ -69,7 +66,7 @@
             
             
               <div class="version">
-                0.2.1
+                0.3.1
               </div>
             
           
@@ -86,7 +83,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -131,7 +127,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">CHANGELOG</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-1-current-master-and-development-branch">rescomp 0.2.1 - Current Master and Development Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-3-1">rescomp 0.3.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-3-0">rescomp 0.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-4">rescomp 0.2.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-3">rescomp 0.2.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-2">rescomp 0.2.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-1">rescomp 0.2.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-2-0">rescomp 0.2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-1-4">rescomp 0.1.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#rescomp-0-1-3">rescomp 0.1.3</a></li>
@@ -145,7 +146,6 @@
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -180,20 +180,18 @@
 
 
 
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
       <li>Installation</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-          
+            
         
       </li>
     
@@ -229,20 +227,20 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="installation">
+<section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>The following is a guide detailing how to install the rescomp package the way it “should” be done, i.e. as safely as possible.<span class="raw-html-m2r"><br></span>
 If you already know what you are doing, you can just install this package like any other locally installed package; no special dependencies are required.</p>
 <p>These instructions are for unix systems, but do work with at most minor modifications on Windows too.</p>
-<div class="section" id="optional-but-strongly-encouraged-prerequesites">
+<section id="optional-but-strongly-encouraged-prerequesites">
 <h2>Optional (but Strongly Encouraged) Prerequesites<a class="headerlink" href="#optional-but-strongly-encouraged-prerequesites" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://git-scm.com/downloads">git</a>: Used for downloading the repository and keeping it up to date.</p></li>
 <li><p><a class="reference external" href="https://www.anaconda.com/distribution/">Anaconda 3</a>: Using a virtual python environment is <strong>highly</strong> recommended to avoid damaging/unintentionally changing your base python.
 Of course you are free to use the environment manager of your choice, but in the following we will assume it to be Anaconda.</p></li>
 </ul>
-</div>
-<div class="section" id="installation-instructions">
+</section>
+<section id="installation-instructions">
 <h2>Installation Instructions<a class="headerlink" href="#installation-instructions" title="Permalink to this headline">¶</a></h2>
 <p>Install git and Anaconda 3 (see above). Make sure to close and then reopen the terminal if this is the first time you installed Anaconda.</p>
 <p>Open a terminal and enter the folder you wish to copy the GitLab repository to.</p>
@@ -260,15 +258,11 @@ Of course you are free to use the environment manager of your choice, but in the
 </pre></div>
 </div>
 <p>Create a new Anaconda environment _rc<em>env</em> from the environment file included in the repository. (If you are on a DLR server/cluster, try using the full environment file _environment_rescomp_full<em>rk.yml</em> first.)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">env</span> <span class="n">create</span> <span class="o">--</span><span class="n">name</span> <span class="n">rc_env</span> <span class="o">--</span><span class="n">file</span> <span class="n">environment_rescomp</span><span class="o">.</span><span class="n">yml</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">--</span><span class="n">name</span> <span class="n">rc_env</span> <span class="o">--</span><span class="n">file</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
 </div>
 <p>Activate your new environment</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">activate</span> <span class="n">rc_env</span>
-</pre></div>
-</div>
-<p>Create the package distribution files</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">sdist</span> <span class="n">bdist_wheel</span>
 </pre></div>
 </div>
 <p>If you plan to contribute, or just want to change the code yourself, it is very convenient to install the package as an <a class="reference external" href="https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs">editable install</a> (the dot is important)</p>
@@ -280,15 +274,20 @@ Of course you are free to use the environment manager of your choice, but in the
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>
 </pre></div>
 </div>
-<p>After the installation, try</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">unittest</span> <span class="o">-</span><span class="n">v</span>
+<p>After the installation, you can test that the package works correctly by installing pytest</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="n">pytest</span>
 </pre></div>
 </div>
-<p>and you should see a variety of tests being executed. If all of them end with “ok” and no errors are thrown, the installation was successful.</p>
+<p>and then running it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span>
+</pre></div>
 </div>
-<div class="section" id="common-installation-problems">
+<p>You should see a variety of tests being executed. If no big red errors are thrown, the installation was successful.</p>
+<p>After the installation, check out our <a class="reference internal" href="examples.html"><span class="doc">examples</span></a> to familiarize yourself with the package.</p>
+</section>
+<section id="common-installation-problems">
 <h2>Common Installation Problems<a class="headerlink" href="#common-installation-problems" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="the-installation-seems-to-have-worked-without-error-but-the-package-is-not-found-when-i-try-to-import-it">
+<section id="the-installation-seems-to-have-worked-without-error-but-the-package-is-not-found-when-i-try-to-import-it">
 <h3>The installation seems to have worked without error, but the package is not found when I try to import it.<a class="headerlink" href="#the-installation-seems-to-have-worked-without-error-but-the-package-is-not-found-when-i-try-to-import-it" title="Permalink to this headline">¶</a></h3>
 <p>Make sure that pip is installed and active in the environment you want to install the package to:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">which</span> <span class="n">pip</span>
@@ -312,13 +311,13 @@ To undo this, first uninstall the package,</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="n">pip</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="nothing-works-please-help-me">
+</section>
+<section id="nothing-works-please-help-me">
 <h3>Nothing works, please help me!<a class="headerlink" href="#nothing-works-please-help-me" title="Permalink to this headline">¶</a></h3>
 <p>If you can’t install or use the package despite following the above instructions, <a class="reference external" href="mailto:Sebastian&#46;Baur&#37;&#52;&#48;dlr&#46;de?cc=Christoph&#46;Raeth&#37;&#52;&#48;dlr&#46;de">write us</a>. For a package as new as this one, such problems are to be expected and we will try to help as soon as possible.</p>
-</div>
-</div>
-<div class="section" id="updating">
+</section>
+</section>
+<section id="updating">
 <h2>Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h2>
 <p>To keep the rescomp package up to date with the most current version in the repository, enter your local repository folder (the same folder we cloned during the installation) and run</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">pull</span>
@@ -330,44 +329,44 @@ If you installed it as a regular package, you can finish the update by running</
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="o">.</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="uninstalling">
+</section>
+<section id="uninstalling">
 <h2>Uninstalling<a class="headerlink" href="#uninstalling" title="Permalink to this headline">¶</a></h2>
 <p>To uninstall the rescomp package, simply activate the respective environment and then type:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">uninstall</span> <span class="n">rescomp</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
            
           </div>
           <footer>
+  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="index.html" class="btn btn-neutral float-left" title="Rescomp Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Rescomp Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk.
+        &copy; Copyright 2020, Jonas Aumeier, Sebastian Baur, Joschka Herteux, Youssef Mabrouk
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
+
         </div>
       </div>
 
@@ -375,6 +374,7 @@ If you installed it as a regular package, you can finish the update by running</
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {

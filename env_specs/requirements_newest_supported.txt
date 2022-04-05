@@ -10,11 +10,11 @@ networkx <= 2.6.3
 pandas <= 1.3.4
 
 # Depends on the above:
-scipy <= 1.7.2
+scipy <= 1.7.3
 # skccm==0.2.dev0
 scikit-learn <= 1.0.1
 
 # Testing
-tox <= 3.24.4
-pytest <= 6.2.5
+# tox <= 3.24.4
+# pytest <= 6.2.5
 

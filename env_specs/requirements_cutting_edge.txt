@@ -15,6 +15,6 @@ scipy
 scikit-learn
 
 # Testing
-tox
-pytest
+# tox
+# pytest
 

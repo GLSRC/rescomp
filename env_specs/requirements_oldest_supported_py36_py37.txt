@@ -1,5 +1,5 @@
-# requirement.txt for rescomp testing. Specifies the oldest package versions we support
-# Note that the order of packages matters, as that's the order they'll be installed in
+# requirement.txt for rescomp testing. Specifies the oldest package versions we support.
+# Note that the order of packages shouldn't matter, but I'm not 100% sure on that.
 
 # Basics:
 numpy == 1.14.5 # officially the min. version for python 3.6, works for higher python version too it seems though
@@ -9,9 +9,8 @@ numpy == 1.14.5 # officially the min. version for python 3.6, works for higher p
 
 # dask == 2.0.0
 # matplotlib == 2.0.0
-networkx == 2.0.0 
-pandas == 1.0.0 # pandas<1.0 (<=0.25) doesn't reliably work on python 3.9
-# pandas == 1.2.0 # pandas<=1.2 (<=0.25, 1.0, 1.1 and 1.2) doesn't reliably work on python 3.9
+networkx == 2.0.0
+pandas == 1.0.0 # In principle we may be able to user older pandas versions, but didn't test that yet
 
 # Depends on the above:
 # numba == 0.40.0
@@ -20,6 +19,6 @@ scipy == 1.4.0 # scipy<=1.3 doesn't reliably work on python 3.9. also 1.4.0 adde
 scikit-learn == 0.23.0 # scikit-learn<=0.22 doesn't reliably work on python 3.9
 
 # Testing
-tox == 3.0.0
-pytest == 5.2.0 # pytest<=5.1 has a dependency error with never versions of attrs
+# tox == 3.0.0
+# pytest == 5.2.0 # pytest<=5.1 has a dependency error with never versions of attrs
 

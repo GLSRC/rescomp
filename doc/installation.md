@@ -32,7 +32,7 @@ Set your name and email for this repository, e.g.:
 
 Create a new Anaconda environment _rc_env_ from the environment file included in the repository. (If you are on a DLR server/cluster, try using the full environment file _environment_rescomp_full_rk.yml_ first.)
 
-    conda env create --name rc_env --file environment_rescomp.yml
+    conda create --name rc_env --file requirements.txt
 
 Activate your new environment
 

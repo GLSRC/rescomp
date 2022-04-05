@@ -38,10 +38,6 @@ Activate your new environment
 
     conda activate rc_env
 
-Create the package distribution files
-
-    python setup.py sdist bdist_wheel
-
 If you plan to contribute, or just want to change the code yourself, it is very convenient to install the package as an [editable install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs) (the dot is important)
     
     pip install -e .
@@ -52,11 +48,17 @@ Alternatively, to install everything like a normal, unchanging package, use (the
 
     pip install .
 
-After the installation, try
+After the installation, you can test that the package works correctly by installing pytest
     
-    python -m unittest -v
+    conda install pytest
 
-and you should see a variety of tests being executed. If all of them end with "ok" and no errors are thrown, the installation was successful. 
+and then running it:
+
+    pytest
+
+You should see a variety of tests being executed. If no big red errors are thrown, the installation was successful. 
+
+After the installation, check out our [examples](examples.rst) to familiarize yourself with the package.  
 
 ### Common Installation Problems
 ####  The installation seems to have worked without error, but the package is not found when I try to import it. 

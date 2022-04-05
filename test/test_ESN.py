@@ -593,6 +593,37 @@ class testESNWrapper(unittest.TestCase):
         np.testing.assert_equal(y_test, y_test_desired)
         np.testing.assert_equal(y_pred, y_pred_desired)
 
+    def test_create_input_matrix(self):
+        disc_steps = 3
+        train_sync_steps = 2
+        train_steps = 5
+        pred_steps = 4
+        total_time_steps = disc_steps + train_sync_steps + train_steps + \
+                           pred_steps
+
+        x_dim = 3
+        data = np.random.random((total_time_steps, x_dim))
+
+        x_train, x_pred = rescomp.utilities.train_and_predict_input_setup(
+            data, disc_steps=disc_steps, train_sync_steps=train_sync_steps,
+            train_steps=train_steps, pred_steps=pred_steps)
+
+        # first w_in:
+        np.random.seed(1)
+        self.esn.create_network()
+        self.esn.train(x_train, train_sync_steps)
+        w_in_train = self.esn.get_w_in()
+
+        # second w_in
+        self.tearDown()
+        self.setUp()
+        np.random.seed(1)
+        self.esn.create_network()
+        self.esn.create_input_matrix(x_dim)
+        self.esn.train(x_train, train_sync_steps, w_in_no_update=True)
+        w_in_create_input_matrix = self.esn.get_w_in()
+
+        np.testing.assert_equal(w_in_train, w_in_create_input_matrix)
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

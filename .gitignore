@@ -14,3 +14,14 @@ doc/_build/
 
 # IDE specific files
 .idea/
+
+# jupyter checkpoint files:
+bin/.ipynb_checkpoints/
+
+# Temporary swap files
+*.swp
+
+# Files for testing with pyenv and tox
+.python-version
+venv/
+.tox/

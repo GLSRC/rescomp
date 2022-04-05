@@ -14,6 +14,7 @@ import pandas.io.pickle
 from . import utilities
 from ._version import __version__
 
+
 # dictionary defining synonyms for the different methods to generalize the
 # reservoir state r(t) to a nonlinear fit for _w_out
 
@@ -40,9 +41,9 @@ class _ESNCore(utilities._ESNLogging):
         self._w_out_fit_flag_synonyms = utilities._SynonymDict()
         self._w_out_fit_flag_synonyms.add_synonyms(0, ["linear_r", "simple"])
         self._w_out_fit_flag_synonyms.add_synonyms(1, "linear_and_square_r")
-        self._w_out_fit_flag_synonyms.add_synonyms(2, ["output_bias","bias"])
+        self._w_out_fit_flag_synonyms.add_synonyms(2, ["output_bias", "bias"])
         self._w_out_fit_flag_synonyms.add_synonyms(3, ["bias_and_square_r"])
-        
+
         self._w_out_fit_flag = None
 
         self._last_r = None
@@ -76,7 +77,7 @@ class _ESNCore(utilities._ESNLogging):
             r = np.zeros((x.shape[0], self._network.shape[0]))
             r[0] = self._act_fct(x[0], self._last_r)
             for t in np.arange(x.shape[0] - 1):
-                r[t+1] = self._act_fct(x[t + 1], r[t])
+                r[t + 1] = self._act_fct(x[t + 1], r[t])
             self._last_r = deepcopy(r[-1])
             return r
         else:
@@ -101,37 +102,49 @@ class _ESNCore(utilities._ESNLogging):
 
         """
         # This needs to work for
-        if self._w_out_fit_flag is 0:
+        if self._w_out_fit_flag == 0:
             return r
-        elif self._w_out_fit_flag is 1:
+        elif self._w_out_fit_flag == 1:
             return np.hstack((r, r ** 2))
-        elif self._w_out_fit_flag is 2:
-            if len(r.shape) is 1:
-                return np.hstack((r,1))
-            elif len(r.shape) is 2:
-                return np.hstack((r, np.ones(r.shape[0])[:,None]))
-        elif self._w_out_fit_flag is 3:
-            if len(r.shape) is 1:
-                return np.hstack((np.hstack((r, r ** 2)),1))
-            elif len(r.shape) is 2:
-                return np.hstack((np.hstack((r, r ** 2)), 
-                                  np.ones(r.shape[0])[:,None]))
+        elif self._w_out_fit_flag == 2:
+            if len(r.shape) == 1:
+                return np.hstack((r, 1))
+            elif len(r.shape) == 2:
+                return np.hstack((r, np.ones(r.shape[0])[:, None]))
+        elif self._w_out_fit_flag == 3:
+            if len(r.shape) == 1:
+                return np.hstack((np.hstack((r, r ** 2)), 1))
+            elif len(r.shape) == 2:
+                return np.hstack((np.hstack((r, r ** 2)),
+                                  np.ones(r.shape[0])[:, None]))
         else:
             raise Exception("self._w_out_fit_flag incorrectly specified")
 
-    def _fit_w_out(self, y_train, r):
+    def _fit_w_out(self, x_train, r):
         """ Fit the output matrix self._w_out after training
 
         Uses linear regression and Tikhonov regularization.
 
         Args:
-            y_train (np.ndarray): Desired prediction from the reservoir states
+            x_train (np.ndarray): get y_train via x_train[1:], y_train = Desired prediction from the reservoir states
             r (np.ndarray): reservoir states
         Returns:
             np.ndarray: r_gen, generalized nonlinear transformed r
 
         """
+        # Note: in an older version y_train was obtained from x_train in _train_synced, and then
+        # parsed directly to _fit_w_out.
+        # This is changed in order to allow for an easy override of _fit_w_out in variations of
+        # the ESN class (e.g. ESNHybrid), that include other non-rc predictions (e.g. x_new = model(x_old))
+        # into an "extended r_gen" = concat(r_gen, model(x)), that is finally fitted to y_train.
 
+        # Note: This is slightly different than the old ESN as y_train was as
+        # long as x_train, but shifted by one time step. Hence to get the same
+        # results as for the old ESN one has to specify an x_train one time step
+        # longer than before. Nonetheless, it's still true that r[t] is
+        # calculated from x[t] and used to calculate y[t] (all the same t)
+
+        y_train = x_train[1:]
         self.logger.debug('Fit _w_out according to method %s' %
                           str(self._w_out_fit_flag))
 
@@ -139,7 +152,7 @@ class _ESNCore(utilities._ESNLogging):
 
         # If we are using local states we only want to use the core dimensions
         # for the fit of W_out, i.e. the dimensions where the corresponding
-        # locality matrix is 2
+        # locality matrix == 2
         if self._loc_nbhd is None:
             self._w_out = np.linalg.solve(
                 r_gen.T @ r_gen + self._reg_param * np.eye(r_gen.shape[1]),
@@ -176,14 +189,7 @@ class _ESNCore(utilities._ESNLogging):
         # The last value of r can't be used for the training, see comment below
         r = self.synchronize(x_train[:-1], save_r=True)
 
-        # Note: This is slightly different than the old ESN as y_train was as
-        # long as x_train, but shifted by one time step. Hence to get the same
-        # results as for the old ESN one has to specify an x_train one time step
-        # longer than before. Nonetheless, it's still true that r[t] is
-        # calculated from x[t] and used to calculate y[t] (all the same t)
-        y_train = x_train[1:]
-
-        r_gen = self._fit_w_out(y_train, r)
+        r_gen = self._fit_w_out(x_train, r)
 
         return r, r_gen
 
@@ -240,7 +246,7 @@ class ESN(_ESNCore):
         self._n_rad = None  # network_spectral_radius
         self._n_avg_deg = None  # network_average_degree
         self._n_edge_prob = None
-        self._n_type_flag = None  #  network_type
+        self._n_type_flag = None  # network_type
         self._network = self._network
 
         # _create_w_in() which is called from train() assigns values to:
@@ -256,7 +262,7 @@ class ESN(_ESNCore):
         self._act_fct = self._act_fct
         self._normal_tanh_nodes = None
         self._squared_tanh_nodes = None
-        
+
         # train() assigns values to:
         self._x_dim = None  # Typically called d
         self._reg_param = self._reg_param
@@ -308,7 +314,7 @@ class ESN(_ESNCore):
 
         """
         self.logger.debug("Create w_in")
-   
+
         if self._w_in_sparse and not self._w_in_ordered:
             self._w_in = np.zeros((self._n_dim, self._x_dim))
             for i in range(self._n_dim):
@@ -316,32 +322,31 @@ class ESN(_ESNCore):
                 self._w_in[i, random_x_coord] = np.random.uniform(
                     low=-self._w_in_scale,
                     high=self._w_in_scale)  # maps input values to reservoir
-                
+
         elif self._w_in_sparse and self._w_in_ordered:
             self._w_in = np.zeros((self._n_dim, self._x_dim))
-            dim_wise=np.array([int(self._n_dim/self._x_dim)]*self._x_dim)
-            dim_wise[:self._n_dim%self._x_dim]+=1
-            
-            s=0
-            
+            dim_wise = np.array([int(self._n_dim / self._x_dim)] * self._x_dim)
+            dim_wise[:self._n_dim % self._x_dim] += 1
+
+            s = 0
+
             dim_wise_2 = dim_wise[:]
-            
+
             for i in range(len(dim_wise_2)):
-                s+=dim_wise_2[i]
-                dim_wise[i]=s
-            
-            dim_wise=np.append(dim_wise,0)
-            
+                s += dim_wise_2[i]
+                dim_wise[i] = s
+
+            dim_wise = np.append(dim_wise, 0)
+
             for d in range(self._x_dim):
-                for i in range(dim_wise[d-1],dim_wise[d]):
-                    
+                for i in range(dim_wise[d - 1], dim_wise[d]):
                     self._w_in[i, d] = np.random.uniform(
                         low=-self._w_in_scale,
                         high=self._w_in_scale)  # maps input values to reservoir
         else:
             self._w_in = np.random.uniform(low=-self._w_in_scale,
-                                          high=self._w_in_scale,
-                                          size=(self._n_dim, self._x_dim))
+                                           high=self._w_in_scale,
+                                           size=(self._n_dim, self._x_dim))
 
     def create_network(self, n_dim=500, n_rad=0.1, n_avg_deg=6.0,
                        n_type_flag="erdos_renyi", network_creation_attempts=10):
@@ -382,7 +387,7 @@ class ESN(_ESNCore):
             break
         else:
             raise Exception("Network creation during ESN init failed %d times"
-                            %network_creation_attempts)
+                            % network_creation_attempts)
 
     def _create_network_connections(self):
         """ Generate the baseline random network to be scaled
@@ -440,9 +445,9 @@ class ESN(_ESNCore):
                 continue
             break
         else:
-            #TODO: Better logging of exceptions
+            # TODO: Better logging of exceptions
             self.logger.error("Network variation failed %d times"
-                            % network_variation_attempts)
+                              % network_variation_attempts)
             raise _ArpackNoConvergence
 
     def _scale_network(self):
@@ -536,7 +541,7 @@ class ESN(_ESNCore):
         """
 
         return np.tanh(self._w_in @ x + self._network @ r + self._bias)
-    
+
     def _act_fct_tanh_squared(self, x, r):
         """ Activation function of the elementwise np.tanh() squared with added
             bias.
@@ -550,7 +555,7 @@ class ESN(_ESNCore):
 
         """
 
-        return np.tanh(self._w_in @ x + self._network @ r + self._bias)**2
+        return np.tanh(self._w_in @ x + self._network @ r + self._bias) ** 2
 
     def _act_fct_mixed(self, x, r):
         """ Different activation functions for different nodes
@@ -564,26 +569,43 @@ class ESN(_ESNCore):
 
         """
         new_r = np.zeros(self._n_dim)
-        
+
         new_r[self._normal_tanh_nodes] = self._act_fct_tanh_bias(x, r)[
-                                         self._normal_tanh_nodes]
-        
+            self._normal_tanh_nodes]
+
         new_r[self._squared_tanh_nodes] = self._act_fct_tanh_squared(x, r)[
-                                          self._squared_tanh_nodes]
-        
+            self._squared_tanh_nodes]
+
         return new_r
-    
+
     def setup_mix(self, mix_ratio):
         self._normal_tanh_nodes = []
         self._squared_tanh_nodes = []
-        
-        
+
         for d in range(self._x_dim):
-            dimwise_nodes = np.nonzero(self._w_in[:,d])[0]
+            dimwise_nodes = np.nonzero(self._w_in[:, d])[0]
             self._normal_tanh_nodes.extend(
-                dimwise_nodes[:round(len(dimwise_nodes)*mix_ratio)])
+                dimwise_nodes[:round(len(dimwise_nodes) * mix_ratio)])
             self._squared_tanh_nodes.extend(
-                dimwise_nodes[round(len(dimwise_nodes)*mix_ratio):])
+                dimwise_nodes[round(len(dimwise_nodes) * mix_ratio):])
+
+    def create_input_matrix(self, x_dim, w_in_scale=1.0, w_in_sparse=True, w_in_ordered=False):
+        ''' create the input matrix _w_in. Can be used to create the _w_in before "train", otherwise it is called in "train"
+        Args:
+            x_dim (int): dimension of the input data
+            w_in_scale (float): maximum absolute value of the (random) w_in
+                elements
+            w_in_sparse (bool): If true, creates w_in such that one element in
+                each row is non-zero (Lu,Hunt, Ott 2018)
+            w_in_orderd (bool): If true and w_in_sparse is true, creates w_in
+                such that elements are ordered by dimension and number of
+                elements for each dimension is equal (as far as possible)
+        '''
+        self._w_in_scale = w_in_scale
+        self._w_in_sparse = w_in_sparse
+        self._w_in_ordered = w_in_ordered
+        self._x_dim = x_dim
+        self._create_w_in()
 
     def train(self, x_train, sync_steps, reg_param=1e-5, w_in_scale=1.0,
               w_in_sparse=True, w_in_ordered=False, w_in_no_update=False,
@@ -626,18 +648,17 @@ class ESN(_ESNCore):
             loc_nbhd (np.ndarray): The local neighborhood used for the
                 generalized local states approach. For more information, please
                 see the docs.
-
         """
         self._reg_param = reg_param
         self._loc_nbhd = loc_nbhd
+
+        x_dim = x_train.shape[1]
         if self._w_in is not None and w_in_no_update:
-            pass
+            if not self._x_dim == x_dim:
+                raise Exception(
+                    f'the x_dim specified in create_input_matrix does not match the data x_dim: {self._x_dim} vs {x_dim}')
         else:
-            self._w_in_scale = w_in_scale
-            self._w_in_sparse = w_in_sparse
-            self._w_in_ordered = w_in_ordered
-            self._x_dim = x_train.shape[1]
-            self._create_w_in()
+            self.create_input_matrix(x_dim, w_in_scale=w_in_scale, w_in_sparse=w_in_sparse, w_in_ordered=w_in_ordered)
 
         self._set_activation_function(act_fct_flag=act_fct_flag,
                                       bias_scale=bias_scale)
@@ -654,8 +675,8 @@ class ESN(_ESNCore):
             self._x_train = x_train
 
         if save_r:
-            self._r_train, self._r_train_gen = self._train_synced(x_train, 
-                                            w_out_fit_flag=w_out_fit_flag)
+            self._r_train, self._r_train_gen = self._train_synced(x_train,
+                                                                  w_out_fit_flag=w_out_fit_flag)
         else:
             self._train_synced(x_train, w_out_fit_flag=w_out_fit_flag)
 
@@ -693,8 +714,8 @@ class ESN(_ESNCore):
 
         # if x_pred is None:
         #
-        if len(x_pred) > sync_steps+pred_steps+1:
-            x_pred = x_pred[:sync_steps+pred_steps+1]
+        if len(x_pred) > sync_steps + pred_steps + 1:
+            x_pred = x_pred[:sync_steps + pred_steps + 1]
 
         # Automatically generates a y_test to compare the prediction against, if
         # the input data is longer than the number of synchronization tests
@@ -823,7 +844,7 @@ class ESN(_ESNCore):
 
         """
 
-        self.logger.debug("Save to file %s, turn off internal logger to do so"%path)
+        self.logger.debug("Save to file %s, turn off internal logger to do so" % path)
 
         self.set_console_logger("off")
         self.set_file_logger("off", None)
@@ -881,7 +902,7 @@ class ESNWrapper(ESN):
         self.train(x_train, train_sync_steps, **train_kwargs)
 
         y_pred, y_test = self.predict(x_pred, sync_steps=pred_sync_steps,
-                        pred_steps=pred_steps, **predict_kwargs)
+                                      pred_steps=pred_steps, **predict_kwargs)
 
         return y_pred, y_test
 
@@ -952,7 +973,7 @@ class ESNGenLoc(utilities._ESNLogging):
         self._esn_instances[0].set_file_logger("off", None)
         self._esn_instances = [deepcopy(self._esn_instances[0]) for i in range(self._nr_nbhds)]
 
-        self.logger.debug("Start Training of Neighborhood 1/%d"%self._nr_nbhds)
+        self.logger.debug("Start Training of Neighborhood 1/%d" % self._nr_nbhds)
         loc_x_train = self._get_local_x(x_train, 0)
         esn = self._esn_instances[0]
         if train_core_only:
@@ -973,9 +994,13 @@ class ESNGenLoc(utilities._ESNLogging):
             #  efficiency.
             #  Also note the necessary w_in_no_update=True in the loop below.
             self._esn_instances[nbhd_index]._w_in = self._esn_instances[0]._w_in
+            self._esn_instances[nbhd_index]._w_in_scale = self._esn_instances[0]._w_in_scale
+            self._esn_instances[nbhd_index]._w_in_sparse = self._esn_instances[0]._w_in_sparse
+            self._esn_instances[nbhd_index]._w_in_ordered = self._esn_instances[0]._w_in_ordered
+            self._esn_instances[nbhd_index]._x_dim = self._esn_instances[0]._x_dim
 
         for nbhd_index in range(1, self._nr_nbhds):
-            self.logger.debug("Start Training of Neighborhood %d/%d"%
+            self.logger.debug("Start Training of Neighborhood %d/%d" %
                               (nbhd_index + 1, self._nr_nbhds))
             loc_x_train = self._get_local_x(x_train, nbhd_index)
             esn = self._esn_instances[nbhd_index]
@@ -990,9 +1015,9 @@ class ESNGenLoc(utilities._ESNLogging):
     def _get_local_x(self, x, nbhd_index):
         nbhd = self._get_nbhd(nbhd_index)
         x_ndim = x.ndim
-        if x_ndim is 2:
+        if x_ndim == 2:
             loc_x = np.squeeze(x[:, np.nonzero(nbhd)], 1)
-        elif x_ndim is 1:
+        elif x_ndim == 1:
             loc_x = x[np.nonzero(nbhd)]
         else:
             raise Exception("x.ndim must be either 1 or 2")
@@ -1041,7 +1066,7 @@ class ESNGenLoc(utilities._ESNLogging):
         if x_sync is not None:
             self.synchronize(x_sync)
 
-        # If pred_steps is 0, this function only syncs, and doesn't actually
+        # If pred_steps == 0, this function only syncs, and doesn't actually
         # predict anything
         if pred_steps != 0:
             # Predict Step by step
@@ -1056,7 +1081,7 @@ class ESNGenLoc(utilities._ESNLogging):
                 if t % 1000 == 0:
                     self.logger.debug('Prediction for %d/%d steps done' % (t, pred_steps))
 
-                y_pred[t + 1] =  self._predict_step(y_pred[t])
+                y_pred[t + 1] = self._predict_step(y_pred[t])
 
             self.logger.debug('Prediction for %d/%d steps done' %
                               (pred_steps, pred_steps))
@@ -1163,8 +1188,8 @@ class ESNGenLoc(utilities._ESNLogging):
         self.train(x_train, train_sync_steps, loc_nbhds,
                    ESN_train_kwargs=ESN_train_kwargs, **self_train_kwargs)
         y_pred, y_test = self.predict(x_pred, sync_steps=pred_sync_steps,
-                        pred_steps=pred_steps, ESN_sync_kwargs=ESN_sync_kwargs,
-                                            **self_predict_kwargs)
+                                      pred_steps=pred_steps, ESN_sync_kwargs=ESN_sync_kwargs,
+                                      **self_predict_kwargs)
 
         return y_pred, y_test
 
@@ -1191,7 +1216,7 @@ class ESNGenLoc(utilities._ESNLogging):
         console_log_level = self._console_log_level
         file_log_level = self._file_log_level
 
-        self.logger.debug("Save LocalESN to file %s"%path)
+        self.logger.debug("Save LocalESN to file %s" % path)
 
         self.set_console_logger("off")
         self.set_file_logger("off", None)
@@ -1218,4 +1243,3 @@ class ESNGenLoc(utilities._ESNLogging):
             last_r = r_states[0]
             esn = self._esn_instances[0]
             esn._last_r = last_r
-

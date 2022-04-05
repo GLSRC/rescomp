@@ -2,7 +2,30 @@
 
 This is the changelog for the rescomp package
 
-### rescomp 0.2.1 - Current Master and Development Branch
+### rescomp 0.3.1
+* Fixed ESNGenLoc bug where W_in was setup incorrectly.
+* Updated the examples to use the Lorenz-96 system instead of the Kuramoto-Sivashinsky system where applicable.
+
+### rescomp 0.3.0
+* Removed the measures.error_over_time() and measures.valid_time_index() functions introduced in 0.2.4 due to
+concerns about their naming. They'll be re-introduced in a later version.
+
+### rescomp 0.2.4
+* Added measures.error_over_time() and measures.valid_time_index() as additional error/data validation functions
+
+### rescomp 0.2.3
+* Added esn.create_input_matrix() to allow the creation of an input matrix independent from any training.
+* Adjusted the arguments of _ESNCore._fit_w_out() to allow for more flexible extension classes built upon _ESNCore 
+and/or ESN
+
+### rescomp 0.2.2
+
+* Updated required packages to correctly reflect the oldest supported packages.
+* Removed the last matplotlib uses in rescomp.
+* Added better testing with tox (and pyenv)
+* Added tests for the KS simulation function variants, and marked the (likely) expected to fail tests as such.
+
+### rescomp 0.2.1
 
 * Fixed Bug where the parameter pred_sync_steps was not passed on and used 
 incorrectly in the following functions:

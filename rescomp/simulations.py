@@ -446,10 +446,6 @@ def simulate_trajectory(sys_flag='mod_lorenz', dt=2e-2, time_steps=int(2e4),
     elif sys_flag_syn == 3:
         f = lambda x: _roessler(x, **kwargs)
     elif sys_flag_syn == 4:
-        # Starting point is ignored here atm
-        if starting_point is not None:
-            # TODO: should be a warning in the logger.
-            print("Starting point is ignored for the Lorenz96 equation")
         f = lambda x: _lorenz_96(x, **kwargs)
     elif sys_flag_syn == 5:
         f = lambda x: _ueda(x)

@@ -2,6 +2,10 @@
 
 This is the changelog for the rescomp package
 
+### rescomp 0.3.1
+* Fixed ESNGenLoc bug where W_in was setup incorrectly.
+* Updated the examples to use the Lorenz-96 system instead of the Kuramoto-Sivashinsky system where applicable.
+
 ### rescomp 0.3.0
 * Removed the measures.error_over_time() and measures.valid_time_index() functions introduced in 0.2.4 due to
 concerns about their naming. They'll be re-introduced in a later version.

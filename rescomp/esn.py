@@ -994,6 +994,10 @@ class ESNGenLoc(utilities._ESNLogging):
             #  efficiency.
             #  Also note the necessary w_in_no_update=True in the loop below.
             self._esn_instances[nbhd_index]._w_in = self._esn_instances[0]._w_in
+            self._esn_instances[nbhd_index]._w_in_scale = self._esn_instances[0]._w_in_scale
+            self._esn_instances[nbhd_index]._w_in_sparse = self._esn_instances[0]._w_in_sparse
+            self._esn_instances[nbhd_index]._w_in_ordered = self._esn_instances[0]._w_in_ordered
+            self._esn_instances[nbhd_index]._x_dim = self._esn_instances[0]._x_dim
 
         for nbhd_index in range(1, self._nr_nbhds):
             self.logger.debug("Start Training of Neighborhood %d/%d" %

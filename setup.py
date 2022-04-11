@@ -39,7 +39,7 @@ setup(
         'networkx>=2.0.0',
         'pandas>=1.0.0',
         'scipy>=1.4.0,<=1.7.3',
-        'scikit-learn>=0.23.0',
+        'scikit-learn>=0.20.0',
     ],
     provides=['rescomp']
 )

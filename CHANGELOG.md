@@ -2,6 +2,9 @@
 
 This is the changelog for the rescomp package
 
+### rescomp 0.3.2
+* Add Scipy 1.8 support by removing a depricated import
+
 ### rescomp 0.3.1
 * Fixed ESNGenLoc bug where W_in was setup incorrectly.
 * Updated the examples to use the Lorenz-96 system instead of the Kuramoto-Sivashinsky system where applicable.

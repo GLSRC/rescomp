@@ -6,10 +6,7 @@ import rescomp
 import numpy as np
 import scipy.sparse
 import scipy.sparse.linalg
-from scipy.sparse.linalg.eigen.arpack.arpack import ArpackNoConvergence
 import time
-import datetime
-import pickle
 from rescomp import simulations
 import networkx as nx
 

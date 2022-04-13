@@ -4,8 +4,7 @@
 import numpy as np
 import scipy.sparse
 import scipy.sparse.linalg
-from scipy.sparse.linalg.eigen.arpack.arpack \
-    import ArpackNoConvergence as _ArpackNoConvergence
+from scipy.sparse.linalg import ArpackNoConvergence as _ArpackNoConvergence
 import networkx as nx
 import pickle
 from copy import deepcopy
@@ -14,9 +13,6 @@ import pandas.io.pickle
 from . import utilities
 from ._version import __version__
 
-
-# dictionary defining synonyms for the different methods to generalize the
-# reservoir state r(t) to a nonlinear fit for _w_out
 
 class _ESNCore(utilities._ESNLogging):
     """ The non-reducible core of ESN RC training and prediction
